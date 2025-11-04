@@ -1,0 +1,21 @@
+@startuml
+participant ":ManagerTurno" as Manager
+participant ":Jugador" as Jugador
+participant ":Carta" as Carta
+participant ":Tablero" as Tablero
+
+Manager -> Jugador: ganador(:juego)
+activate Jugador
+loop Para cada carta
+    Jugador -> Carta: sumar(acumulador:int)
+    activate Carta
+    Carta --> Jugador: suma:int
+    deactivate Carta
+end
+Jugador -> Tablero: puntaje(acumulador:int)
+activate Tablero
+Tablero --> Jugador: boolean
+deactivate Tablero
+Jugador --> Manager: boolean
+deactivate Jugador
+@enduml 
