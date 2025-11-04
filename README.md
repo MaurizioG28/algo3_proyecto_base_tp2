@@ -5,7 +5,7 @@
 
 Trabajo Práctico número 2 de la materia Algoritmos y Programación III de FIUBA
 
-## Grupo {5}
+## Grupo 5
 
 * **Integrante 1** - [Enzo Ponferrada](https://github.com/enzoponf3)
 * **Integrante 2** - [Ariel Cruz](https://github.com/leoxz-dev)
@@ -13,7 +13,7 @@ Trabajo Práctico número 2 de la materia Algoritmos y Programación III de FIUB
 * **Integrante 4** - [Maurizio Giannantonio](https://github.com/MaurizioG28)
 * **Integrante 5** - [Tomas Echeverria](https://github.com/Tomas30022)
 
-Corrector: **{Diego Sanchez}**
+Corrector: **Diego Sanchez**
 
 ## Aplicación
 
