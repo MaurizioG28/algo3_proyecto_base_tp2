@@ -14,9 +14,9 @@ class Posicion
   + {static} Posicion(): Posicion
 }
 
-Tablero -d-> Posicion
-Posicion -l-> Lado
-Posicion -r-> Vertice
+Tablero "1    "*-d-"19 " Posicion
+Posicion "1"*-l-"6" Lado
+Posicion "1"*-r-"6" Vertice
 Posicion -d-> Terreno
 
 class Lado
@@ -24,14 +24,14 @@ class Lado
   + {static} Lado(): Lado
 }
 
-Tablero -d-> Lado
+Tablero "1       "*-d-"70" Lado
 
 class Vertice
 {
   + {static} Vertice(): Vertice
 }
 
-Tablero -> Vertice
+Tablero "1 "*-"54   " Vertice
 
 class Terreno 
 {
@@ -74,8 +74,7 @@ class Jugador
   + sosGanador(puntos: int): Boolean
 }
 
-ManagerTurno -> Jugador
-Jugador ..> Tablero
+ManagerTurno "1   "o--"3...*  " Jugador
 Tablero ..> Jugador
 
 abstract class Construccion
@@ -92,8 +91,15 @@ abstract class CartaDesarrollo
   + suma(valor: int): int
 }
 
-Jugador -> Construccion
-Jugador -> CartaDesarrollo
+Jugador "1"-> "0...*  " Construccion
+Jugador "1    "-d-> "0...*   " CartaDesarrollo
+
+class Ladron
+{
+  + {static} Ladron(): Ladron
+}
+
+Terreno "1       "-d->"0-1 " Ladron
 
 class Poblado extends Construccion
 {
