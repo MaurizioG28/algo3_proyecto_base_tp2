@@ -78,14 +78,14 @@ ManagerTurno -> Jugador
 Jugador ..> Tablero
 Tablero ..> Jugador
 
-interface Construccion
+abstract class Construccion
 {
   - puntos: int
   + {static} Construccion(): Construccion
   + suma(valor: int): int
 }
 
-interface CartaDesarrollo
+abstract class CartaDesarrollo
 {
   - puntos: int
   + {static} CartaDesarrollo(): CartaDesarrollo
@@ -95,42 +95,42 @@ interface CartaDesarrollo
 Jugador -> Construccion
 Jugador -> CartaDesarrollo
 
-class Poblado implements Construccion
+class Poblado extends Construccion
 {
   + {static} Poblado(): Poblado
 }
 
-class Carretera implements Construccion
+class Carretera extends Construccion
 {
   + {static} Carretera(): Carretera
 }
 
-class Ciudad implements Construccion
+class Ciudad extends Construccion
 {
   + {static} Ciudad(): Ciudad
 }
 
-class Caballero implements CartaDesarrollo
+class Caballero extends CartaDesarrollo
 {
   + {static} Caballero(): Caballero
 }
 
-class PuntoDeVictoria implements CartaDesarrollo
+class PuntoDeVictoria extends CartaDesarrollo
 {
   + {static} PuntoDeVictoria(): PuntoDeVictoria
 }
 
-class Descubrimiento implements CartaDesarrollo
+class Descubrimiento extends CartaDesarrollo
 {
   + {static} Descubrimiento(): Descubrimiento
 }
 
-class ConstruccionCarretera implements CartaDesarrollo
+class ConstruccionCarretera extends CartaDesarrollo
 {
   + {static} ConstruccionCarretera(): ConstruccionCarretera
 }
 
-class Monopolio implements CartaDesarrollo
+class Monopolio extends CartaDesarrollo
 {
   + {static} Monopolio(): Monopolio
 }
