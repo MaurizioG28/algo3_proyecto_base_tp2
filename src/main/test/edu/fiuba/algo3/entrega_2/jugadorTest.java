@@ -15,7 +15,7 @@ public class jugadorTest {
     //Verificar que si un jugador tiene más de 7 cartas, descarte correctamente la mitad,
     //redondeando hacia abajo, al lanzar un 7.
     @Test
-    public void jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
+    public void Test01jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
         int cantidadCartasEsperadas  =  4;
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
@@ -29,7 +29,7 @@ public class jugadorTest {
 
     }
     @Test
-    public void jugadorTieneMenosDe7RecursosEnTotalYNoDescarta(){
+    public void Test02jugadorTieneMenosDe7RecursosEnTotalYNoDescarta(){
         int cantidadCartasEsperadas  =  5;
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
@@ -44,7 +44,7 @@ public class jugadorTest {
     }
 
     @Test
-    public void jugadorTiene7RecursosEnTotalYNoDescarta(){
+    public void Test03jugadorTiene7RecursosEnTotalYNoDescarta(){
         int cantidadCartasEsperadas  =  7;
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
