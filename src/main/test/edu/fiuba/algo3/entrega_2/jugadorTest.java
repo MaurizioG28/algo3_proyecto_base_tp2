@@ -20,7 +20,7 @@ public class jugadorTest {
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
 
-        jugador.agregarRecurso(Recurso.Madera,8);
+        jugador.agregarRecurso(Recurso.MADERA,8);
         jugador.descartarMitadDeRecursos();
 
         cantidadRecursosJugador = jugador.totalRecursos();
@@ -34,7 +34,7 @@ public class jugadorTest {
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
 
-        jugador.agregarRecurso(Recurso.Madera,5);
+        jugador.agregarRecurso(Recurso.MADERA,5);
         jugador.descartarMitadDeRecursos();
 
         cantidadRecursosJugador = jugador.totalRecursos();
@@ -49,7 +49,7 @@ public class jugadorTest {
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
 
-        jugador.agregarRecurso(Recurso.Madera,7);
+        jugador.agregarRecurso(Recurso.MADERA,7);
         jugador.descartarMitadDeRecursos();
 
         cantidadRecursosJugador = jugador.totalRecursos();
