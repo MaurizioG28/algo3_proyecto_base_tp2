@@ -17,10 +17,12 @@ public class HexagonoTest {
 
         assertTrue(terreno.sePuedeProducir());
     }
-
+    
     @Test
-    public void Test02TerrenoNoPuedeProducirSiTieneUnLadron(){
-        Hexagono terreno = new Hexagono(DESIERTO, 2);
+    public void Test02TerrenoNoPuedeProducirSiUnLadronEsColocado(){
+        Hexagono terreno = new Hexagono(BOSQUE, 2);
+
+        terreno.moverLadron();
 
         assertFalse(terreno.sePuedeProducir());
     }
