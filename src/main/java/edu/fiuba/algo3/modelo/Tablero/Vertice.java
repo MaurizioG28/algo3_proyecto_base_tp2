@@ -23,4 +23,8 @@ public class Vertice {
     public void colocarConstruccion(Jugador jugador) {
         this.propietario = jugador;
     }
+
+    public void agregarAdyacente(Vertice v2) {
+        this.adyacentes.add(v2);
+    }
 }
