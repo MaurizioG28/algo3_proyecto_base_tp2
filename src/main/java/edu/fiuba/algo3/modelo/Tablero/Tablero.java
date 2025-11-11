@@ -2,6 +2,7 @@ package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
 
+import edu.fiuba.algo3.modelo.Jugador;
 import org.apache.commons.lang3.ArrayUtils;
 
 public class Tablero {
@@ -53,5 +54,17 @@ public class Tablero {
         }
 
         return correcto;
+    }
+
+    public void construirPoblado(Jugador jugador, Vertice vertice) throws ReglaDistanciaException {
+
+        if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
+            throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
+        }
+        /*
+        construye directamente, falta implementar el chequeo de recursos del jugardor.
+        Con algo como jugador.recursosPoblado()
+        */
+        vertice.colocarConstruccion(jugador);
     }
 }
