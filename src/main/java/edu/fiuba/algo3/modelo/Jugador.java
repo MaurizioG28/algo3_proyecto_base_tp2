@@ -24,4 +24,14 @@ public class Jugador {
         return this.almacenJugador.totalRecursos();
     }
 
+    private Recurso entregarRecursoAleatorio() {
+        return this.almacenJugador.robarRecursoAleatorio();
+    }
+
+    public void robarRecurso(Jugador victima) {
+        Recurso recursoRobado = victima.entregarRecursoAleatorio();
+        if(recursoRobado != null){
+            this.almacenJugador.agregarRecurso(recursoRobado,1);
+        }
+    }
 }

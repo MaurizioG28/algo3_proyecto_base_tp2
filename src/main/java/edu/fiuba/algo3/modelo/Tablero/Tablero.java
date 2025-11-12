@@ -26,6 +26,8 @@ public class Tablero {
 
     private final ArrayList<Hexagono> hexagonos = new ArrayList<>();
 
+    private Hexagono posicionDelLadron;
+
     public Tablero(){
     }
 
@@ -36,6 +38,19 @@ public class Tablero {
             terreno.agregarTerreno(hexagonos, fichasNumeradas);
         }
         this.tableroInicializado = true;
+        this.posicionDelLadron = buscarHexagonoDesierto();
+        if(this.posicionDelLadron == null){
+            throw new IllegalStateException("No se encontro el Ladron");
+        }
+    }
+
+    private Hexagono buscarHexagonoDesierto() {
+        for (Hexagono hex : hexagonos) {
+            if (hex.getTipo() == TipoTerreno.DESIERTO) {
+                return hex;
+            }
+        }
+        return null;
     }
 
     private Terreno sortearTerreno(){
@@ -59,6 +74,9 @@ public class Tablero {
     }
 
     public void construirPoblado(Jugador jugador, Vertice vertice) throws ReglaDistanciaException {
+        if (!tableroInicializado) {
+            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
+        }
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
@@ -102,4 +120,24 @@ public class Tablero {
     public void agregarHexagono(Hexagono h) {
         this.hexagonos.add(h);
     }
+
+    public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
+        if (!tableroInicializado) {
+            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
+        }
+
+        this.posicionDelLadron = posicion;
+        List<Jugador> victimas = new ArrayList<>();
+        for (Vertice v : posicion.getVertices()) {
+            if (!v.tieneConstruccion()) continue;
+            Jugador propietario = v.getPropietario();
+            if (propietario == null) continue;
+            if (propietario.equals(jugadorActual)) continue;
+            if (!victimas.contains(propietario)) {
+                victimas.add(propietario);
+            }
+        }
+        return victimas;
+    }
+
 }
