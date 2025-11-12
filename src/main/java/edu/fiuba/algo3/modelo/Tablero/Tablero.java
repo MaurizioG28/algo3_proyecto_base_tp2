@@ -2,8 +2,6 @@ package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 public class Tablero {
 
     private static final int CANTIDAD_HEXAGONOS = 19;
