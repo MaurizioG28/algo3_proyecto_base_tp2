@@ -5,13 +5,10 @@ import edu.fiuba.algo3.modelo.Recurso;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class tableroTest {
+public class TableroTest {
 
     private Hexagono hex(TipoTerreno t, int numero, Vertice... vs) {
         Hexagono h = new Hexagono(t, numero);
@@ -20,13 +17,13 @@ public class tableroTest {
     }
     private Vertice vPoblado(Jugador j) {
         Vertice v = new Vertice();
-        v.colocarPoblado(j); // debe setear propietario y tipo POBLADO
+        v.colocarPoblado(j);
         return v;
     }
     private Vertice vCiudad(Jugador j) {
         Vertice v = new Vertice();
         v.colocarPoblado(j);
-        v.mejorarACiudad(); // debe setear tipo CIUDAD
+        v.mejorarACiudad();
         return v;
     }
     private Vertice vLibre() { return new Vertice(); }

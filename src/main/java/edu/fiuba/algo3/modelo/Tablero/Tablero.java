@@ -5,7 +5,7 @@ import java.util.*;
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
-import org.apache.commons.lang3.ArrayUtils;
+
 
 public class Tablero {
 
@@ -70,7 +70,7 @@ public class Tablero {
         vertice.colocarPoblado(jugador);
     }
 
-    public Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
+    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
         Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
 
         for (Hexagono h : hexagonos) {
