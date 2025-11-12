@@ -8,12 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class jugadorTest {
 
-    //Verificar la producción correcta: 1 recurso por Poblado, 2 recursos por Ciudad,
-    //adyacentes al número lanzado.
 
-
-    //Verificar que si un jugador tiene más de 7 cartas, descarte correctamente la mitad,
-    //redondeando hacia abajo, al lanzar un 7.
     @Test
     public void Test01jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
         int cantidadCartasEsperadas  =  4;

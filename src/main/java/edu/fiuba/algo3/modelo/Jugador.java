@@ -23,4 +23,5 @@ public class Jugador {
     public int totalRecursos() {
         return this.almacenJugador.totalRecursos();
     }
+
 }
