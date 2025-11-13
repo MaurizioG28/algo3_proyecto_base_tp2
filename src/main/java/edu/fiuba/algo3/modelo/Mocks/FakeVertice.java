@@ -9,31 +9,41 @@ import java.util.List;
 
 public class FakeVertice implements IVertice {
 
-    private boolean valido;
-    private List<ICelda> celdas;
+    private boolean noValido;
+    private List<ICelda> celdasAdyacentes;
 
     public FakeVertice(boolean valido, List<ICelda> celdas) {
-        this.valido = valido;
-        this.celdas = celdas;
-    }
-
-    @Override
-    public boolean validarConstruccion(Jugador jugador) {
-        return valido;
+        this.noValido = valido;
+        this.celdasAdyacentes = celdas;
     }
 
     @Override
     public List<ICelda> obtenerCeldasAdyacentes() {
-        return celdas;
+        return celdasAdyacentes;
     }
 
     @Override
     public List<Recurso> darRecursos() {
         List<Recurso> recursos = new LinkedList<>();
-        for (ICelda celda : celdas) {
+        for (ICelda celda : celdasAdyacentes) {
             recursos.add(celda.darRecurso());
         }
         return recursos;
+    }
+
+    @Override
+    public boolean tieneConstruccionAdyacente() {
+        return false;
+    }
+
+    @Override
+    public boolean tieneConstruccion() {
+        return noValido;
+    }
+
+    @Override
+    public void colocarPoblado(Jugador jugador) {
+
     }
 
 }

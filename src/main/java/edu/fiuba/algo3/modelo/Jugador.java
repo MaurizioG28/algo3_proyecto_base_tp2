@@ -7,15 +7,15 @@ public class Jugador {
     int MADERA = 0;
     int LADRILLO = 0;
     int LANA= 0;
-    int CEREAL= 0;
+    int GRANO = 0;
     int MINERAL= 0;
 
     // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
-    public boolean tiene(int madera, int ladrillo, int lana, int cereal, int mineral) {
+    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
         return  MADERA   >= madera   &&
                 LADRILLO >= ladrillo &&
                 LANA     >= lana     &&
-                CEREAL   >= cereal   &&
+                GRANO   >= grano   &&
                 MINERAL  >= mineral;
     }
 
@@ -31,8 +31,8 @@ public class Jugador {
                 case LANA:
                     LANA++;
                     break;
-                case CEREAL:
-                    CEREAL++;
+                case GRANO:
+                    GRANO++;
                     break;
                 case MINERAL:
                     MINERAL++;

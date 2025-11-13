@@ -3,6 +3,7 @@ package edu.fiuba.algo3.modelo.Tablero;
 import java.util.*;
 
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
 
@@ -78,7 +79,7 @@ public class Tablero {
         return correcto;
     }
 
-    public void construirPoblado(Jugador jugador, Vertice vertice) throws ReglaDistanciaException {
+    public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
 //        if (!tableroInicializado) {
 //            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
 //        }
@@ -91,6 +92,8 @@ public class Tablero {
         Con algo como jugador.recursosPoblado()
         */
         vertice.colocarPoblado(jugador);
+        List<Recurso> recursos = vertice.darRecursos();
+        jugador.sumarRecursos(recursos);
     }
 
     private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
