@@ -1,8 +1,19 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
+<<<<<<< HEAD
 import java.util.HashMap;
 
 import edu.fiuba.algo3.modelo.Contruccion.Contruccion;
+=======
+import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recurso;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+>>>>>>> Maurizio
 
 import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.DESIERTO;
 
@@ -12,6 +23,7 @@ public class Hexagono {
     private HashMap<Integer, Contruccion> viviendas = new HashMap<>(); // 0..6
     private HashMap<Integer, Contruccion> caminos = new HashMap<>(); // 0..6
     private boolean bloqueadoPorLadron = false;
+    private final List<Vertice> vertices = new ArrayList<>(6);
 
     public Hexagono(TipoTerreno tipo, int numero) {
         this.tipo = tipo;
@@ -43,5 +55,11 @@ public class Hexagono {
     public boolean sePuedeProducir() {
         return (!bloqueadoPorLadron);
     }
+    public TipoTerreno getTipo() { return tipo; }
+    public int getNumero() { return numero; }
+
+    public List<Vertice> getVertices() { return vertices; }
+
+    public void agregarVertice(Vertice v) { this.vertices.add(v); }
 
 }

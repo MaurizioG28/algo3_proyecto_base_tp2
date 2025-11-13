@@ -8,19 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class jugadorTest {
 
-    //Verificar la producción correcta: 1 recurso por Poblado, 2 recursos por Ciudad,
-    //adyacentes al número lanzado.
 
-
-    //Verificar que si un jugador tiene más de 7 cartas, descarte correctamente la mitad,
-    //redondeando hacia abajo, al lanzar un 7.
     @Test
     public void Test01jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
         int cantidadCartasEsperadas  =  4;
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
 
-        jugador.agregarRecurso(Recurso.Madera,8);
+        jugador.agregarRecurso(Recurso.MADERA,8);
         jugador.descartarMitadDeRecursos();
 
         cantidadRecursosJugador = jugador.totalRecursos();
@@ -34,7 +29,7 @@ public class jugadorTest {
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
 
-        jugador.agregarRecurso(Recurso.Madera,5);
+        jugador.agregarRecurso(Recurso.MADERA,5);
         jugador.descartarMitadDeRecursos();
 
         cantidadRecursosJugador = jugador.totalRecursos();
@@ -49,7 +44,7 @@ public class jugadorTest {
         int cantidadRecursosJugador;
         Jugador jugador = new Jugador();
 
-        jugador.agregarRecurso(Recurso.Madera,7);
+        jugador.agregarRecurso(Recurso.MADERA,7);
         jugador.descartarMitadDeRecursos();
 
         cantidadRecursosJugador = jugador.totalRecursos();
