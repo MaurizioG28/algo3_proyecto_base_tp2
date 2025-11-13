@@ -70,5 +70,24 @@ public class ManagerTurnoTest {
         // Assert
         assertTrue(jugador.tiene(1,0,0,0,0));
     }
+    @Test
+    public void test04JugadorRecibeTresRecursosIguales() {
+        Tablero tablero = new Tablero();
+        Jugador jugador = new Jugador();
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero);
+
+        IVertice vertice = new FakeVertice(true,
+                List.of(
+                        new FakeCelda(Recurso.CEREAL),
+                        new FakeCelda(Recurso.CEREAL),
+                        new FakeCelda(Recurso.CEREAL)
+                )
+        );
+
+        managerTurno.construirPoblado(vertice);
+
+        assertTrue(jugador.tiene(0,0,0,3,0));
+    }
+
 
 }
