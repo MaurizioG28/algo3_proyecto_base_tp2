@@ -1,19 +1,21 @@
 @startuml
 actor ":Jugador" as jugador
 participant ":Tablero" as tablero
-participant ":Dado" as dado
+participant ":Dados" as dados
 
 jugador -> tablero: tirarDados()
 activate tablero
 
-tablero -> dado: tirarDados()
-activate dado
-dado -> dado : generarNumero()
-dado -> dado : verificarNumero()
+tablero -> dados: tirar()
+activate dados
 
-loop mientras no sea valido
-        dado -> dado: generarNumero()
-end
-dado --> tablero:int
+dados -> dados: generarNumero()  // dado 1
+dados -> dados: generarNumero()  // dado 2
+
+dados --> tablero: total (int)
+deactivate dados
+
+tablero --> jugador: int
+deactivate tablero
 
 @enduml
