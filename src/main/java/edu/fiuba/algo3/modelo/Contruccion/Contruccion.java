@@ -14,7 +14,4 @@ public final class Contruccion {
         this.identificacion = identificacion;
     }
 
-    public void recolectarRecurso(Recurso recurso) {
-        tipoConstruccion.generarRecurso(recurso, duenio);
-    }
 }

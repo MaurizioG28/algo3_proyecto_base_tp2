@@ -1,10 +1,10 @@
 package edu.fiuba.algo3.entrega_2;
 
-import edu.fiuba.algo3.modelo.Contruccion.Contruccion;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Recurso;
 import edu.fiuba.algo3.modelo.Tablero.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Tablero;
+import edu.fiuba.algo3.modelo.Tablero.Vertice;
 import org.junit.jupiter.api.Test;
 
 import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.BOSQUE;
@@ -16,49 +16,57 @@ public class HexagonoTest {
 
     @Test
     public void Test01TerrenoNoPuedeProducirSiUnLadronEsColocado(){
+        Tablero tablero = new Tablero();
         Hexagono terreno = new Hexagono(BOSQUE, 2);
         Jugador jugador = new Jugador();
-        Poblado tipo = new Poblado();
-        Contruccion poblado = new Contruccion(jugador, tipo, 1);
-
+        Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 0;
 
-        terreno.agregarVivienda(poblado, 1);
+        tablero.agregarHexagono(terreno);
+        terreno.agregarVertice(vertice);
+        vertice.colocarPoblado(jugador);
+
         terreno.moverLadron();
-        terreno.producirRecursos();
+        tablero.repartirProduccion(2);
 
         assertEquals(totalRecursosEsperados,jugador.CantidadRecurso(Recurso.MADERA));
     }
 
     @Test
     public void Test02TerrenoDeberiaProducirNormalmenteSiNoTieneUnLadronBloqueando(){
+        Tablero tablero = new Tablero();
         Hexagono terreno = new Hexagono(BOSQUE, 2);
         Jugador jugador = new Jugador();
-        Poblado tipo = new Poblado();
-        Contruccion poblado = new Contruccion(jugador, tipo, 1);
-
+        Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 1;
-        terreno.agregarVivienda(poblado, 1);
-        terreno.producirRecursos();
+
+        tablero.agregarHexagono(terreno);
+        terreno.agregarVertice(vertice);
+        vertice.colocarPoblado(jugador);
+
+        tablero.repartirProduccion(2);
 
         assertEquals(totalRecursosEsperados,jugador.CantidadRecurso(Recurso.MADERA));
     }
 
     @Test
     public void Test03TerrenoDeserticoNoDeberiaProducirRecursosBajoNingunaCircustancia(){
+        Tablero tablero = new Tablero();
         Hexagono terreno = new Hexagono(DESIERTO, 2);
         Jugador jugador = new Jugador();
-        Poblado tipo = new Poblado();
-        Contruccion poblado = new Contruccion(jugador, tipo, 1);
-
+        Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 0;
 
-        terreno.agregarVivienda(poblado, 1);
+        tablero.agregarHexagono(terreno);
+        terreno.agregarVertice(vertice);
+        vertice.colocarPoblado(jugador);
+
         terreno.moverLadron();
-        terreno.producirRecursos();
+        tablero.repartirProduccion(2);
         terreno.moverLadron();
-        terreno.producirRecursos();
+        tablero.repartirProduccion(2);
 
         assertEquals(totalRecursosEsperados,jugador.totalRecursos());
     }
+    
 }
