@@ -16,8 +16,9 @@ public class ManagerTurno {
     private Jugador getJugadorActual() {
         return jugadores.get(indiceJugadorActual);
     }
-    public void construirPoblado(Vertice vertice) {
+    public void construirPoblado(IVertice vertice) {
         Jugador jugadorActual = getJugadorActual();
         tablero.construirPoblado(jugadorActual,vertice);
+
     }
 }
