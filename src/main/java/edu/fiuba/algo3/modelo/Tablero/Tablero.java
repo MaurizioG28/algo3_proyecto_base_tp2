@@ -2,6 +2,11 @@ package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
 
+import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recurso;
+
+
 public class Tablero {
 
     private static final int CANTIDAD_HEXAGONOS = 19;
@@ -51,5 +56,50 @@ public class Tablero {
         }
 
         return correcto;
+    }
+
+    public void construirPoblado(Jugador jugador, Vertice vertice) throws ReglaDistanciaException {
+
+        if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
+            throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
+        }
+        /*
+        construye directamente, falta implementar el chequeo de recursos del jugardor.
+        Con algo como jugador.recursosPoblado()
+        */
+        vertice.colocarPoblado(jugador);
+    }
+
+    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
+        Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
+
+        for (Hexagono h : hexagonos) {
+            if (h.getNumero() != numeroLanzado) continue;
+            if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
+            if (!h.sePuedeProducir()) continue;          // si usás ladrón
+
+            Recurso r = h.getTipo().recursoOtorgado();
+
+            for (Vertice v : h.getVertices()) {
+                if (!v.tieneConstruccion()) continue;
+
+                int cant = (v.getTipoConstruccion() == TipoConstruccion.CIUDAD) ? 2 : 1;
+                Jugador j = v.getPropietario();
+
+                produccion
+                        .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
+                        .merge(r, cant, Integer::sum);
+            }
+        }
+        return produccion;
+    }
+
+    public void repartirProduccion(int numeroLanzado){
+        Map<Jugador, EnumMap<Recurso, Integer>> bolsa = calcularProduccion(numeroLanzado);
+        bolsa.forEach((jug, mapa) -> mapa.forEach(jug::agregarRecurso)); // (recurso,cantidad)
+    }
+
+    public void agregarHexagono(Hexagono h) {
+        this.hexagonos.add(h);
     }
 }
