@@ -1,16 +1,11 @@
 package edu.fiuba.algo3.modelo.Tablero;
-
-<<<<<<< HEAD
-import java.util.HashMap;
-
 import edu.fiuba.algo3.modelo.Contruccion.Contruccion;
-=======
+import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.DESIERTO;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> Maurizio
 
-import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.DESIERTO;
 
 public class Hexagono {
     private final TipoTerreno tipo;
