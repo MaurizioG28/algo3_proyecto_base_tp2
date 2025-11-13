@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.UnitTest;
 
+import edu.fiuba.algo3.modelo.Tablero.*;
 import org.junit.jupiter.api.Test;
 
 public class testPrueba {
@@ -9,7 +10,8 @@ public class testPrueba {
 
     @Test
     public void test01PruebaIDE() {
-
+        Tablero tablero = new Tablero();
     }
+
 
 }

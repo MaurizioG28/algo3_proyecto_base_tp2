@@ -22,7 +22,8 @@ public class Tablero {
     boolean tableroInicializado = false;
     //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
     private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
-
+    
+    private Dados dados = new Dados();
 
     private final ArrayList<Hexagono> hexagonos = new ArrayList<>();
 
@@ -42,6 +43,10 @@ public class Tablero {
         if(this.posicionDelLadron == null){
             throw new IllegalStateException("No se encontro el Ladron");
         }
+    }
+  
+    public int tirarDados(){
+        return dados.tirar();
     }
 
     private Hexagono buscarHexagonoDesierto() {
