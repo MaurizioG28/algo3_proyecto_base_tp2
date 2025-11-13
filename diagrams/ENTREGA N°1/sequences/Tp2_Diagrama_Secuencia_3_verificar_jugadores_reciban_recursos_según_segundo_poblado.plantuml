@@ -1,0 +1,30 @@
+@startuml
+title Verificar que los jugadores reciban los recursos iniciales correctos según el segundo poblado colocado.
+
+actor Jugador
+participant ":ManagerTurno" as ManagerTurno
+participant ":Tablero" as Tablero
+participant ":Vertice" as Vertice
+participant Poblado
+participant ":Celda" as Celda
+activate ManagerTurno
+activate Tablero
+activate Vertice
+
+activate Celda
+Jugador -> ManagerTurno : construirPobladoEn(vertice)
+ManagerTurno -> Tablero : construirPoblado(jugador, vertice)
+Tablero -> Vertice : validarConstruccion(jugador)
+Vertice --> Tablero : valido / noValido
+
+Tablero -> Poblado : crear()
+activate Poblado
+Poblado --> Tablero : nuevaConstruccion
+deactivate Poblado
+loop para cada Celda Adyacente
+    Vertice -> Celda: darRecursos()
+    Celda --> Jugador :recurso
+end
+
+@enduml
+
