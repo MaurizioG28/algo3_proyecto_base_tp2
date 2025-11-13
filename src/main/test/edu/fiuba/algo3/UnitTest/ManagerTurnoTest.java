@@ -54,5 +54,21 @@ public class ManagerTurnoTest {
         // Assert
         assertTrue(jugador.tiene(0,0,0,0,0)); // no recibió recursos
     }
+    @Test
+    public void test03JugadorRecibeRecursoDeUnaSolaCelda() {
+        // Arrange
+        Tablero tablero = new Tablero();
+        Jugador jugador = new Jugador();
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero);
+
+        FakeCelda celda = new FakeCelda(Recurso.MADERA);
+        IVertice vertice = new FakeVertice(true, List.of(celda));
+
+        // Act
+        managerTurno.construirPoblado(vertice);
+
+        // Assert
+        assertTrue(jugador.tiene(1,0,0,0,0));
+    }
 
 }
