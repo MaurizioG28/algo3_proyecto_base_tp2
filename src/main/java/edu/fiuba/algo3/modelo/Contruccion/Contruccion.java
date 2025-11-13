@@ -1,13 +1,20 @@
 package edu.fiuba.algo3.modelo.Contruccion;
 
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recurso;
 
-final class Contruccion {
+public final class Contruccion {
     final Jugador duenio;
     final TipoConstruccion tipoConstruccion;
+    final Integer identificacion;
 
-    Contruccion(Jugador duenio, TipoConstruccion tipoConstruccion) {
+    public Contruccion(Jugador duenio, TipoConstruccion tipoConstruccion, Integer identificacion) {
         this.duenio = duenio;
         this.tipoConstruccion = tipoConstruccion;
+        this.identificacion = identificacion;
+    }
+
+    public void recolectarRecurso(Recurso recurso) {
+        tipoConstruccion.generarRecurso(recurso, duenio);
     }
 }
