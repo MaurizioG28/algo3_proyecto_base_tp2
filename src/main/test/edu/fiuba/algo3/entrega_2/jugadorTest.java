@@ -53,5 +53,34 @@ public class jugadorTest {
 
     }
 
+    @Test
+    public void Test04jugadorDebeRobarUnRecursoDeLaVictima() {
+        Jugador ladron = new Jugador();
+        Jugador victima = new Jugador();
+
+
+        victima.agregarRecurso(Recurso.MADERA, 1);
+
+
+        ladron.robarRecurso(victima);
+
+        assertEquals(1, ladron.CantidadRecurso(Recurso.MADERA));
+
+        assertEquals(0, victima.CantidadRecurso(Recurso.MADERA));
+    }
+
+    @Test
+    public void Test05noDebeRobarSiLaVictimaNoTieneRecursos() {
+        Jugador ladron = new Jugador();
+        Jugador victima = new Jugador();
+
+
+        ladron.robarRecurso(victima);
+
+
+        assertEquals(0, ladron.totalRecursos());
+        assertEquals(0, victima.totalRecursos());
+    }
+
 
 }

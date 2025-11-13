@@ -33,6 +33,9 @@ public class Hexagono {
     public boolean sePuedeProducir() {
         return (!bloqueadoPorLadron);
     }
+    public boolean isBloqueadoPorLadron() {
+        return (bloqueadoPorLadron);
+    }
     public TipoTerreno getTipo() { return tipo; }
     public int getNumero() { return numero; }
 
