@@ -6,6 +6,8 @@ import edu.fiuba.algo3.modelo.Tablero.*;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TableroTest {
@@ -101,6 +103,66 @@ public class TableroTest {
         assertEquals(cantidadGranoEsperada,A.CantidadRecurso(Recurso.GRANO));
 
 
+
+    }
+
+    @Test
+    void Test06MoverladronANuevaPosicion(){
+        Tablero tablero = new Tablero();
+        tablero.agregarHexagono( hex(TipoTerreno.DESIERTO, 7, vLibre(), vLibre(), vLibre()));
+        Hexagono bosque9 = hex(TipoTerreno.BOSQUE, 9,vLibre(), vLibre(), vLibre());
+        tablero.agregarHexagono( bosque9);
+
+
+        Jugador actual = new Jugador();
+         tablero.moverLadron(actual,bosque9);
+        assertFalse(bosque9.isBloqueadoPorLadron());
+    }
+    @Test
+    void Test07MoverladronANuevaPosicionSinVictimas(){
+        Tablero tablero = new Tablero();
+        tablero.agregarHexagono( hex(TipoTerreno.DESIERTO, 7, vLibre(), vLibre(), vLibre()));
+        Hexagono bosque9 = hex(TipoTerreno.BOSQUE, 9,vLibre(), vLibre(), vLibre());
+        tablero.agregarHexagono( bosque9);
+
+
+        Jugador actual = new Jugador();
+        List<Jugador> victimas=tablero.moverLadron(actual,bosque9);
+        assertTrue(victimas.isEmpty());
+    }
+    @Test
+    void test08MoverLadronConUnaVictima() {
+        Tablero tablero = new Tablero();
+        Jugador actual = new Jugador();
+        Jugador victima = new Jugador();
+        Hexagono desierto = hex(TipoTerreno.DESIERTO, 0,vLibre(), vLibre(), vLibre());
+        tablero.agregarHexagono(desierto);
+        Hexagono bosque9 = hex(TipoTerreno.BOSQUE, 9,vPoblado(victima), vLibre(), vLibre());
+        tablero.agregarHexagono( bosque9);
+
+
+        List<Jugador> victimas = tablero.moverLadron(actual, bosque9);
+        assertEquals(1, victimas.size());
+        assertTrue(victimas.contains(victima));
+
+    }
+
+    @Test
+    void test09MoverLadronConMuchasVictimas() {
+        Tablero tablero = new Tablero();
+        Jugador actual = new Jugador();
+        Jugador victima1 = new Jugador();
+        Jugador victima2 = new Jugador();
+        Hexagono desierto = hex(TipoTerreno.DESIERTO, 0,vLibre(), vLibre(), vLibre());
+        tablero.agregarHexagono(desierto);
+        Hexagono bosque9 = hex(TipoTerreno.BOSQUE, 9,vPoblado(victima1), vPoblado(victima2), vLibre());
+        tablero.agregarHexagono( bosque9);
+        List<Jugador> victimasEsperadas = List.of(victima1, victima2);
+
+        List<Jugador> victimas = tablero.moverLadron(actual, bosque9);
+        assertEquals(2, victimas.size());
+
+        assertTrue(victimas.containsAll(victimasEsperadas));
 
     }
 

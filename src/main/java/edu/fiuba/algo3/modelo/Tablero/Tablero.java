@@ -74,9 +74,9 @@ public class Tablero {
     }
 
     public void construirPoblado(Jugador jugador, Vertice vertice) throws ReglaDistanciaException {
-        if (!tableroInicializado) {
-            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
-        }
+//        if (!tableroInicializado) {
+//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
+//        }
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
@@ -122,9 +122,9 @@ public class Tablero {
     }
 
     public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
-        if (!tableroInicializado) {
-            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
-        }
+//        if (!tableroInicializado) {
+//            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
+//        }
 
         this.posicionDelLadron = posicion;
         List<Jugador> victimas = new ArrayList<>();
