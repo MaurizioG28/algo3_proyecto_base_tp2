@@ -29,7 +29,7 @@ public class ManagerTurno {
         indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
     }
 
-    public void construirPoblado(Vertice vertice){
+    public void construirPoblado(IVertice vertice){
         Jugador jugadorActual = getJugadorActual();
         try {
             tablero.construirPoblado(jugadorActual, vertice);

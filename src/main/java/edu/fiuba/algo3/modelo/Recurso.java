@@ -4,6 +4,6 @@ public enum Recurso {
     MADERA,
     LADRILLO,
     LANA,
-    CEREAL,
+    GRANO,
     MINERAL
 }
