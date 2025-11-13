@@ -3,15 +3,13 @@ package edu.fiuba.algo3.UnitTest;
 import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Mocks.FakeCelda;
 import edu.fiuba.algo3.modelo.Mocks.FakeVertice;
-import edu.fiuba.algo3.modelo.Tablero.Dados;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ManagerTurnoTest {
     @Test
@@ -40,4 +38,21 @@ public class ManagerTurnoTest {
         assertTrue(jugador1.tiene(0,1,2,0,0));
 
     }
+    @Test
+    public void test02NoDebeDarRecursosSiVerticeEsInvalido() {
+        // Arrange
+        Tablero tablero = new Tablero();
+        Jugador jugador = new Jugador();
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero);
+
+
+        IVertice vertice = new FakeVertice(false, List.of());
+
+        // Act
+        assertThrows(IllegalArgumentException.class, () -> managerTurno.construirPoblado(vertice));
+
+        // Assert
+        assertTrue(jugador.tiene(0,0,0,0,0)); // no recibió recursos
+    }
+
 }
