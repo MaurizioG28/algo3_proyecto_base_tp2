@@ -1,0 +1,14 @@
+@startuml
+actor jugador_interfaz
+participant "Tablero" as Tablero
+participant "Jugador" as Jugador
+participant "Camino" as Camino
+
+jugador_interfaz -> Tablero : colocarCaminoEn(lado, jugador)
+
+Tablero -> Tablero : validar(lado)
+Tablero -> Jugador : pagar(costoCamino)
+Tablero -> Camino : new(jugador)
+Tablero -> Tablero : colocar(camino, lado)
+
+@enduml
