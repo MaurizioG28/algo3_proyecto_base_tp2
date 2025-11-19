@@ -133,7 +133,7 @@ public class Tablero {
 //        if (!tableroInicializado) {
 //            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
 //        }
-
+        posicion.moverLadron();
         this.posicionDelLadron = posicion;
         List<Jugador> victimas = new ArrayList<>();
         for (Vertice v : posicion.getVertices()) {
@@ -147,5 +147,6 @@ public class Tablero {
         }
         return victimas;
     }
+
 
 }
