@@ -20,17 +20,45 @@ public class Tablero {
             TipoTerreno.DESIERTO, new Desierto()
         );
 
-    boolean tableroInicializado = false;
     //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
     private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
     
     private Dados dados = new Dados();
 
-    private final ArrayList<Hexagono> hexagonos = new ArrayList<>();
+    private ArrayList<Hexagono> hexagonos = new ArrayList<>();
+    private List<Terreno> listaHexagonos;
 
     private Hexagono posicionDelLadron;
 
     public Tablero(){
+    }
+
+    public Tablero(List<Terreno> hexagonos, List<Produccion> fichasNumeradas) {
+        this.listaHexagonos = hexagonos;
+        asignarFichas(fichasNumeradas);
+    }
+
+    private void asignarFichas(List<Produccion> fichasNumeradas) {
+        for(Terreno hexagono: this.listaHexagonos){
+            if(!hexagono.esDesierto()){
+                hexagono.setProduccion(fichasNumeradas.iterator().next());
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if(this.getClass() != object.getClass()){return false;}
+        return ((Tablero) object).mismosHexagonos(listaHexagonos);
+    }
+
+    private boolean mismosHexagonos(List<Terreno> hexagonos){
+        for (int i = 0; i < hexagonos.size(); i++){
+            if(!listaHexagonos.get(i).equals(hexagonos.get(i))){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void setUp(){
@@ -39,7 +67,6 @@ public class Tablero {
 
             terreno.agregarTerreno(hexagonos, fichasNumeradas);
         }
-        this.tableroInicializado = true;
         this.posicionDelLadron = buscarHexagonoDesierto();
         if(this.posicionDelLadron == null){
             throw new IllegalStateException("No se encontro el Ladron");
