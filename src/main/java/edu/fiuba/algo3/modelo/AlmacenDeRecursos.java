@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -8,7 +10,7 @@ import java.util.*;
 
 public class AlmacenDeRecursos {
 
-    private final EnumMap<Recurso, Integer> cantidades = new EnumMap<>(Recurso.class);
+    private final Map<TipoDeRecurso, Integer> cantidades = new HashMap<>();
     private final Random azar;
 
     public AlmacenDeRecursos() {
@@ -17,35 +19,32 @@ public class AlmacenDeRecursos {
 
     public AlmacenDeRecursos(Random azar) {
         this.azar = Objects.requireNonNull(azar, "El generador de azar no puede ser null");
-        for (Recurso r : Recurso.values()) {
-            cantidades.put(r, 0);  // evita nulls
-        }
     }
 
-    private Recurso recursoAleatorio() {
+    private TipoDeRecurso  recursoAleatorio() {
         int total = totalRecursos();
         if (total == 0) return null;
         int k = azar.nextInt(total); // [0,total)
-        for (Recurso r : Recurso.values()) {
-            int c = cantidades.get(r);
-            if (k < c) return r;
+        for (Map.Entry<TipoDeRecurso, Integer> e : cantidades.entrySet()) {
+            int c = e.getValue();
+            if (k < c) return e.getKey();
             k -= c;
         }
         return null; // no debería pasar
     }
 
-    public void agregarRecurso(Recurso recurso, int cantidad) {
+    public void agregarRecurso(TipoDeRecurso recurso, int cantidad) {
         if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
         if (cantidad <= 0) throw new IllegalArgumentException("La cantidad debe ser > 0");
-        cantidades.put(recurso, cantidades.get(recurso) + cantidad);
+        cantidades.merge(recurso, cantidad, Integer::sum);
     }
 
-    public void agregarTodos(Map<Recurso, Integer> paquete) {
+    public void agregarTodos(Map<TipoDeRecurso, Integer> paquete) {
         if (paquete == null) throw new IllegalArgumentException("Paquete no puede ser null");
         paquete.forEach(this::agregarRecurso);
     }
 
-    public int cantidadDe(Recurso recurso) {
+    public int cantidadDe(TipoDeRecurso recurso) {
         if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
         return cantidades.getOrDefault(recurso, 0);
     }
@@ -60,7 +59,7 @@ public class AlmacenDeRecursos {
         return totalRecursos() == 0;
     }
 
-    public boolean quitar(Recurso recurso, int cantidad) {
+    public boolean quitar(TipoDeRecurso recurso, int cantidad) {
         if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
         if (cantidad <= 0) return true;
         int actual = cantidades.get(recurso);
@@ -69,33 +68,32 @@ public class AlmacenDeRecursos {
         return true;
     }
 
-    public boolean quitarUno(Recurso recurso) {
+    public boolean quitarUno(TipoDeRecurso recurso) {
         return quitar(recurso, 1);
     }
 
     /** Roba 1 recurso al azar (ponderado) y lo quita del almacén. */
-    public Recurso robarRecursoAleatorio() {
-        Recurso r = recursoAleatorio();
+    public TipoDeRecurso robarRecursoAleatorio() {
+        TipoDeRecurso r = recursoAleatorio();
         if (r != null) quitarUno(r);
         return r;
     }
 
     /** Descarta floor(total/2) recursos al azar. Devuelve lo descartado por tipo. */
-    public Map<Recurso, Integer> descartarPorReglaDelSiete() {
+    public Map<TipoDeRecurso, Integer> descartarPorReglaDelSiete() {
         int total = totalRecursos();
         if (total <= 7) return Collections.emptyMap();
 
-        int aDescartar = total / 2; // redondeo hacia abajo
-        EnumMap<Recurso, Integer> descartados = new EnumMap<>(Recurso.class);
-        for (Recurso r : Recurso.values()) descartados.put(r, 0);
+        int aDescartar = total / 2; // floor
+        Map<TipoDeRecurso, Integer> descartados = new HashMap<>();
 
         for (int i = 0; i < aDescartar; i++) {
-            Recurso r = robarRecursoAleatorio(); // ya quita 1 del almacén
+            TipoDeRecurso r = robarRecursoAleatorio();
             if (r == null) break;
-            descartados.put(r, descartados.get(r) + 1);
+            descartados.merge(r, 1, Integer::sum);
         }
         return descartados;
     }
-
-
 }
+
+
