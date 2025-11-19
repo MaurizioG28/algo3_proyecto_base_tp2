@@ -1,9 +1,12 @@
 package edu.fiuba.algo3.vistas;
 
 import edu.fiuba.algo3.SystemInfo;
+import edu.fiuba.algo3.controllers.ControladorTeclaPresionada;
+import edu.fiuba.algo3.vistas.vistas.VistaInicial;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -13,13 +16,19 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     @Override
-    public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
+    public void start(Stage stage) throws Exception {
 
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
-        stage.setScene(scene);
+        PantallaPrincipal pantallaPrincipal = new PantallaPrincipal(stage);
+
+        VistaInicial vistaInicial = new VistaInicial(stage, pantallaPrincipal);
+        pantallaPrincipal.setCentro(vistaInicial);
+        Scene sceneInicio = new Scene(pantallaPrincipal, 1280, 720);
+        sceneInicio.setOnKeyPressed(new ControladorTeclaPresionada(stage, pantallaPrincipal.getBarraDeMenu()));
+        Image icono = new Image("file:" + System.getProperty("user.dir") + "edu/fiuba/algo3/resources/catan-game-pantalla.png");
+        stage.getIcons().add(icono);
+        stage.setScene(sceneInicio);
+        stage.setMinWidth(1280);
+        stage.setMinHeight(720);
         stage.show();
     }
 
