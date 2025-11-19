@@ -49,33 +49,33 @@ public class TableroProduccion {
     }
 
     private void conectarHexagonosVertices() {
-//        Hexagono h1 = hexagonos.get(new Coordenada(3,3));
-//
-//        Coordenada[] v1coords = {
-//                new Coordenada(2,3),
-//                new Coordenada(3,2),
-//                new Coordenada(4,3),
-//                new Coordenada(4,4),
-//                new Coordenada(3,4),
-//                new Coordenada(2,4)
-//        };
-//
-//        conectarVerticesAdyacentes(v1coords);
-//
-//
-//
-//        Hexagono h2 = hexagonos.get(new Coordenada(3,4));
-//
-//        Coordenada[] v2coords = {
-//                new Coordenada(2,4),
-//                new Coordenada(3,4),
-//                new Coordenada(4,4),
-//                new Coordenada(4,5),
-//                new Coordenada(3,5),
-//                new Coordenada(2,5)
-//        };
-//
-//        conectarVerticesAdyacentes(v2coords);
+        Hexagono h1 = hexagonos.get(new Coordenada(3,3));
+
+        Coordenada[] v1coords = {
+                new Coordenada(2,3),
+                new Coordenada(3,2),
+                new Coordenada(4,3),
+                new Coordenada(4,4),
+                new Coordenada(3,4),
+                new Coordenada(2,4)
+        };
+
+        conectarVerticesAdyacentes(v1coords);
+
+
+
+        Hexagono h2 = hexagonos.get(new Coordenada(3,4));
+
+        Coordenada[] v2coords = {
+                new Coordenada(2,4),
+                new Coordenada(3,4),
+                new Coordenada(4,4),
+                new Coordenada(4,5),
+                new Coordenada(3,5),
+                new Coordenada(2,5)
+        };
+
+        conectarVerticesAdyacentes(v2coords);
 
         Vertice v35 = vertices.get(new Coordenada(3,5));
         Vertice v36 = vertices.get(new Coordenada(3,6));
