@@ -109,7 +109,7 @@ public class Tablero {
             for (Vertice v : h.getVertices()) {
                 if (!v.tieneConstruccion()) continue;
 
-                int cant = (v.getTipoConstruccion() == TipoConstruccion.CIUDAD) ? 2 : 1;
+                int cant = v.obtenerFactorProduccion();
                 Jugador j = v.getPropietario();
 
                 produccion
