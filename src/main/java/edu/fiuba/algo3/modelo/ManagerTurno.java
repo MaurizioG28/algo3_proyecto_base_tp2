@@ -25,7 +25,7 @@ public class ManagerTurno {
         return jugadores.get(indiceJugadorActual);
     }
 
-    private void siguienteTurno() {
+    public void siguienteTurno() {
         indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
     }
 

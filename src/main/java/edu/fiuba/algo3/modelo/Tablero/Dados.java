@@ -2,7 +2,7 @@ package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.Random;
 
-public class Dados {
+public class Dados implements IDado {
     private int generarNumero() {
         Random random = new Random();
         return random.nextInt(6) + 1;  // 1 a 6

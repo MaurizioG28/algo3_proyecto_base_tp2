@@ -2,6 +2,7 @@ package edu.fiuba.algo3.UnitTest;
 
 import edu.fiuba.algo3.modelo.Tablero.Dados;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,5 +33,14 @@ public class DadosTest {
                 "El resultado debe estar entre 2 y 12, pero fue: " + resultado);
     }
 
-
+    @Test
+    public void test03ResultadoDeTirarDadosEs2() {
+        //Arrage
+        Dados dados = Mockito.mock(Dados.class);
+        Mockito.when(dados.tirar()).thenReturn(2);
+        //Act
+        int resultado = dados.tirar();
+        //Assert
+        assertEquals(2, resultado);
+    }
 }
