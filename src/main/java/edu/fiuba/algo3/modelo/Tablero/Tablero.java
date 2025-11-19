@@ -3,6 +3,7 @@ package edu.fiuba.algo3.modelo.Tablero;
 import java.util.*;
 
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
 
@@ -22,9 +23,12 @@ public class Tablero {
     boolean tableroInicializado = false;
     //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
     private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
-
+    
+    private Dados dados = new Dados();
 
     private final ArrayList<Hexagono> hexagonos = new ArrayList<>();
+
+    private Hexagono posicionDelLadron;
 
     public Tablero(){
     }
@@ -36,6 +40,23 @@ public class Tablero {
             terreno.agregarTerreno(hexagonos, fichasNumeradas);
         }
         this.tableroInicializado = true;
+        this.posicionDelLadron = buscarHexagonoDesierto();
+        if(this.posicionDelLadron == null){
+            throw new IllegalStateException("No se encontro el Ladron");
+        }
+    }
+  
+    public int tirarDados(){
+        return dados.tirar();
+    }
+
+    private Hexagono buscarHexagonoDesierto() {
+        for (Hexagono hex : hexagonos) {
+            if (hex.getTipo() == TipoTerreno.DESIERTO) {
+                return hex;
+            }
+        }
+        return null;
     }
 
     private Terreno sortearTerreno(){
@@ -58,7 +79,10 @@ public class Tablero {
         return correcto;
     }
 
-    public void construirPoblado(Jugador jugador, Vertice vertice) throws ReglaDistanciaException {
+    public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
+//        if (!tableroInicializado) {
+//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
+//        }
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
@@ -68,6 +92,8 @@ public class Tablero {
         Con algo como jugador.recursosPoblado()
         */
         vertice.colocarPoblado(jugador);
+        List<Recurso> recursos = vertice.darRecursos();
+        jugador.sumarRecursos(recursos);
     }
 
     private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
@@ -83,7 +109,7 @@ public class Tablero {
             for (Vertice v : h.getVertices()) {
                 if (!v.tieneConstruccion()) continue;
 
-                int cant = (v.getTipoConstruccion() == TipoConstruccion.CIUDAD) ? 2 : 1;
+                int cant = v.obtenerFactorProduccion();
                 Jugador j = v.getPropietario();
 
                 produccion
@@ -102,4 +128,25 @@ public class Tablero {
     public void agregarHexagono(Hexagono h) {
         this.hexagonos.add(h);
     }
+
+    public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
+//        if (!tableroInicializado) {
+//            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
+//        }
+        posicion.moverLadron();
+        this.posicionDelLadron = posicion;
+        List<Jugador> victimas = new ArrayList<>();
+        for (Vertice v : posicion.getVertices()) {
+            if (!v.tieneConstruccion()) continue;
+            Jugador propietario = v.getPropietario();
+            if (propietario == null) continue;
+            if (propietario.equals(jugadorActual)) continue;
+            if (!victimas.contains(propietario)) {
+                victimas.add(propietario);
+            }
+        }
+        return victimas;
+    }
+
+
 }
