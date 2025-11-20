@@ -1,46 +1,12 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Tablero.Costo;
+
 import java.util.Map;
 import java.util.List;
 
 public class Jugador {
-    int MADERA = 0;
-    int LADRILLO = 0;
-    int LANA= 0;
-    int GRANO = 0;
-    int MINERAL= 0;
-
     // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
-    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
-        return  MADERA   >= madera   &&
-                LADRILLO >= ladrillo &&
-                LANA     >= lana     &&
-                GRANO   >= grano   &&
-                MINERAL  >= mineral;
-    }
-
-    public void sumarRecursos(List<Recurso> recursos) {
-        for (Recurso recurso : recursos) {
-            switch (recurso) {
-                case MADERA:
-                    MADERA++;
-                    break;
-                case LADRILLO:
-                    LADRILLO++;
-                    break;
-                case LANA:
-                    LANA++;
-                    break;
-                case GRANO:
-                    GRANO++;
-                    break;
-                case MINERAL:
-                    MINERAL++;
-                    break;
-            }
-        }
-    }
-
     private AlmacenDeRecursos almacenJugador;
 
     public Jugador(){
@@ -71,5 +37,15 @@ public class Jugador {
         if(recursoRobado != null){
             this.almacenJugador.agregarRecurso(recursoRobado,1);
         }
+    }
+    public void pagar(Costo costo){
+        almacenJugador.pagar(costo);
+    }
+    public void sumarRecursos(List<Recurso> recursos) {
+        almacenJugador.sumarRecursos(recursos);
+    }
+    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral){
+        return almacenJugador.tiene(madera, ladrillo, lana, grano, mineral);
+
     }
 }

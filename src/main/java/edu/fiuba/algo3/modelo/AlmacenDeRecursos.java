@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Tablero.Costo;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -7,7 +9,6 @@ import java.util.Random;
 import java.util.*;
 
 public class AlmacenDeRecursos {
-
     private final EnumMap<Recurso, Integer> cantidades = new EnumMap<>(Recurso.class);
     private final Random azar;
 
@@ -96,6 +97,44 @@ public class AlmacenDeRecursos {
         }
         return descartados;
     }
+
+    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
+        return  cantidades.get(Recurso.MADERA)   >= madera   &&
+                cantidades.get(Recurso.LADRILLO) >= ladrillo &&
+                cantidades.get(Recurso.LANA)     >= lana     &&
+                cantidades.get(Recurso.GRANO)    >= grano    &&
+                cantidades.get(Recurso.MINERAL)  >= mineral;
+    }
+    public void sumarRecursos(List<Recurso> recursos) {
+        for (Recurso recurso : recursos) {
+
+            if (recurso == Recurso.MADERA) {
+                cantidades.put(Recurso.MADERA, cantidades.get(Recurso.MADERA) + 1);
+            }
+            else if (recurso == Recurso.LADRILLO) {
+                cantidades.put(Recurso.LADRILLO, cantidades.get(Recurso.LADRILLO) + 1);
+            }
+            else if (recurso == Recurso.LANA) {
+                cantidades.put(Recurso.LANA, cantidades.get(Recurso.LANA) + 1);
+            }
+            else if (recurso == Recurso.GRANO) {
+                cantidades.put(Recurso.GRANO, cantidades.get(Recurso.GRANO) + 1);
+            }
+            else if (recurso == Recurso.MINERAL) {
+                cantidades.put(Recurso.MINERAL, cantidades.get(Recurso.MINERAL) + 1);
+            }
+        }
+    }
+    public void pagar(Costo costo) {
+        for (var entry : costo.requeridos().entrySet()) {
+            Recurso recurso = entry.getKey();
+            int cantidad = entry.getValue();
+
+            cantidades.put(recurso, cantidades.get(recurso) - cantidad);
+        }
+    }
+
+
 
 
 }
