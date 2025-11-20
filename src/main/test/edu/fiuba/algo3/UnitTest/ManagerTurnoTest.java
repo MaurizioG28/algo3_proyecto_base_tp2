@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.UnitTest;
 import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
+import edu.fiuba.algo3.modelo.interfaces.IVertice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
