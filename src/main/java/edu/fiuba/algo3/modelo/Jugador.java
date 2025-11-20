@@ -1,9 +1,13 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
+
 import java.util.Map;
 import java.util.List;
 
 public class Jugador {
+    private Color color;
     int MADERA = 0;
     int LADRILLO = 0;
     int LANA= 0;
@@ -46,7 +50,11 @@ public class Jugador {
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
     }
-    public int CantidadRecurso(Recurso recurso) {
+    public Jugador(Color color){
+        this.almacenJugador = new AlmacenDeRecursos();
+        this.color = color;
+    }
+    public int cantidadRecurso(Recurso recurso) {
         return this.almacenJugador.cantidadDe(recurso);
     }
 
@@ -71,5 +79,31 @@ public class Jugador {
         if(recursoRobado != null){
             this.almacenJugador.agregarRecurso(recursoRobado,1);
         }
+    }
+
+    public Construccion comprarPoblado() {
+        return almacenJugador.comprarPoblado(color);
+    }
+
+    public boolean tieneColor(String color) {
+        return this.color.esMismoColor(color);
+    }
+
+    public void intercambiar(Recurso recursoEntregar, int cantidadEntregar, Jugador jugador2, Recurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
+        if(!jugador2.cambiar(recursoRecibir, cantidadRecibir, recursoEntregar, cantidadEntregar)){
+            throw new RecursosIsuficientesException("El segundo jugador no tiene suficientes recursos.");
+        }
+        if(!this.cambiar(recursoEntregar, cantidadEntregar, recursoRecibir, cantidadRecibir)){
+            jugador2.cambiar(recursoEntregar, cantidadEntregar, recursoRecibir, cantidadRecibir);
+            throw new RecursosIsuficientesException("El primer jugador no tiene suficientes recursos.");
+        };
+    }
+
+    public boolean cambiar(Recurso recursoEntregar, int cantidadEntregar, Recurso recursoRecibir, int cantidadRecibir) {
+        if(!this.almacenJugador.quitar(recursoEntregar,cantidadEntregar)) {
+            return false;
+        }
+        this.almacenJugador.agregarRecurso(recursoRecibir, cantidadRecibir);
+        return true;
     }
 }

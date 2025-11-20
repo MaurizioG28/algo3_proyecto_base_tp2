@@ -1,10 +1,10 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
+import edu.fiuba.algo3.modelo.*;
+import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
+import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
-import edu.fiuba.algo3.modelo.ICelda;
-import edu.fiuba.algo3.modelo.IVertice;
-import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,11 +14,11 @@ public class Vertice implements IVertice {
 
     private Jugador propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
-    private TipoConstruccion tipo;
+    private Construccion tipo = null;
     private List<ICelda> celdasAdyacentes;
 
     public boolean tieneConstruccion() {
-        return propietario != null;
+        return (propietario != null || tipo != null);
     }
 
     @Override
@@ -43,16 +43,29 @@ public class Vertice implements IVertice {
 
     public void colocarPoblado(Jugador jugador) {
         this.propietario = jugador;
-        this.tipo = TipoConstruccion.POBLADO;
+        this.tipo = new Poblado(new Color("negro"));
     }
     public void mejorarACiudad() {
         if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");
-        this.tipo = TipoConstruccion.CIUDAD;
+        String color =this.tipo.getColor();
+        this.tipo = new Ciudad(new Color(color));
     }
     public Jugador getPropietario() { return propietario; }
-    public TipoConstruccion getTipoConstruccion() { return tipo; }
+    public Construccion getTipoConstruccion() { return tipo; }
 
     public void agregarAdyacente(Vertice v2) {
         this.adyacentes.add(v2);
+    }
+
+    public void colocar(Construccion pieza) throws ConstruccionExistenteException {
+        if (this.tipo != null) {
+            throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
+        }
+        this.tipo = pieza;
+
+    }
+
+    public int obtenerFactorProduccion() {
+        return this.tipo.obtenerFactorProduccion();
     }
 }

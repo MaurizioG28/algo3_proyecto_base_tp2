@@ -10,7 +10,7 @@ import java.util.Random;
 
 
 public class ManagerTurno {
-    private List<Jugador> jugadores;
+    private final List<Jugador> jugadores;
     private int indiceJugadorActual = 0;
     private final Tablero tablero;
     private final Random azar;
