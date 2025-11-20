@@ -23,6 +23,7 @@ TestCase -> comprador: agregarRecurso(Recurso.MINERAL, 1)
 deactivate comprador
 
 TestCase -> servicio: comprarCarta(comprador, 0)
+servicio --> TestCase: CartaDesarrollo
 
 activate comprador
 TestCase -> comprador: totalRecursos()
