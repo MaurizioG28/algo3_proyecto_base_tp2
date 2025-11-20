@@ -1,7 +1,9 @@
 package edu.fiuba.algo3.modelo;
 
+
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
+import edu.fiuba.algo3.modelo.Tablero.Costo;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -116,4 +118,29 @@ public class AlmacenDeRecursos {
         }
         return null;
     }
+    public void pagar(Costo costo) {
+        for (var entry : costo.requeridos().entrySet()) {
+            Recurso recurso = entry.getKey();
+            int cantidad = entry.getValue();
+
+            cantidades.put(recurso, cantidades.get(recurso) - cantidad);
+        }
+    }
+    public void sumarRecursos(List<Recurso> recursos) {
+        for (Recurso recurso : recursos) {
+            cantidades.put(recurso, cantidades.get(recurso) + 1);
+        }
+    }
+
+    public boolean tiene(Map<Recurso, Integer> requeridos) {
+        for (var entry : requeridos.entrySet()) {
+            Recurso recurso = entry.getKey();
+            int cantidadNecesaria = entry.getValue();
+            if (cantidades.get(recurso) < cantidadNecesaria) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

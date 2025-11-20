@@ -226,13 +226,13 @@ public class TableroTest {
         //Arrange
         Tablero tablero = new Tablero();
         Jugador jugador = new Jugador();
-        jugador.agregarRecurso(Recurso.MADERA,1);
+        jugador.agregarRecurso(Recurso.MADERA,2);
         jugador.agregarRecurso(Recurso.LADRILLO,1);
         ILado lado = Mockito.mock(ILado.class);
         //Act
         tablero.colocarCaminoEn(lado,jugador);
         //Assert
-        assertTrue(jugador.tiene(0,0,0,0,0));
+        assertTrue(jugador.tiene(1,0,0,0,0));
     }
 
 }

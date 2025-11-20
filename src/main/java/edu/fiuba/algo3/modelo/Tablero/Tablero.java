@@ -179,7 +179,19 @@ public class Tablero {
     }
 
 
-    public void colocarCaminoEn(edu.fiuba.algo3.modelo.interfaces.ILado lado, Jugador jugador) {
+    private void validarLado(ILado lado, Jugador jugador) {
+        ILado.validar(lado, jugador);
+    }
+    private void colocar(Camino camino, ILado lado){}
+
+    public void colocarCaminoEn(ILado lado, Jugador jugador){
+
+        FabricaConstrucciones fabrica = new FabricaConstrucciones();
+        Costo costo = fabrica.costoDeCamino();
+        this.validarLado(lado, jugador);
+        jugador.pagar(costo);
+        Camino camino = fabrica.crearCamino(jugador);
+        this.colocar(camino,lado);
     }
 }
 

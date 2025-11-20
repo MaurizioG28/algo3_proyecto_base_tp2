@@ -2,48 +2,13 @@ package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
+import edu.fiuba.algo3.modelo.Tablero.Costo;
 
 import java.util.Map;
 import java.util.List;
 
 public class Jugador {
     private Color color;
-    int MADERA = 0;
-    int LADRILLO = 0;
-    int LANA= 0;
-    int GRANO = 0;
-    int MINERAL= 0;
-
-    // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
-    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
-        return  MADERA   >= madera   &&
-                LADRILLO >= ladrillo &&
-                LANA     >= lana     &&
-                GRANO   >= grano   &&
-                MINERAL  >= mineral;
-    }
-
-    public void sumarRecursos(List<Recurso> recursos) {
-        for (Recurso recurso : recursos) {
-            switch (recurso) {
-                case MADERA:
-                    MADERA++;
-                    break;
-                case LADRILLO:
-                    LADRILLO++;
-                    break;
-                case LANA:
-                    LANA++;
-                    break;
-                case GRANO:
-                    GRANO++;
-                    break;
-                case MINERAL:
-                    MINERAL++;
-                    break;
-            }
-        }
-    }
 
     private AlmacenDeRecursos almacenJugador;
 
@@ -106,4 +71,22 @@ public class Jugador {
         this.almacenJugador.agregarRecurso(recursoRecibir, cantidadRecibir);
         return true;
     }
+    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
+
+        Map<Recurso, Integer> requeridos = Map.of(
+                Recurso.MADERA, madera,
+                Recurso.LADRILLO, ladrillo,
+                Recurso.LANA, lana,
+                Recurso.GRANO, grano,
+                Recurso.MINERAL, mineral
+        );
+
+        return almacenJugador.tiene(requeridos);
+    }
+
+    public void sumarRecursos(List<Recurso> recursos) {
+        almacenJugador.sumarRecursos(recursos);
+    }
+
+    public void pagar(Costo costo) {almacenJugador.pagar(costo);};
 }
