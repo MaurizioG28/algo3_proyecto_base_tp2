@@ -120,8 +120,8 @@ public class Tablero {
         Con algo como jugador.recursosPoblado()
         */
         vertice.colocarPoblado(jugador);
-        List<Recurso> recursos = vertice.darRecursos();
-        jugador.sumarRecursos(recursos);
+        //List<Recurso> recursos = vertice.darRecursos();
+        //jugador.sumarRecursos(recursos);
     }
 
     private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
