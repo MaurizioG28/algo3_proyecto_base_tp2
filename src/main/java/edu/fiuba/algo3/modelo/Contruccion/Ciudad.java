@@ -9,15 +9,7 @@ public class Ciudad implements Construccion {
         this.color = color;
     }
 
-    @Override
-    public boolean esPoblado() {
-        return false;
-    }
 
-    @Override
-    public boolean esCiudad() {
-        return true;
-    }
 
     @Override
     public String getColor() {

@@ -4,23 +4,27 @@ import java.util.Objects;
 
 public class Coordenada {
 
-    private final int x;
-    private final int y;
+    private final int hex;
+    private final int indice;
 
-    public Coordenada(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Coordenada(int hex, int indice) {
+        this.hex = hex;
+        this.indice = indice;
     }
+
+    public int numHex() { return hex; }
+    public int indice() { return indice; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Coordenada)) return false;
         Coordenada c = (Coordenada) o;
-        return x == c.x && y == c.y;
+        return hex == c.hex && indice == c.indice;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(hex, indice);
     }
 }

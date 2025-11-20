@@ -7,14 +7,14 @@ import edu.fiuba.algo3.modelo.Dividendo;
 import java.util.*;
 
 public class TableroProduccion {
-    private final Map<Coordenada, Hexagono> hexagonos = new HashMap<>();
+    private final Map<Integer, Hexagono> hexagonos = new HashMap<>();
     private final Map<Coordenada, Vertice> vertices = new HashMap<>();
     private final Map<Coordenada, Lado> lados = new HashMap<>();
     private final Map<Color,Integer> pobladosPorColor = new HashMap<>();
 
 
 
-    private Coordenada posicionDelLadron;
+    //private Coordenada posicionDelLadron;
 
     public TableroProduccion() {
         inicializarTableroFijo();
@@ -25,88 +25,64 @@ public class TableroProduccion {
         // 1. Crear hexágonos con coordenada FIJA
 
 
-        hexagonos.put(new Coordenada(3,3),new Hexagono(TipoTerreno.COLINA, 4));
+        hexagonos.put(1,new Hexagono(TipoTerreno.COLINA, 4));
 
-        hexagonos.put(new Coordenada(3,4),new Hexagono(TipoTerreno.COLINA, 8));
+        hexagonos.put(2,new Hexagono(TipoTerreno.COLINA, 8));
 
-        hexagonos.put(new Coordenada(4,3),new Hexagono(TipoTerreno.CAMPO, 7));
+        hexagonos.put(3,new Hexagono(TipoTerreno.CAMPO, 6));
 
         // 2. Crear vértices FIJOS
+        vertices.put(new Coordenada(1,0), new Vertice());
+        vertices.put(new Coordenada(1,1), new Vertice());
+        Vertice h1h3 = new Vertice();
+        vertices.put(new Coordenada(1,2), h1h3);
+        Vertice h1h2h3 = new Vertice();
+        vertices.put(new Coordenada(1,3), h1h2h3);
+        Vertice h1h2 = new Vertice();
+        vertices.put(new Coordenada(1,4), h1h2);
+        vertices.put(new Coordenada(1,5), new Vertice());
+        vertices.put(new Coordenada(2,0), h1h2);
+        vertices.put(new Coordenada(2,1), h1h2h3);
+        vertices.put(new Coordenada(2,2), new Vertice());
         vertices.put(new Coordenada(2,3), new Vertice());
-        vertices.put(new Coordenada(3,2), new Vertice());
-        vertices.put(new Coordenada(4,3), new Vertice());
         vertices.put(new Coordenada(2,4), new Vertice());
-        vertices.put(new Coordenada(3,6), new Vertice());
-        vertices.put(new Coordenada(4,4), new Vertice());
-        vertices.put(new Coordenada(3,5), new Vertice());
-        vertices.put(new Coordenada(3,4), new Vertice());
-        vertices.put(new Coordenada(3,4), new Vertice());
         vertices.put(new Coordenada(2,5), new Vertice());
-        vertices.put(new Coordenada(4,5), new Vertice());
+        vertices.put(new Coordenada(3,0), h1h3);
+        vertices.put(new Coordenada(3,1), new Vertice());
+        vertices.put(new Coordenada(3,2), new Vertice());
+        vertices.put(new Coordenada(3,3), new Vertice());
+        vertices.put(new Coordenada(3,4), new Vertice());
+        vertices.put(new Coordenada(3,5), h1h2h3);
+
 
 
         lados.put(new Coordenada(2,3), new Lado());
 
         // 3. Relación hexágono-vértice
-        conectarHexagonosVertices();
+        conectarHexagonosVertices(1);
+        conectarHexagonosVertices(2);
+        conectarHexagonosVertices(3);
+
+        conectarVerticesAdyacentes(1);
+        conectarVerticesAdyacentes(2);
+        conectarVerticesAdyacentes(3);
 
         // 4. Ladron en el desierto
-        this.posicionDelLadron = new Coordenada(3,5);
+       // this.posicionDelLadron = new Coordenada(3,3);
     }
 
-    private void conectarHexagonosVertices() {
-        Hexagono h1 = hexagonos.get(new Coordenada(3,3));
+    private void conectarHexagonosVertices(int indiceHexagono) {
 
-        Coordenada[] v1coords = {
-                new Coordenada(2,3),
-                new Coordenada(3,2),
-                new Coordenada(4,3),
-                new Coordenada(4,4),
-                new Coordenada(3,4),
-                new Coordenada(2,4)
-        };
-
-        conectarVerticesAdyacentes(v1coords);
-
-
-
-        Hexagono h2 = hexagonos.get(new Coordenada(3,4));
-
-        Coordenada[] v2coords = {
-                new Coordenada(2,4),
-                new Coordenada(3,4),
-                new Coordenada(4,4),
-                new Coordenada(4,5),
-                new Coordenada(3,5),
-                new Coordenada(2,5)
-        };
-
-        conectarVerticesAdyacentes(v2coords);
-
-        Vertice v35 = vertices.get(new Coordenada(3,5));
-        Vertice v36 = vertices.get(new Coordenada(3,6));
-
-        v35.agregarAdyacente(v36);
-        v36.agregarAdyacente(v35);
-
-        Hexagono h3 = hexagonos.get(new Coordenada(4,3));
-
-        h1.agregarVertice(vertices.get(new Coordenada(3,4)));
-
-        h2.agregarVertice(vertices.get(new Coordenada(3,4)));
-
-        h3.agregarVertice(vertices.get(new Coordenada(3,4)));
-    }
-    private void conectarVerticesAdyacentes(Coordenada[] vCoords ) {
-
-        List<Vertice> v = new ArrayList<>();
-        for (Coordenada c : vCoords) {
-            Vertice vertice = vertices.get(c);
-            v.add(vertice);
+        for (int i = 0 ; i < 6 ; i++) {
+            hexagonos.get(indiceHexagono).agregarVertice(vertices.get(new Coordenada(indiceHexagono, i)));
         }
-        for (int i = 0; i < v.size(); i++) {
-            Vertice a = v.get(i);
-            Vertice b = v.get((i + 1) % v.size());
+
+    }
+    private void conectarVerticesAdyacentes(int hexId ) {
+
+        for (int i = 0; i < 6; i++) {
+            Vertice a = vertices.get(new Coordenada(hexId, i));
+            Vertice b = vertices.get(new Coordenada(hexId, (i + 1) % 6));
             a.agregarAdyacente(b);
             b.agregarAdyacente(a);
         }

@@ -20,8 +20,8 @@ public class CasoDeUsoColocacionInicialTest {
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
-        caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
-        Dividendo dividendo = caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(3,4));
+        caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,0));
+        Dividendo dividendo = caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,3));
 
         Dividendo dividendosEsperadoes = new Dividendo(
                 new Color("Azul" ),
@@ -34,23 +34,23 @@ public class CasoDeUsoColocacionInicialTest {
     }
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDePobladosValidandoLaReglaDelaDistancia(){
+    public void test02CasoDeUsoColocacionInicialDePobladosValidandoLaReglaDelaDistancia(){
         var unTablero = new TableroProduccion();
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
         try {
-            caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(3,5));
+            caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,0));
         } catch (ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
 
         assertThrows(ReglaDistanciaException.class,() ->
-                caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(3,6)));
+                caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,1)));
     }
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDeCaminos(){
+    public void test03CasoDeUsoColocacionInicialDeCaminos(){
         var unTablero = new TableroProduccion();
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);

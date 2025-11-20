@@ -8,15 +8,7 @@ public class Poblado implements  Construccion{
         this.color = color;
     }
 
-    @Override
-    public boolean esPoblado() {
-        return true;
-    }
 
-    @Override
-    public boolean esCiudad() {
-        return false;
-    }
     @Override
     public String getColor() {
         return this.color.getColor();
