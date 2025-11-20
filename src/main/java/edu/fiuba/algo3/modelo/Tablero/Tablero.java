@@ -2,8 +2,7 @@ package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
 
-import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
-import edu.fiuba.algo3.modelo.IVertice;
+import edu.fiuba.algo3.modelo.interfaces.*;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
 
@@ -29,6 +28,8 @@ public class Tablero {
     private final ArrayList<Hexagono> hexagonos = new ArrayList<>();
 
     private Hexagono posicionDelLadron;
+
+    private final IFabricaConstrucciones fabrica = new FabricaConstrucciones();
 
     public Tablero(){
     }
@@ -148,5 +149,15 @@ public class Tablero {
         return victimas;
     }
 
-
+    private void validarLado(ILado lado, Jugador jugador) {
+        lado.validar(lado, jugador);
+    }
+    private void colocar(ICamino camino, ILado lado){}
+    public void colocarCaminoEn(ILado lado, Jugador jugador){
+        Costo costo = fabrica.costoDeCamino();
+        this.validarLado(lado, jugador);
+        jugador.pagar(costo);
+        ICamino camino = fabrica.crearCamino(jugador);
+        this.colocar(camino,lado);
+    }
 }

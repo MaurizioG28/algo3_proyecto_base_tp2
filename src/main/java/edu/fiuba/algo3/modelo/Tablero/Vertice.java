@@ -4,7 +4,8 @@ import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
-import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.interfaces.ICelda;
+import edu.fiuba.algo3.modelo.interfaces.IVertice;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

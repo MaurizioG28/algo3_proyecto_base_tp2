@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
+import edu.fiuba.algo3.modelo.interfaces.IDado;
+
 import java.util.Random;
 
 public class Dados implements IDado {
