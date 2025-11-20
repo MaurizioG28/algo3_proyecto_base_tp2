@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram'
+
+title Secuencia: Compra de carta de desarrollo
+
+Actor Tester
+
+Tester -> TestCase: Run
+
+Participant TestCase
+TestCase -> TestCase: cantidadRecursosEsperada = 0
+create "numeroRandom:Random" as random
+TestCase -> random: <<Create>>
+create "servicio:MazoOculto" as servicio
+TestCase -> servicio: <<Create>> MazoOculto(numeroRandom)
+create "comprador:Jugador" as comprador
+TestCase -> comprador: <<Create>>
+
+activate comprador
+TestCase -> comprador: agregarRecurso(Recurso.LANA, 1)
+TestCase -> comprador: agregarRecurso(Recurso.GRANO, 1)
+TestCase -> comprador: agregarRecurso(Recurso.MINERAL, 1)
+deactivate comprador
+
+TestCase -> servicio: comprarCarta(comprador, 0)
+
+activate comprador
+TestCase -> comprador: totalRecursos()
+comprador --> TestCase: 0
+deactivate comprador
+
+TestCase -> TestCase: assertEquals(cantidadRecursosEsperada, comprador.totalRecursos())
+TestCase --> Tester: true
+
+@enduml

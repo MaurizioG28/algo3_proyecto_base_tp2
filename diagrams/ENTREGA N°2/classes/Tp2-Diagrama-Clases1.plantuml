@@ -1,0 +1,156 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Catan 
+{
+  + {static} Catan(): Catan
+}
+
+
+Catan -> Tablero
+
+class Posicion
+{
+  + {static} Posicion(): Posicion
+}
+
+Tablero "1    "*-d-"19 " Posicion
+Posicion "1"*-l-"6" Lado
+Posicion "1"*-r-"6" Vertice
+Posicion -d-> Terreno
+
+class Lado
+{
+  + {static} Lado(): Lado
+}
+
+Tablero "1       "*-d-"70" Lado
+
+class Vertice
+{
+  + {static} Vertice(): Vertice
+}
+
+Tablero "1 "*-"54   " Vertice
+
+class Terreno 
+{
+  + {static} Terreno(): Terreno
+}
+
+class Tablero 
+{
+  + {static} Tablero(): Tablero
+  + tirarDados(): Integer
+  + construirPoblado(jugador: Jugador, vertice: Vertice): void
+  + construirCiudad(jugador: Jugador, vertice: Vertice): void
+  + construirCarretera(jugador: Jugador, lado: Lado): void
+  + granRutaComercial(jugador: Jugador, lado: Lado): void
+  + granCaballeria(cantCaballeros: int): void
+  + esGanador(puntos: int): Boolean
+}
+
+class ManagerTurno 
+{
+  + {static} ManagerTurno(): ManagerTurno
+  + construirPoblado(jugador: Jugador, vertice: Vertice): void
+  + construirCiudad(jugador: Jugador, vertice: Vertice): void
+  + construirCarretera(jugador: Jugador, lado: Lado): void
+  + siguienteTurno(): void
+  + soyGanador(puntos: int): Boolean
+}
+
+Tablero -> ManagerTurno
+
+class Jugador
+{
+  - caballerosJugados: int
+  - grano: int
+  - ladrillo: int
+  - lana: int
+  - mineral: int
+  - madera: int
+  + {static} Jugador(nombre: String): Jugador
+  + sosGanador(puntos: int): Boolean
+}
+
+ManagerTurno "1   "o--"3...*  " Jugador
+Tablero ..> Jugador
+
+abstract class Construccion
+{
+  - puntos: int
+  + {static} Construccion(): Construccion
+  + suma(valor: int): int
+}
+
+abstract class CartaDesarrollo
+{
+  - puntos: int
+  + {static} CartaDesarrollo(): CartaDesarrollo
+  + suma(valor: int): int
+}
+
+Jugador "1"-> "0...*  " Construccion
+Jugador "1    "-d-> "0...*   " CartaDesarrollo
+
+class Ladron
+{
+  + {static} Ladron(): Ladron
+}
+
+Terreno "1       "-d->"0-1 " Ladron
+
+class Poblado extends Construccion
+{
+  + {static} Poblado(): Poblado
+}
+
+class Carretera extends Construccion
+{
+  + {static} Carretera(): Carretera
+}
+
+class Ciudad extends Construccion
+{
+  + {static} Ciudad(): Ciudad
+}
+
+class Caballero extends CartaDesarrollo
+{
+  + {static} Caballero(): Caballero
+}
+
+class PuntoDeVictoria extends CartaDesarrollo
+{
+  + {static} PuntoDeVictoria(): PuntoDeVictoria
+}
+
+class Descubrimiento extends CartaDesarrollo
+{
+  + {static} Descubrimiento(): Descubrimiento
+}
+
+class ConstruccionCarretera extends CartaDesarrollo
+{
+  + {static} ConstruccionCarretera(): ConstruccionCarretera
+}
+
+class Monopolio extends CartaDesarrollo
+{
+  + {static} Monopolio(): Monopolio
+}
+
+@enduml
+
+@startuml
+skinparam classAttributeIconSize 0
+
+class Nombre {
+        - {static} atributoUno : ClaseX
+        - atributoDos : ClaseY
+
+        + metodoA() : ClaseY
+        + {static} metodoB(param : ClaseZ) : void
+}
+@enduml

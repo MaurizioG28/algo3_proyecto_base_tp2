@@ -1,0 +1,36 @@
+@startuml
+title Secuencia: construirPoblado(jugador, vertice)
+
+actor Jugador
+participant ":ManagerTurno" as ManagerTurno
+participant ":Tablero" as Tablero
+participant ":Vertice" as Vertice
+participant ":Celda" as Celda
+participant ":Jugador" as JugadorObj
+activate JugadorObj
+activate Celda
+Jugador -> ManagerTurno : construirPobladoEn(vertice)
+activate ManagerTurno
+
+ManagerTurno -> Tablero : construirPoblado(jugadorActual, vertice)
+activate Tablero
+
+Tablero -> Vertice : validarConstruccion(jugadorActual)
+
+Tablero -> Vertice : darRecursos()
+activate Vertice
+
+loop por cada Celda adyacente
+    Vertice -> Celda : darRecurso()
+    Celda --> Vertice : recurso
+end
+
+Vertice --> Tablero : listaRecursos
+deactivate Vertice
+
+Tablero -> JugadorObj : sumarRecursos(listaRecursos)
+
+deactivate Tablero
+deactivate ManagerTurno
+
+@enduml

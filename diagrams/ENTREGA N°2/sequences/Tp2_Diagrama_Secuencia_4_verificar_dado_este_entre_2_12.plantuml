@@ -1,0 +1,21 @@
+@startuml
+actor ":Jugador" as jugador
+participant ":Tablero" as tablero
+participant ":Dados" as dados
+
+jugador -> tablero: tirarDados()
+activate tablero
+
+tablero -> dados: tirar()
+activate dados
+
+dados -> dados: generarNumero()  // dado 1
+dados -> dados: generarNumero()  // dado 2
+
+dados --> tablero: total (int)
+deactivate dados
+
+tablero --> jugador: int
+deactivate tablero
+
+@enduml
