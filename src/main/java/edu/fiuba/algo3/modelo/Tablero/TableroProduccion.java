@@ -4,15 +4,14 @@ import edu.fiuba.algo3.modelo.Color;
 import  edu.fiuba.algo3.modelo.Contruccion.*;
 import edu.fiuba.algo3.modelo.Dividendo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TableroProduccion {
     private final Map<Coordenada, Hexagono> hexagonos = new HashMap<>();
     private final Map<Coordenada, Vertice> vertices = new HashMap<>();
-    private Map<Color,Integer> pobladosPorColor = new HashMap<>();
+    private final Map<Coordenada, Lado> lados = new HashMap<>();
+    private final Map<Color,Integer> pobladosPorColor = new HashMap<>();
+
 
 
     private Coordenada posicionDelLadron;
@@ -28,9 +27,9 @@ public class TableroProduccion {
 
         hexagonos.put(new Coordenada(3,3),new Hexagono(TipoTerreno.COLINA, 4));
 
-        hexagonos.put(new Coordenada(3,4),new Hexagono(TipoTerreno.PRADERA, 8));
+        hexagonos.put(new Coordenada(3,4),new Hexagono(TipoTerreno.COLINA, 8));
 
-        hexagonos.put(new Coordenada(3,5),new Hexagono(TipoTerreno.DESIERTO, 7));
+        hexagonos.put(new Coordenada(4,3),new Hexagono(TipoTerreno.CAMPO, 7));
 
         // 2. Crear vértices FIJOS
         vertices.put(new Coordenada(2,3), new Vertice());
@@ -40,6 +39,13 @@ public class TableroProduccion {
         vertices.put(new Coordenada(3,6), new Vertice());
         vertices.put(new Coordenada(4,4), new Vertice());
         vertices.put(new Coordenada(3,5), new Vertice());
+        vertices.put(new Coordenada(3,4), new Vertice());
+        vertices.put(new Coordenada(3,4), new Vertice());
+        vertices.put(new Coordenada(2,5), new Vertice());
+        vertices.put(new Coordenada(4,5), new Vertice());
+
+
+        lados.put(new Coordenada(2,3), new Lado());
 
         // 3. Relación hexágono-vértice
         conectarHexagonosVertices();
@@ -83,6 +89,13 @@ public class TableroProduccion {
         v35.agregarAdyacente(v36);
         v36.agregarAdyacente(v35);
 
+        Hexagono h3 = hexagonos.get(new Coordenada(4,3));
+
+        h1.agregarVertice(vertices.get(new Coordenada(3,4)));
+
+        h2.agregarVertice(vertices.get(new Coordenada(3,4)));
+
+        h3.agregarVertice(vertices.get(new Coordenada(3,4)));
     }
     private void conectarVerticesAdyacentes(Coordenada[] vCoords ) {
 
@@ -111,16 +124,43 @@ public class TableroProduccion {
 
 
         if ( esSegundoPoblado(pieza.getColorActual()))
-            return calcularDividendosIniciales(coord);
+            return calcularDividendosIniciales(coord,pieza.getColorActual());
 
         return Dividendo.vacio();
     }
 
-    private Dividendo calcularDividendosIniciales(Coordenada coord) {
-        return new Dividendo() ;
+    private Dividendo calcularDividendosIniciales(Coordenada coord, Color colorActual) {
+        Vertice v = vertices.get(coord);
+        Dividendo d = new Dividendo(colorActual);
+
+        for (Hexagono h : hexagonos.values()) {
+            if (h.getVertices().contains(v) && h.getTipo().produceAlgo()) {
+                d.agregar(Objects.requireNonNull(h.getTipo().recursoOtorgado()));
+            }
+        }
+
+        return d;
     }
 
     private boolean esSegundoPoblado(Color color) {
         return (pobladosPorColor.get(color)==2);
     }
+
+    public void colocarCarretera(Carretera pieza, Coordenada coordenada) throws PosInvalidaParaConstruirException {
+        Lado lado = lados.get(coordenada);
+        if (lado == null) {
+            throw new IllegalArgumentException("Coordenada invalida para camino");
+        }
+
+        if (lado.tieneConstruccion()) {
+            throw new PosInvalidaParaConstruirException("Ya hay una carretera en esa posición");
+        }
+
+        lado.colocar(pieza);
+    }
+    public boolean tieneCarreteraEn(Coordenada coord) {
+        Lado lado = lados.get(coord);
+        return lado != null && lado.tieneConstruccion();
+    }
+
 }

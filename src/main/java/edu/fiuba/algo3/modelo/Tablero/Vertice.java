@@ -14,7 +14,7 @@ public class Vertice implements IVertice {
 
     private Jugador propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
-    private Construccion tipo;
+    private Construccion tipo = null;
     private List<ICelda> celdasAdyacentes;
 
     public boolean tieneConstruccion() {
