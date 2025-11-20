@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Tablero.Hexagono;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
@@ -12,21 +14,41 @@ import java.util.Random;
 public class ManagerTurno {
     private final List<Jugador> jugadores;
     private int indiceJugadorActual = 0;
+    private int numeroTurnoActual = 0;
     private final Tablero tablero;
     private final Random azar;
+    private final MazoOculto mazoOculto;
 
-    public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random) {
+    public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random, MazoOculto mazoOculto) {
         this.jugadores = jugadores;
         this.tablero = tablero;
         this.azar=  Random;
+        this.mazoOculto = mazoOculto;
+    }
+
+    public void comprarCarta() {
+        Jugador jugador = getJugadorActual();
+        jugador.agregarCarta(mazoOculto.comprarCarta(getJugadorActual(), numeroTurnoActual));
+    }
+
+    public void usarUnaCarta(int indice) {
+        CartaDesarrollo cartaSeleccionada = getJugadorActual().agarrarCarta(indice);
+
+        if (!cartaSeleccionada.SePuedeUsar(numeroTurnoActual)) {
+            throw new ReglaDeCompraYUsoException("La carta no puede ser usada el mismo turno en el que se compra.");
+        }
+
+        // Utilidad de las cartas
     }
 
     private Jugador getJugadorActual() {
         return jugadores.get(indiceJugadorActual);
     }
 
-    private void siguienteTurno() {
+    public void siguienteTurno() {
+
         indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
+        numeroTurnoActual += 1;
     }
 
     public void construirPoblado(IVertice vertice){

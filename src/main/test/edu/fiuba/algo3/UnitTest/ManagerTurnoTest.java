@@ -25,7 +25,8 @@ public class ManagerTurnoTest {
         jugadores.add(jugador1);
         jugadores.add(jugador2);
         Random random = new Random();
-        ManagerTurno managerTurno = new ManagerTurno(jugadores,tablero,random);
+        MazoOculto mazoOculto = new MazoOculto(random);
+        ManagerTurno managerTurno = new ManagerTurno(jugadores,tablero,random,mazoOculto);
         List<ICelda>  celdasAdyacentes = new ArrayList<>();
         FakeCelda fakeCeldaLana1 = new FakeCelda(Recurso.LANA);
         FakeCelda fakeCeldaLana2 = new FakeCelda(Recurso.LANA);
@@ -48,7 +49,8 @@ public class ManagerTurnoTest {
         Tablero tablero = new Tablero();
         Jugador jugador = new Jugador();
         Random random = new Random();
-        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero,random);
+        MazoOculto mazoOculto = new MazoOculto(random);
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero,random,mazoOculto);
 
         IVertice vertice = new FakeVertice(false,
                 List.of(
@@ -69,7 +71,8 @@ public class ManagerTurnoTest {
         Tablero tablero = new Tablero();
         Jugador jugador = new Jugador();
         Random random = new Random();
-        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero,random);
+        MazoOculto mazoOculto = new MazoOculto(random);
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero,random,mazoOculto);
 
         FakeCelda celda = new FakeCelda(Recurso.MADERA);
         IVertice vertice = new FakeVertice(false, List.of(celda));
@@ -85,7 +88,8 @@ public class ManagerTurnoTest {
         Tablero tablero = new Tablero();
         Jugador jugador = new Jugador();
         Random random = new Random();
-        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero,random);
+        MazoOculto mazoOculto = new MazoOculto(random);
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero,random,mazoOculto);
 
         IVertice vertice = new FakeVertice(false,
                 List.of(

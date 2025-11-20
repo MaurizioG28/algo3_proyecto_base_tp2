@@ -1,0 +1,49 @@
+@startuml
+actor "TestRunner" as Runner
+participant "Test" as Test
+participant ":Jugador" as Jugador
+participant ":Tablero" as Tablero
+participant ":verticeCiudad" as verticeCiudad
+participant ":verticeLibre" as verticeLibre1
+participant ":verticeLibre" as verticeLibre2
+participant ":hexagono" as hexagono
+
+Runner -> Test: run()
+create Jugador
+Test -> Jugador: <<create>>
+create Tablero
+Test -> Tablero: <<create>>
+create verticeCiudad
+Test -> verticeCiudad: <<create>>
+Test -> verticeCiudad: colocarPoblado(jugador)
+activate verticeCiudad
+verticeCiudad -> verticeCiudad
+activate verticeCiudad
+deactivate verticeCiudad
+deactivate verticeCiudad
+create verticeLibre1
+Test -> verticeLibre1: <<create>>
+create verticeLibre2
+Test -> verticeLibre2: <<create>>
+create hexagono
+Test -> hexagono: <<create>>
+
+Test -> Tablero: agregarHexagono(hexagono)
+activate Tablero
+Test -> Tablero: repartirProduccion(int numero)
+Tablero -> Tablero: calcularProduccion()
+activate Tablero
+Tablero -> hexagono: getTipo()
+Tablero -> hexagono: getVertices()
+Tablero -> verticeCiudad: tieneConstruccion()
+Tablero -> verticeCiudad: getTipoConstruccion()
+Tablero -> verticeCiudad: getPropietario()
+return produccion
+Tablero -> Jugador: agregarRecurso(recurso, cantidad)
+activate Jugador
+Test -> Jugador: CantidadRecurso(recurso)
+Jugador-->Test:cantidadRecurso
+
+
+
+@enduml

@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
 
@@ -16,11 +17,7 @@ public class Jugador {
 
     // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
     public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
-        return  MADERA   >= madera   &&
-                LADRILLO >= ladrillo &&
-                LANA     >= lana     &&
-                GRANO   >= grano   &&
-                MINERAL  >= mineral;
+        return almacenJugador.tiene(madera, ladrillo, lana, grano, mineral);
     }
 
     public void sumarRecursos(List<Recurso> recursos) {
@@ -46,9 +43,11 @@ public class Jugador {
     }
 
     private AlmacenDeRecursos almacenJugador;
+    private MazoDeCartas mazoCartas;
 
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
+        this.mazoCartas = new MazoDeCartas();
     }
     public Jugador(Color color){
         this.almacenJugador = new AlmacenDeRecursos();
@@ -66,6 +65,10 @@ public class Jugador {
         this.almacenJugador.agregarRecurso(recurso,cantidadRecurso);
     }
 
+    public void removerRecurso(Recurso recurso, int cantidadRecurso){
+        this.almacenJugador.removerRecurso(recurso, cantidadRecurso);
+    }
+
     public int totalRecursos() {
         return this.almacenJugador.totalRecursos();
     }
@@ -81,6 +84,12 @@ public class Jugador {
         }
     }
 
+    public void agregarCarta(CartaDesarrollo cartaNueva) {
+        mazoCartas.agregarCarta(cartaNueva);
+    }
+
+    public CartaDesarrollo agarrarCarta(int indice) {
+        return mazoCartas.agarrarCarta(indice);
     public Construccion comprarPoblado() {
         return almacenJugador.comprarPoblado(color);
     }

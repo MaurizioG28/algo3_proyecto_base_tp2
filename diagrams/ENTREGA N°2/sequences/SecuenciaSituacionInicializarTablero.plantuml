@@ -1,0 +1,20 @@
+@startuml
+actor "Inicializador" as Inic
+participant ":Tablero" as Tablero
+participant ":Terreno" as Terreno
+
+Inic ->Tablero: setUp()
+activate Tablero
+loop Mientras hayan menos de 19 hexagonos creados
+    Tablero -> Tablero: sortearTerreno()
+    activate Tablero
+    deactivate Tablero
+    Tablero -> Terreno: agregarTerreno(Hexagono[] hexagonos, int[] fichas)
+    activate Terreno
+    Terreno -> Terreno: sortearFicha(int[] fichas)
+    activate Terreno
+    deactivate Terreno
+    deactivate Terreno
+    deactivate Tablero
+end
+@enduml
