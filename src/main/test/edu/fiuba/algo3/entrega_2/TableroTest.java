@@ -3,12 +3,17 @@ package edu.fiuba.algo3.entrega_2;
 import edu.fiuba.algo3.modelo.CasoDeUsoArmarTablero;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Tablero.*;
 
+import edu.fiuba.algo3.modelo.interfaces.ILado;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -214,6 +219,20 @@ public class TableroTest {
 
         assertTrue(victimas.containsAll(victimasEsperadas));
 
+    }
+    //Casos de uso del test 1 2do entregable
+    @Test
+    void test10ColocarCaminoYRestoRecursos(){
+        //Arrange
+        Tablero tablero = new Tablero();
+        Jugador jugador = new Jugador();
+        jugador.agregarRecurso(Recurso.MADERA,1);
+        jugador.agregarRecurso(Recurso.LADRILLO,1);
+        ILado lado = Mockito.mock(ILado.class);
+        //Act
+        tablero.colocarCaminoEn(lado,jugador);
+        //Assert
+        assertTrue(jugador.tiene(0,0,0,0,0));
     }
 
 }

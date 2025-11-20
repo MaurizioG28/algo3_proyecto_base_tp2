@@ -7,4 +7,5 @@ module edu.fiuba.algo3 {
     exports edu.fiuba.algo3.modelo.Tablero;
     exports edu.fiuba.algo3.modelo;
     exports edu.fiuba.algo3.modelo.Mocks;
+    exports edu.fiuba.algo3.modelo.interfaces;
 }

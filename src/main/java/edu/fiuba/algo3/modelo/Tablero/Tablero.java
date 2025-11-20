@@ -7,6 +7,7 @@ import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
 import edu.fiuba.algo3.modelo.Recursos.RecursoBase;
+import edu.fiuba.algo3.modelo.interfaces.*;
 
 
 public class Tablero {
@@ -178,4 +179,7 @@ public class Tablero {
     }
 
 
+    public void colocarCaminoEn(edu.fiuba.algo3.modelo.interfaces.ILado lado, Jugador jugador) {
+    }
 }
+
