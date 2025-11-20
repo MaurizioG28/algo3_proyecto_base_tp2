@@ -2,12 +2,20 @@ package edu.fiuba.algo3.entrega_2;
 
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
+import edu.fiuba.algo3.modelo.Tablero.Costo;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class jugadorTest {
 
+
+    private static final Logger log = LoggerFactory.getLogger(jugadorTest.class);
 
     @Test
     public void Test01jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
@@ -82,5 +90,22 @@ public class jugadorTest {
         assertEquals(0, victima.totalRecursos());
     }
 
+    @Test
+    public void test06SeDescuentanRecursosAlJugador() {
+        // Arrange
+        Jugador jugador = new Jugador();
+        jugador.agregarRecurso(Recurso.MADERA, 2);
+        jugador.agregarRecurso(Recurso.LADRILLO, 1);
+
+        Costo costo = new Costo(Map.of(
+                Recurso.MADERA, 1,
+                Recurso.LADRILLO, 1
+        ));
+
+        // Act
+        jugador.pagar(costo);
+
+        assertTrue(jugador.tiene(1, 0, 0, 0, 0));
+    }
 
 }
