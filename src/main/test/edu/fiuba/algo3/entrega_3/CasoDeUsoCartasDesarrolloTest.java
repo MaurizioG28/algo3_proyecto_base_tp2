@@ -1,7 +1,6 @@
 package edu.fiuba.algo3.entrega_3;
 
 import edu.fiuba.algo3.modelo.*;
-import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CasoDeUsoCartasDesarrollo {
+public class CasoDeUsoCartasDesarrolloTest {
 
     @Test
     public void Test01UnJugadorDebeConsumirSusRecursosAlComprarUnaCarta() {
