@@ -1,9 +1,13 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+
 import java.util.Map;
 import java.util.List;
+import java.util.Objects;
 
 public class Jugador {
+    private Color color;
     int MADERA = 0;
     int LADRILLO = 0;
     int LANA= 0;
@@ -46,6 +50,10 @@ public class Jugador {
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
     }
+    public Jugador(Color color){
+        this.almacenJugador = new AlmacenDeRecursos();
+        this.color = color;
+    }
     public int CantidadRecurso(Recurso recurso) {
         return this.almacenJugador.cantidadDe(recurso);
     }
@@ -71,5 +79,13 @@ public class Jugador {
         if(recursoRobado != null){
             this.almacenJugador.agregarRecurso(recursoRobado,1);
         }
+    }
+
+    public Construccion comprarPoblado() {
+        return almacenJugador.comprarPoblado(color);
+    }
+
+    public boolean tieneColor(String color) {
+        return this.color.esMismoColor(color);
     }
 }

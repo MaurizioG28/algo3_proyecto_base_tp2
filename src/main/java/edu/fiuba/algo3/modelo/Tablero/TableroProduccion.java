@@ -88,7 +88,7 @@ public class TableroProduccion {
         }
     }
 
-    public Dividendo colocarPoblado(Poblado pieza, Coordenada coord) throws ReglaDistanciaException {
+    public Dividendo colocarPoblado(Poblado pieza, Coordenada coord) throws ReglaDistanciaException, ConstruccionExistenteException {
         Vertice vertice = vertices.get(coord);
         if (vertice == null) throw new IllegalArgumentException("Coordenada inválida");
 

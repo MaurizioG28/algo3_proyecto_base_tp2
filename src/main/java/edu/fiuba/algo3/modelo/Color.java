@@ -31,4 +31,8 @@ public class Color {
         return color;
     }
 
+    public boolean esMismoColor(String color) {
+        String colorFormateado = color.trim().toLowerCase();
+        return this.color.equals(colorFormateado);
+    }
 }

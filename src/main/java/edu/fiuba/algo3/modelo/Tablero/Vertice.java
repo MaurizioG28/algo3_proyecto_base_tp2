@@ -57,9 +57,9 @@ public class Vertice implements IVertice {
         this.adyacentes.add(v2);
     }
 
-    public void colocar(Poblado pieza) {
+    public void colocar(Construccion pieza) throws ConstruccionExistenteException {
         if (this.tipo != null) {
-            throw new IllegalStateException("El vértice ya tiene una construcción.");
+            throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
         }
         this.tipo = pieza;
 

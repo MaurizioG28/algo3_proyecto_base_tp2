@@ -1,10 +1,12 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class jugadorTest {
 
@@ -82,5 +84,32 @@ public class jugadorTest {
         assertEquals(0, victima.totalRecursos());
     }
 
+    @Test
+    public void test06crearJugadorConColor(){
+        Color color = new Color("Azul");
+        Jugador jugador = new Jugador(color);
+        String colorEsperado = "Azul";
+
+        assertTrue(jugador.tieneColor(colorEsperado));
+    }
+
+    @Test
+    public void test07intentarComprarPobladoSinRecursosDevuelveNull(){
+        Jugador jugador = new Jugador(new Color("Azul"));
+
+        assertNull(jugador.comprarPoblado());
+    }
+
+    @Test
+    public void test08comprarPobladoConRecursosDevuelvePoblado(){
+        Jugador jugador = new Jugador(new Color("Azul"));
+        jugador.agregarRecurso(Recurso.MADERA, 1);
+        jugador.agregarRecurso(Recurso.GRANO, 1);
+        jugador.agregarRecurso(Recurso.LANA, 1);
+        jugador.agregarRecurso(Recurso.LADRILLO, 1);
+
+        Object poblado = jugador.comprarPoblado();
+        assertEquals(Poblado.class, poblado.getClass());
+    }
 
 }

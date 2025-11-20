@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CasoDeUsoColocacionInicialTest {
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDePoblados() throws ReglaDistanciaException {
+    public void test01CasoDeUsoColocacionInicialDePoblados() throws ReglaDistanciaException, ConstruccionExistenteException {
         var unTablero = new TableroProduccion();
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
@@ -41,7 +41,7 @@ public class CasoDeUsoColocacionInicialTest {
 
         try {
             caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,0));
-        } catch (ReglaDistanciaException e) {
+        } catch (ReglaDistanciaException | ConstruccionExistenteException e) {
             throw new RuntimeException(e);
         }
 
