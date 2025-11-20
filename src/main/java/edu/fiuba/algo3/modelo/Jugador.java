@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
 import edu.fiuba.algo3.modelo.Tablero.Costo;
@@ -11,9 +12,11 @@ public class Jugador {
     private Color color;
 
     private AlmacenDeRecursos almacenJugador;
+    private MazoDeCartas mazoCartas;
 
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
+        this.mazoCartas = new MazoDeCartas();
     }
     public Jugador(Color color){
         this.almacenJugador = new AlmacenDeRecursos();
@@ -31,6 +34,10 @@ public class Jugador {
         this.almacenJugador.agregarRecurso(recurso,cantidadRecurso);
     }
 
+    public void removerRecurso(Recurso recurso, int cantidadRecurso){
+        this.almacenJugador.removerRecurso(recurso, cantidadRecurso);
+    }
+
     public int totalRecursos() {
         return this.almacenJugador.totalRecursos();
     }
@@ -46,6 +53,12 @@ public class Jugador {
         }
     }
 
+    public void agregarCarta(CartaDesarrollo cartaNueva) {
+        mazoCartas.agregarCarta(cartaNueva);
+    }
+
+    public CartaDesarrollo agarrarCarta(int indice) {
+        return mazoCartas.agarrarCarta(indice);
     public Construccion comprarPoblado() {
         return almacenJugador.comprarPoblado(color);
     }

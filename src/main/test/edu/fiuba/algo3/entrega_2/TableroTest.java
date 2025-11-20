@@ -171,7 +171,7 @@ public class TableroTest {
 
         Jugador actual = new Jugador();
          tablero.moverLadron(actual,bosque9);
-        assertFalse(bosque9.isBloqueadoPorLadron());
+        assertTrue(bosque9.isBloqueadoPorLadron());
     }
     @Test
     void Test07MoverladronANuevaPosicionSinVictimas(){

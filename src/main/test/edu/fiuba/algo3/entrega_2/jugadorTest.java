@@ -1,11 +1,23 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.UnitTest.ManagerTurnoTest;
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.ManagerTurno;
 import edu.fiuba.algo3.modelo.Recurso;
+import edu.fiuba.algo3.modelo.ReglaDeCompraYUsoException;
+import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
+import edu.fiuba.algo3.modelo.Tablero.Tablero;
+import edu.fiuba.algo3.modelo.Tablero.TableroProduccion;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class jugadorTest {
