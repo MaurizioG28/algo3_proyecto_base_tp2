@@ -6,6 +6,8 @@ import java.util.Random;
 
 import java.util.*;
 
+import static edu.fiuba.algo3.modelo.Recurso.*;
+
 public class AlmacenDeRecursos {
 
     private final EnumMap<Recurso, Integer> cantidades = new EnumMap<>(Recurso.class);
@@ -61,6 +63,15 @@ public class AlmacenDeRecursos {
         int total = 0;
         for (int v : cantidades.values()) total += v;
         return total;
+    }
+
+    // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
+    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
+        return  cantidades.getOrDefault(MADERA, 0)   >= madera   &&
+                cantidades.getOrDefault(LADRILLO, 0) >= ladrillo &&
+                cantidades.getOrDefault(LANA, 0)     >= lana     &&
+                cantidades.getOrDefault(GRANO, 0)   >= grano   &&
+                cantidades.getOrDefault(MINERAL, 0)  >= mineral;
     }
 
     public boolean estaVacio() {

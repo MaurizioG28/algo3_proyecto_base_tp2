@@ -14,11 +14,7 @@ public class Jugador {
 
     // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
     public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
-        return  MADERA   >= madera   &&
-                LADRILLO >= ladrillo &&
-                LANA     >= lana     &&
-                GRANO   >= grano   &&
-                MINERAL  >= mineral;
+        return almacenJugador.tiene(madera, ladrillo, lana, grano, mineral);
     }
 
     public void sumarRecursos(List<Recurso> recursos) {
