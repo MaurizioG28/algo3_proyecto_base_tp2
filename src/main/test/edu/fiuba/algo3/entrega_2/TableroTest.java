@@ -67,7 +67,7 @@ public class TableroTest {
         t.agregarHexagono(bosque9);
         t.repartirProduccion(9); // <-- ahora sí se cargan recursos en A
 
-        assertEquals(1, A.CantidadRecurso(Recurso.MADERA)); // 1 por poblado
+        assertEquals(1, A.cantidadRecurso(Recurso.MADERA)); // 1 por poblado
 
 
 
@@ -81,7 +81,7 @@ public class TableroTest {
         t.agregarHexagono(bosque9);
         t.repartirProduccion(9); // <-- ahora sí se cargan recursos en A
 
-        assertEquals(2, A.CantidadRecurso(Recurso.MADERA)); // 1 por poblado
+        assertEquals(2, A.cantidadRecurso(Recurso.MADERA)); // 1 por poblado
 
 
 
@@ -99,8 +99,8 @@ public class TableroTest {
         t.repartirProduccion(9);
         t.repartirProduccion(6);
 
-        assertEquals(cantidadMaderaEsperada, A.CantidadRecurso(Recurso.MADERA));
-        assertEquals(cantidadGranoEsperada,A.CantidadRecurso(Recurso.GRANO));
+        assertEquals(cantidadMaderaEsperada, A.cantidadRecurso(Recurso.MADERA));
+        assertEquals(cantidadGranoEsperada,A.cantidadRecurso(Recurso.GRANO));
 
 
 

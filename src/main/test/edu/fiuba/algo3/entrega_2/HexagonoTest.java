@@ -29,7 +29,7 @@ public class HexagonoTest {
         terreno.moverLadron();
         tablero.repartirProduccion(2);
 
-        assertEquals(totalRecursosEsperados,jugador.CantidadRecurso(Recurso.MADERA));
+        assertEquals(totalRecursosEsperados,jugador.cantidadRecurso(Recurso.MADERA));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class HexagonoTest {
 
         tablero.repartirProduccion(2);
 
-        assertEquals(totalRecursosEsperados,jugador.CantidadRecurso(Recurso.MADERA));
+        assertEquals(totalRecursosEsperados,jugador.cantidadRecurso(Recurso.MADERA));
     }
 
     @Test

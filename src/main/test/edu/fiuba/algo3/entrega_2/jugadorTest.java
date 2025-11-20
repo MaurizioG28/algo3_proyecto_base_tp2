@@ -66,9 +66,9 @@ public class jugadorTest {
 
         ladron.robarRecurso(victima);
 
-        assertEquals(1, ladron.CantidadRecurso(Recurso.MADERA));
+        assertEquals(1, ladron.cantidadRecurso(Recurso.MADERA));
 
-        assertEquals(0, victima.CantidadRecurso(Recurso.MADERA));
+        assertEquals(0, victima.cantidadRecurso(Recurso.MADERA));
     }
 
     @Test
@@ -111,5 +111,40 @@ public class jugadorTest {
         Object poblado = jugador.comprarPoblado();
         assertEquals(Poblado.class, poblado.getClass());
     }
+
+    @Test
+    public void test09cambiarRecursosQuitaCorrectamente(){
+        Jugador jugador = new Jugador(new Color("Azul"));
+        jugador.agregarRecurso(Recurso.MADERA, 10);
+        jugador.cambiar(Recurso.MADERA, 2, Recurso.GRANO, 2);
+        int maderaEsperada = 8;
+        assertEquals(maderaEsperada, jugador.cantidadRecurso(Recurso.MADERA));
+    }
+    @Test
+    public void test10cambiarRecursosAgregaCorrectamente(){
+        Jugador jugador = new Jugador(new Color("Azul"));
+        jugador.agregarRecurso(Recurso.MADERA, 10);
+        jugador.cambiar(Recurso.MADERA, 2, Recurso.GRANO, 2);
+        int granoEsperado = 2;
+        assertEquals(granoEsperado, jugador.cantidadRecurso(Recurso.GRANO));
+    }
+
+
+    @Test
+    public void test11cambiarSinRecursosNoCambiaCantidades(){
+        Jugador jugador = new Jugador(new Color("Azul"));
+        jugador.cambiar(Recurso.MADERA, 2, Recurso.GRANO, 2);
+        int granoEsperado = 0;
+        assertEquals(granoEsperado, jugador.cantidadRecurso(Recurso.GRANO));
+    }
+
+    @Test
+    public void test12cambiarSinRecursosNoCambiaCantidades(){
+        Jugador jugador = new Jugador(new Color("Azul"));
+        jugador.cambiar(Recurso.MADERA, 2, Recurso.GRANO, 2);
+        int maderaEsperada = 0;
+        assertEquals(maderaEsperada, jugador.cantidadRecurso(Recurso.MADERA));
+    }
+
 
 }
