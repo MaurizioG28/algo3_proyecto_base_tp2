@@ -6,10 +6,16 @@ public class Desierto extends Terreno {
         super();
         tipoTerreno = TipoTerreno.DESIERTO;
         cantidadMaxima = 1;
+        produccion = new Produccion(0);
     }
 
     @Override
     protected int sortearFicha(int[] fichasNumeradas){
         return 0;
+    }
+
+    @Override
+    public boolean esDesierto(){
+        return true;
     }
 }

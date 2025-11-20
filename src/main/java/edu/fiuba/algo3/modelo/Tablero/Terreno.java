@@ -9,6 +9,7 @@ public abstract class Terreno {
     protected int cantidadMaxima;
     protected int cantidadColocada = 0;
     protected TipoTerreno tipoTerreno;
+    protected Produccion produccion;
 
     public void agregarTerreno(ArrayList<Hexagono> hexagonos, int[] fichasNumeradas) {
         if(cantidadColocada >= cantidadMaxima){
@@ -44,5 +45,27 @@ public abstract class Terreno {
         fichasNumeradas = ArrayUtils.remove(fichasNumeradas, numeroAleatorio);
 
         return fichaSorteada;
+    }
+
+    public void setProduccion(Produccion produccion) {
+        this.produccion = produccion;
+    }
+
+    public boolean esDesierto() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(this.getClass() != object.getClass()){return false;}
+        return mismaProduccion(((Terreno) object).getProduccion());
+    }
+
+    private Produccion getProduccion() {
+        return this.produccion;
+    }
+
+    public boolean mismaProduccion(Produccion produccion){
+        return  this.produccion.equals(produccion);
     }
 }
