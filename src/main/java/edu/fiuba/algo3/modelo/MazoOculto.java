@@ -13,7 +13,7 @@ public class MazoOculto {
     }
 
     public CartaDesarrollo comprarCarta(Jugador comprador, int turno) {
-        if (comprador.tiene(0, 0, 1, 1, 1)) {
+        if (!comprador.tiene(0, 0, 1, 1, 1)) {
             throw new RecursosInsuficientesException("No se tienen suficientes recursos para comprar una carta.");
         }
         comprador.removerRecurso(Recurso.LANA, 1);
