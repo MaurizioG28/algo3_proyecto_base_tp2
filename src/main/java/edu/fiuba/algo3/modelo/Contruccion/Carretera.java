@@ -7,4 +7,5 @@ public class Carretera {
     public Carretera(Color color) {
         this.color = color;
     }
+
 }

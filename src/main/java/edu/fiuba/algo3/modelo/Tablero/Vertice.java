@@ -14,7 +14,7 @@ public class Vertice implements IVertice {
 
     private Jugador propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
-    private Construccion tipo;
+    private Construccion tipo = null;
     private List<ICelda> celdasAdyacentes;
 
     public boolean tieneConstruccion() {
@@ -57,9 +57,9 @@ public class Vertice implements IVertice {
         this.adyacentes.add(v2);
     }
 
-    public void colocar(Poblado pieza) {
+    public void colocar(Construccion pieza) throws ConstruccionExistenteException {
         if (this.tipo != null) {
-            throw new IllegalStateException("El vértice ya tiene una construcción.");
+            throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
         }
         this.tipo = pieza;
 

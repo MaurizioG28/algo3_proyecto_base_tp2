@@ -5,27 +5,28 @@ import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
+import edu.fiuba.algo3.modelo.Recursos.Grano;
+import edu.fiuba.algo3.modelo.Recursos.Ladrillo;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CasoDeUsoColocacionInicialTest {
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDePoblados(){
+    public void test01CasoDeUsoColocacionInicialDePoblados() throws ReglaDistanciaException, ConstruccionExistenteException {
         var unTablero = new TableroProduccion();
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
-        caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
-        Dividendo dividendo = caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
+        caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,0));
+        Dividendo dividendo = caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,3));
 
        Dividendo dividendosEsperadoes = new Dividendo(
                 new Color("Azul" ),
-                new Grano(2),
-                new Ladrillo(4)
+                new Grano(1),
+                new Ladrillo(2)
         );
 
         assertEquals( dividendosEsperadoes, dividendo);
@@ -33,30 +34,35 @@ public class CasoDeUsoColocacionInicialTest {
     }
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDePobladosValidandoLaReglaDelaDistancia(){
+    public void test02CasoDeUsoColocacionInicialDePobladosValidandoLaReglaDelaDistancia(){
         var unTablero = new TableroProduccion();
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
         try {
-            caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(3,5));
-        } catch (ReglaDistanciaException e) {
+            caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,0));
+        } catch (ReglaDistanciaException | ConstruccionExistenteException e) {
             throw new RuntimeException(e);
         }
 
         assertThrows(ReglaDistanciaException.class,() ->
-                caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(3,6)));
+                caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,1)));
     }
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDeCaminos(){
+    public void test03CasoDeUsoColocacionInicialDeCaminos(){
         var unTablero = new TableroProduccion();
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
-        caso.colocarEn( new Carretera( new Color("Azul")), new Coordenada(2,3));
+        try {
+            caso.colocarCarretera( new Carretera( new Color("Azul")), new Coordenada(2,3));
+        } catch (PosInvalidaParaConstruirException e) {
+            throw new RuntimeException(e);
+        }
+        Coordenada caminoEsperadoEn = new Coordenada(2,3);
 
-        // Completar
+        assertTrue(caso.tineCarreteraEn(caminoEsperadoEn));
 
     }
 }

@@ -1,5 +1,8 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -116,4 +119,19 @@ public class AlmacenDeRecursos {
     }
 
 
+    public Construccion comprarPoblado(Color color) {
+        if(cantidadDe(Recurso.MADERA) >= 1 &&
+            cantidadDe(Recurso.LADRILLO) >= 1 &&
+            cantidadDe(Recurso.LANA) >= 1 &&
+            cantidadDe(Recurso.GRANO) >= 1){
+
+            quitarUno(Recurso.MADERA);
+            quitarUno(Recurso.LADRILLO);
+            quitarUno(Recurso.LANA);
+            quitarUno(Recurso.GRANO);
+
+            return new Poblado(color);
+        }
+        return null;
+    }
 }

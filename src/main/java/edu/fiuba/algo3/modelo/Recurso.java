@@ -5,5 +5,7 @@ public enum Recurso {
     LADRILLO,
     LANA,
     GRANO,
-    MINERAL
+    MINERAL;
+
+
 }

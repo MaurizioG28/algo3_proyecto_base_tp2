@@ -6,6 +6,7 @@ import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
+import edu.fiuba.algo3.modelo.Recursos.RecursoBase;
 
 
 public class Tablero {
@@ -131,7 +132,7 @@ public class Tablero {
             if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
             if (!h.sePuedeProducir()) continue;          // si usás ladrón
 
-            Recurso r = h.getTipo().recursoOtorgado();
+            RecursoBase r = h.getTipo().recursoOtorgado();
 
             for (Vertice v : h.getVertices()) {
                 if (!v.tieneConstruccion()) continue;
@@ -139,9 +140,10 @@ public class Tablero {
                 int cant = v.obtenerFactorProduccion();
                 Jugador j = v.getPropietario();
 
+                assert r != null;
                 produccion
                         .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
-                        .merge(r, cant, Integer::sum);
+                        .merge(r.tipo(), cant, Integer::sum);
             }
         }
         return produccion;
