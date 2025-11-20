@@ -22,7 +22,7 @@ public class CasoDeUsoColocacionInicialTest {
         caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
         Dividendo dividendo = caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
 
-        Dividendo dividendosEsperadoes = new Dividendo(
+       Dividendo dividendosEsperadoes = new Dividendo(
                 new Color("Azul" ),
                 new Grano(2),
                 new Ladrillo(4)

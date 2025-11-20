@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+
 import java.util.Map;
 import java.util.List;
 
@@ -42,9 +44,11 @@ public class Jugador {
     }
 
     private AlmacenDeRecursos almacenJugador;
+    private MazoDeCartas mazoCartas;
 
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
+        this.mazoCartas = new MazoDeCartas();
     }
     public int CantidadRecurso(Recurso recurso) {
         return this.almacenJugador.cantidadDe(recurso);
@@ -56,6 +60,10 @@ public class Jugador {
 
     public void agregarRecurso(Recurso recurso, int cantidadRecurso){
         this.almacenJugador.agregarRecurso(recurso,cantidadRecurso);
+    }
+
+    public void removerRecurso(Recurso recurso, int cantidadRecurso){
+        this.almacenJugador.removerRecurso(recurso, cantidadRecurso);
     }
 
     public int totalRecursos() {
@@ -71,5 +79,13 @@ public class Jugador {
         if(recursoRobado != null){
             this.almacenJugador.agregarRecurso(recursoRobado,1);
         }
+    }
+
+    public void agregarCarta(CartaDesarrollo cartaNueva) {
+        mazoCartas.agregarCarta(cartaNueva);
+    }
+
+    public CartaDesarrollo agarrarCarta(int indice) {
+        return mazoCartas.agarrarCarta(indice);
     }
 }

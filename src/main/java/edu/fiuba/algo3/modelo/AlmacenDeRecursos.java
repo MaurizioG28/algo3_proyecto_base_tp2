@@ -40,6 +40,13 @@ public class AlmacenDeRecursos {
         cantidades.put(recurso, cantidades.get(recurso) + cantidad);
     }
 
+    public void removerRecurso(Recurso recurso, int cantidad) {
+        if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
+        if (cantidad <= 0) throw new IllegalArgumentException("La cantidad debe ser < 0");
+        if (cantidades.get(recurso) < cantidad) throw new CantidadIncorrectaException("La cantidad a sacar es mayor a la cantidad que se tiene.");
+        cantidades.put(recurso, cantidades.get(recurso) - cantidad);
+    }
+
     public void agregarTodos(Map<Recurso, Integer> paquete) {
         if (paquete == null) throw new IllegalArgumentException("Paquete no puede ser null");
         paquete.forEach(this::agregarRecurso);
