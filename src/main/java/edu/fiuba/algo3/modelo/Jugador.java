@@ -1,75 +1,64 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
 public class Jugador {
-    int MADERA = 0;
-    int LADRILLO = 0;
-    int LANA= 0;
-    int GRANO = 0;
-    int MINERAL= 0;
-
-    // maderaReq, ladrilloReq, lanaReq, cerealReq, mineralReq
-    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
-        return  MADERA   >= madera   &&
-                LADRILLO >= ladrillo &&
-                LANA     >= lana     &&
-                GRANO   >= grano   &&
-                MINERAL  >= mineral;
-    }
-
-    public void sumarRecursos(List<Recurso> recursos) {
-        for (Recurso recurso : recursos) {
-            switch (recurso) {
-                case MADERA:
-                    MADERA++;
-                    break;
-                case LADRILLO:
-                    LADRILLO++;
-                    break;
-                case LANA:
-                    LANA++;
-                    break;
-                case GRANO:
-                    GRANO++;
-                    break;
-                case MINERAL:
-                    MINERAL++;
-                    break;
-            }
-        }
-    }
 
     private AlmacenDeRecursos almacenJugador;
+    private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
 
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
     }
-    public int CantidadRecurso(Recurso recurso) {
-        return this.almacenJugador.cantidadDe(recurso);
+    public int CantidadRecurso(TipoDeRecurso tipo) {
+        return almacenJugador.cantidadDe(tipo);
     }
 
-    public Map<Recurso, Integer> descartarMitadDeRecursos() {
+    public void agregarRecurso(TipoDeRecurso recurso) {
+        almacenJugador.agregarRecurso(recurso);
+    }
+
+    public void quitarRecurso(TipoDeRecurso tipo, int cantidad) {
+        if (!almacenJugador.quitar(tipo, cantidad)) {
+            throw new IllegalStateException("El jugador no tiene suficientes " + tipo.nombre());
+        }
+    }
+
+    public int mejorTasaPara(TipoDeRecurso recursoEntregado) {
+        return politicas.stream()
+                .filter(p -> p.aplicaA(this, recursoEntregado))
+                .mapToInt(PoliticaDeIntercambio::tasa)
+                .min()
+                .orElse(4); // base 4:1
+    }
+    public void agregarPolitica(PoliticaDeIntercambio politica) {
+        politicas.add(politica);
+    }
+
+    public Map<TipoDeRecurso, Integer> descartarMitadDeRecursos() {
         return this.almacenJugador.descartarPorReglaDelSiete();
-    }
-
-    public void agregarRecurso(Recurso recurso, int cantidadRecurso){
-        this.almacenJugador.agregarRecurso(recurso,cantidadRecurso);
     }
 
     public int totalRecursos() {
         return this.almacenJugador.totalRecursos();
     }
 
-    private Recurso entregarRecursoAleatorio() {
+    private TipoDeRecurso entregarRecursoAleatorio() {
         return this.almacenJugador.robarRecursoAleatorio();
     }
 
     public void robarRecurso(Jugador victima) {
-        Recurso recursoRobado = victima.entregarRecursoAleatorio();
+        TipoDeRecurso recursoRobado = victima.entregarRecursoAleatorio();
         if(recursoRobado != null){
-            this.almacenJugador.agregarRecurso(recursoRobado,1);
+            this.almacenJugador.agregarRecurso(recursoRobado);
         }
     }
+
+
+
 }

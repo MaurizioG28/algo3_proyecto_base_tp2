@@ -1,7 +1,6 @@
 package edu.fiuba.algo3.entrega_2;
 
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import org.junit.jupiter.api.Test;
 

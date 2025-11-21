@@ -5,7 +5,7 @@ import java.util.*;
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 
 public class Tablero {
@@ -80,20 +80,19 @@ public class Tablero {
     }
 
     public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
-//        }
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
         }
-        /*
-        construye directamente, falta implementar el chequeo de recursos del jugardor.
-        Con algo como jugador.recursosPoblado()
-        */
+
         vertice.colocarPoblado(jugador);
-        List<Recurso> recursos = vertice.darRecursos();
-        jugador.sumarRecursos(recursos);
+
+        // Ahora el vértice debe devolver List<TipoDeRecurso>
+        List<TipoDeRecurso> recursos = vertice.darRecursos(); // cada uno con cantidad 1
+
+        for (TipoDeRecurso r : recursos) {
+            jugador.agregarRecurso(r); // new Madera(1), new Grano(1), etc.
+        }
     }
 
     private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){

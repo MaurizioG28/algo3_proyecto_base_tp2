@@ -2,7 +2,6 @@ package edu.fiuba.algo3.UnitTest;
 
 import edu.fiuba.algo3.modelo.Tablero.Bosque;
 import edu.fiuba.algo3.modelo.Tablero.Hexagono;
-import edu.fiuba.algo3.modelo.Tablero.TipoTerreno;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

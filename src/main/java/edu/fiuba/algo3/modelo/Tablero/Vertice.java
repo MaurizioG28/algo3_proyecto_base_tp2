@@ -4,7 +4,7 @@ import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
 import edu.fiuba.algo3.modelo.ICelda;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,8 +26,8 @@ public class Vertice implements IVertice {
         return celdasAdyacentes;
     }
     @Override
-    public List<Recurso> darRecursos() {
-        List<Recurso> recursos = new LinkedList<>();
+    public List<TipoDeRecurso> darRecursos() {
+        List<TipoDeRecurso> recursos = new LinkedList<>();
         for (ICelda celda : celdasAdyacentes) {
             recursos.add(celda.darRecurso());
         }
