@@ -2,7 +2,12 @@ package edu.fiuba.algo3.modelo.Recursos;
 
 import java.util.Objects;
 
-public class Grano implements TipoDeRecurso {
+public class Grano extends TipoDeRecurso {
+
+
+    public Grano(int cantidad) {
+        super(cantidad);
+    }
 
     @Override
     public String nombre() {
@@ -10,17 +15,18 @@ public class Grano implements TipoDeRecurso {
     }
 
     @Override
+    public TipoDeRecurso nuevo(int cantidad) {
+        return new Grano(cantidad);
+    }
+
+    @Override
     public boolean equals(Object o) {
+        // Solo importa el tipo, no la cantidad
         return o instanceof Grano;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash("Grano");
-    }
-
-    @Override
-    public String toString() {
-        return nombre();
     }
 }
