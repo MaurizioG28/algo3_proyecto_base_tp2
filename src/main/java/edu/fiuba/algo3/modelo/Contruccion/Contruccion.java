@@ -1,7 +1,6 @@
 package edu.fiuba.algo3.modelo.Contruccion;
 
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
 
 public final class Contruccion {
     final Jugador duenio;

@@ -1,7 +1,6 @@
 package edu.fiuba.algo3.modelo.Mocks;
 
 import edu.fiuba.algo3.modelo.ICelda;
-import edu.fiuba.algo3.modelo.Recurso;
 
 public class FakeCelda implements ICelda {
     private final Recurso recurso;
