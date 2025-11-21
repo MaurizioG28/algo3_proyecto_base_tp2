@@ -7,73 +7,46 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class Jugador {
 
-    private AlmacenDeRecursos almacenJugador;
+    private final AlmacenDeRecursos almacen = new AlmacenDeRecursos();
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
-    private static final int TASA_BASE_BANCO = 4;
 
-    public Jugador(){
-        this.almacenJugador = new AlmacenDeRecursos();
-    }
-    public int CantidadRecurso(TipoDeRecurso recurso) {
-        return this.almacenJugador.cantidadDe(recurso);
+    public int CantidadRecurso(TipoDeRecurso tipo) {
+        return almacen.cantidadDe(tipo);
     }
 
-    public Map<TipoDeRecurso, Integer> descartarMitadDeRecursos() {
-        return this.almacenJugador.descartarPorReglaDelSiete();
+    public void agregarRecurso(TipoDeRecurso recurso) {
+        almacen.agregarRecurso(recurso);
     }
 
-    public void agregarRecurso(TipoDeRecurso recurso, int cantidadRecurso){
-        this.almacenJugador.agregarRecurso(recurso,cantidadRecurso);
-    }
-
-    public void quitarRecurso(TipoDeRecurso recurso, int cantidad) {
-        boolean ok = this.almacenJugador.quitar(recurso, cantidad);
-        if (!ok) {
-            throw new IllegalArgumentException("El jugador no tiene suficientes " + recurso);
+    public void quitarRecurso(TipoDeRecurso tipo, int cantidad) {
+        if (!almacen.quitar(tipo, cantidad)) {
+            throw new IllegalStateException("El jugador no tiene suficientes " + tipo.nombre());
         }
     }
 
-//    Después, cuando el jugador construye en un vértice con puerto, el Tablero hace:
-//    jugador.agregarPolitica(new PuertoGenerico(3));
-//// o:
-//jugador.agregarPolitica(new PuertoEspecifico(TipoDeRecurso.MADERA, 2));
+    public Map<TipoDeRecurso, Integer> descartarMitadDeRecursos() {
+        return almacen.descartarPorReglaDelSiete();
+    }
+
     public void agregarPolitica(PoliticaDeIntercambio politica) {
         politicas.add(politica);
     }
 
-
-    public int totalRecursos() {
-        return this.almacenJugador.totalRecursos();
-    }
-
-    private TipoDeRecurso entregarRecursoAleatorio() {
-        return this.almacenJugador.robarRecursoAleatorio();
-    }
-
-    public void robarRecurso(Jugador victima) {
-        TipoDeRecurso recursoRobado = victima.entregarRecursoAleatorio();
-        if(recursoRobado != null){
-            this.almacenJugador.agregarRecurso(recursoRobado,1);
-        }
-    }
-
-    public void sumarRecursos(List<TipoDeRecurso> recursos) {
-        if (recursos == null) return;
-        for (TipoDeRecurso r : recursos) {
-            this.agregarRecurso(r, 1);
-        }
-    }
-
     public int mejorTasaPara(TipoDeRecurso recursoEntregado) {
-        int mejor = TASA_BASE_BANCO;
-
-        for (PoliticaDeIntercambio p : politicas) {
-            if (p.aplicaA(this, recursoEntregado)) {
-                mejor = Math.min(mejor, p.tasa());
-            }
-        }
-        return mejor;
+        return politicas.stream()
+                .filter(p -> p.aplicaA(this, recursoEntregado))
+                .mapToInt(PoliticaDeIntercambio::tasa)
+                .min()
+                .orElse(4); // base 4:1
     }
 }

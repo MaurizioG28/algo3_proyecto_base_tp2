@@ -8,9 +8,16 @@ import java.util.Random;
 
 import java.util.*;
 
+import java.util.*;
+
+import java.util.*;
+
+import java.util.*;
+
 public class AlmacenDeRecursos {
 
-    private final Map<TipoDeRecurso, Integer> cantidades = new HashMap<>();
+    // 1 entrada por tipo: Madera, Grano, etc.
+    private final Map<TipoDeRecurso, TipoDeRecurso> recursos = new HashMap<>();
     private final Random azar;
 
     public AlmacenDeRecursos() {
@@ -18,65 +25,89 @@ public class AlmacenDeRecursos {
     }
 
     public AlmacenDeRecursos(Random azar) {
-        this.azar = Objects.requireNonNull(azar, "El generador de azar no puede ser null");
+        this.azar = Objects.requireNonNull(azar);
     }
 
-    private TipoDeRecurso  recursoAleatorio() {
-        int total = totalRecursos();
-        if (total == 0) return null;
-        int k = azar.nextInt(total); // [0,total)
-        for (Map.Entry<TipoDeRecurso, Integer> e : cantidades.entrySet()) {
-            int c = e.getValue();
-            if (k < c) return e.getKey();
-            k -= c;
+    /** Normaliza: siempre usamos tipo.nuevo(0) como "representante" de la clave. */
+    private TipoDeRecurso claveDe(TipoDeRecurso r) {
+        return r.nuevo(0);
+    }
+
+    /** El recurso trae la cantidad: new Madera(4) suma 4 al almacén. */
+    public void agregarRecurso(TipoDeRecurso recurso) {
+        if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
+        if (recurso.obtenerCantidad() <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser > 0");
         }
-        return null; // no debería pasar
+
+        TipoDeRecurso clave = claveDe(recurso);
+        recursos.merge(
+                clave,
+                recurso,                         // si no existe, guardo este mismo objeto
+                (actual, nuevo) -> {             // si existe, acumulo sobre el existente
+                    actual.sumar(nuevo.obtenerCantidad());
+                    return actual;
+                }
+        );
     }
 
-    public void agregarRecurso(TipoDeRecurso recurso, int cantidad) {
-        if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
-        if (cantidad <= 0) throw new IllegalArgumentException("La cantidad debe ser > 0");
-        cantidades.merge(recurso, cantidad, Integer::sum);
+    public int cantidadDe(TipoDeRecurso tipo) {
+        if (tipo == null) throw new IllegalArgumentException("Recurso no puede ser null");
+        TipoDeRecurso clave = claveDe(tipo);
+        TipoDeRecurso r = recursos.get(clave);
+        return (r == null) ? 0 : r.obtenerCantidad();
     }
 
-    public void agregarTodos(Map<TipoDeRecurso, Integer> paquete) {
-        if (paquete == null) throw new IllegalArgumentException("Paquete no puede ser null");
-        paquete.forEach(this::agregarRecurso);
+    public boolean quitar(TipoDeRecurso tipo, int cantidad) {
+        if (tipo == null) throw new IllegalArgumentException("Recurso no puede ser null");
+        if (cantidad <= 0) return true;
+
+        TipoDeRecurso clave = claveDe(tipo);
+        TipoDeRecurso r = recursos.get(clave);
+        if (r == null || r.obtenerCantidad() < cantidad) return false;
+
+        r.restar(cantidad);
+        if (r.obtenerCantidad() == 0) {
+            recursos.remove(clave);
+        }
+        return true;
     }
 
-    public int cantidadDe(TipoDeRecurso recurso) {
-        if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
-        return cantidades.getOrDefault(recurso, 0);
+    public boolean quitarUno(TipoDeRecurso tipo) {
+        return quitar(tipo, 1);
     }
 
     public int totalRecursos() {
         int total = 0;
-        for (int v : cantidades.values()) total += v;
+        for (TipoDeRecurso r : recursos.values()) {
+            total += r.obtenerCantidad();
+        }
         return total;
     }
 
     public boolean estaVacio() {
-        return totalRecursos() == 0;
+        return recursos.isEmpty();
     }
 
-    public boolean quitar(TipoDeRecurso recurso, int cantidad) {
-        if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
-        if (cantidad <= 0) return true;
-        int actual = cantidades.get(recurso);
-        if (actual < cantidad) return false;
-        cantidades.put(recurso, actual - cantidad);
-        return true;
-    }
+    private TipoDeRecurso recursoAleatorio() {
+        int total = totalRecursos();
+        if (total == 0) return null;
+        int k = azar.nextInt(total); // [0,total)
 
-    public boolean quitarUno(TipoDeRecurso recurso) {
-        return quitar(recurso, 1);
+        for (Map.Entry<TipoDeRecurso, TipoDeRecurso> e : recursos.entrySet()) {
+            int c = e.getValue().obtenerCantidad();
+            if (k < c) return e.getKey();
+            k -= c;
+        }
+        return null;
     }
 
     /** Roba 1 recurso al azar (ponderado) y lo quita del almacén. */
     public TipoDeRecurso robarRecursoAleatorio() {
-        TipoDeRecurso r = recursoAleatorio();
-        if (r != null) quitarUno(r);
-        return r;
+        TipoDeRecurso tipo = recursoAleatorio();
+        if (tipo == null) return null;
+        quitar(tipo, 1);
+        return tipo.nuevo(1);
     }
 
     /** Descarta floor(total/2) recursos al azar. Devuelve lo descartado por tipo. */
@@ -84,16 +115,19 @@ public class AlmacenDeRecursos {
         int total = totalRecursos();
         if (total <= 7) return Collections.emptyMap();
 
-        int aDescartar = total / 2; // floor
+        int aDescartar = total / 2;
         Map<TipoDeRecurso, Integer> descartados = new HashMap<>();
 
         for (int i = 0; i < aDescartar; i++) {
             TipoDeRecurso r = robarRecursoAleatorio();
             if (r == null) break;
-            descartados.merge(r, 1, Integer::sum);
+            TipoDeRecurso clave = claveDe(r);
+            descartados.merge(clave, 1, Integer::sum);
         }
         return descartados;
     }
 }
+
+
 
 

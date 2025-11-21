@@ -37,9 +37,10 @@ public class ServicioComercio {
 
         // Ejecutar intercambio
         jugador.quitarRecurso(recursoEntregado, cantidadEntregada);
-        jugador.agregarRecurso(recursoRecibido, cantidadRecibida);
+        jugador.agregarRecurso(recursoRecibido.nuevo(cantidadRecibida));
 
-        banco.recibir(recursoEntregado, cantidadEntregada);
+        banco.recibir(recursoEntregado.nuevo(cantidadEntregada));
         banco.entregar(recursoRecibido, cantidadRecibida);
     }
 }
+

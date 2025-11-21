@@ -2,33 +2,53 @@ package edu.fiuba.algo3.modelo.Intercambios;
 
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Banco {
-    private final Map<TipoDeRecurso, Integer> stock = new HashMap<>();
 
-    public Banco() {
+    private final Map<TipoDeRecurso, TipoDeRecurso> stock = new HashMap<>();
+
+    private TipoDeRecurso claveDe(TipoDeRecurso r) {
+        return r.nuevo(0);
+    }
+
+    public void recibir(TipoDeRecurso recurso) {
+        if (recurso == null) throw new IllegalArgumentException("Recurso no puede ser null");
+        if (recurso.obtenerCantidad() <= 0) throw new IllegalArgumentException("Cantidad > 0");
+
+        TipoDeRecurso clave = claveDe(recurso);
+        stock.merge(
+                clave,
+                recurso,
+                (actual, nuevo) -> {
+                    actual.sumar(nuevo.obtenerCantidad());
+                    return actual;
+                }
+        );
     }
 
     public void inicializarStock(Map<TipoDeRecurso, Integer> inicial) {
         if (inicial == null) return;
-        inicial.forEach((r, cant) -> stock.merge(r, cant, Integer::sum));
+        inicial.forEach((tipo, cant) -> recibir(tipo.nuevo(cant)));
     }
 
-    public boolean tieneStock(TipoDeRecurso recurso, int cantidad) {
-        return stock.getOrDefault(recurso, 0) >= cantidad;
+    public boolean tieneStock(TipoDeRecurso tipo, int cantidad) {
+        TipoDeRecurso clave = claveDe(tipo);
+        TipoDeRecurso r = stock.get(clave);
+        return r != null && r.obtenerCantidad() >= cantidad;
     }
 
-    public void recibir(TipoDeRecurso recurso, int cantidad) {
-        stock.merge(recurso, cantidad, Integer::sum);
-    }
-
-    public void entregar(TipoDeRecurso recurso, int cantidad) {
-        if (!tieneStock(recurso, cantidad)) {
-            throw new IllegalStateException("El banco no tiene suficiente " + recurso.nombre());
+    public void entregar(TipoDeRecurso tipo, int cantidad) {
+        TipoDeRecurso clave = claveDe(tipo);
+        TipoDeRecurso r = stock.get(clave);
+        if (r == null || r.obtenerCantidad() < cantidad) {
+            throw new IllegalStateException("El banco no tiene suficiente " + tipo.nombre());
         }
-        stock.put(recurso, stock.get(recurso) - cantidad);
+        r.restar(cantidad);
+        if (r.obtenerCantidad() == 0) {
+            stock.remove(clave);
+        }
     }
 }
+
