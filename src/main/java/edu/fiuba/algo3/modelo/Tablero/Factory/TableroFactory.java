@@ -19,6 +19,7 @@ public class TableroFactory {
 
 
 
+
     public static Tablero crear(List<Terreno> terrenos, List<Produccion> fichas) {
 
         if(terrenos.isEmpty() || fichas.isEmpty() || terrenos.size() < 19) {
@@ -28,36 +29,32 @@ public class TableroFactory {
         Map<Integer, Terreno> terrenosPorId = new HashMap<>();
         Map<Cubic, Vertice> verticesUnicos = new HashMap<>();
         Map<Coordenada, Vertice> verticesPorCoordenada = new HashMap<>();
+        Map<Cubic, Lado> ladosUnicos = new HashMap<>();
+        Map<Coordenada, Lado> ladosPorCoordenada = new HashMap<>();
 
-        // Generar posiciones hexagonales dinámicamente
         List<Axial> posicionesHexagonos = generarLayoutHexagonal();
 
         // 1. Asignar hexágonos fijos a los terrenos
         for (int id = 1; id <= terrenos.size(); id++) {
             Terreno terrenoActual = terrenos.get(id - 1);
             terrenoActual.asignarHexagono(new Hexagono());
+            terrenoActual.setPosicion(posicionesHexagonos.get(id - 1));
             terrenosPorId.put(id, terrenoActual);
+            terrenoActual.setId(id);
         }
 
-        // 2. Generar vertices compartidos geométricamente
-        for (int id = 1; id <= terrenos.size(); id++) {
-            Terreno terrenoActual = terrenosPorId.get(id);
-            Hexagono hex = terrenoActual.getHexagono();
+        for (Terreno terreno : terrenosPorId.values()) {
+            terreno.crearVertices(verticesUnicos, verticesPorCoordenada, Vertice_OFFSETS);
+        }
 
-            Axial axial = posicionesHexagonos.get(id - 1);
-            Cubic centro = axial.toCubic();
 
-            for (int i = 0; i < 6; i++) {
-                Cubic vCoord = centro.add(Vertice_OFFSETS[i]);
-                Vertice v = verticesUnicos.computeIfAbsent(vCoord, k -> new Vertice());
-                hex.agregarVertice(v);
 
-                Coordenada coord = new Coordenada(id, i);
-                verticesPorCoordenada.put(coord, v);
-            }
+        for (Terreno terreno : terrenosPorId.values()) {
+            terreno.crearLados(ladosUnicos,ladosPorCoordenada, Vertice_OFFSETS);
         }
 
         conectarVerticesAdyacentesSimples(verticesUnicos, posicionesHexagonos);
+        conectarLadosAdyacentesSimples(ladosUnicos, posicionesHexagonos);
 
         // 3. Asignar fichas de producción (igual que antes)
         Iterator<Produccion> it = fichas.iterator();
@@ -68,13 +65,13 @@ public class TableroFactory {
             }
         }
 
-        return new Tablero(terrenosPorId, verticesPorCoordenada);
+        return new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
     }
 
 
 
     public static List<Axial> generarLayoutHexagonal() {
-        //List<Axial> posiciones = new ArrayList<>();
+
 
 
         return Arrays.asList(
@@ -86,23 +83,13 @@ public class TableroFactory {
         );
 
 
-//        for (int q = 0; q < radio; q++) {
-//            for (int r = 0; r < radio; r++) {
-//                posiciones.add(new Axial(q, r));
-//                if (posiciones.size() == cantidadHexagonos) {
-//                    return posiciones;
-//                }
-//            }
-//        }
-//
-//        return posiciones;
     }
 
     public static void conectarVerticesAdyacentesSimples(Map<Cubic, Vertice> verticesUnicos, List<Axial> posicionesHexagonos) {
         for (Axial posHex : posicionesHexagonos) {
             Cubic centro = posHex.toCubic();
 
-            // Obtener los 6 vértices de este hexágono
+
             Vertice[] verticesHex = new Vertice[6];
             for (int i = 0; i < 6; i++) {
                 Cubic vCoord = centro.add(Vertice_OFFSETS[i]);
@@ -115,6 +102,31 @@ public class TableroFactory {
                 if (actual != null) {
                     Vertice siguiente = verticesHex[(i + 1) % 6];
                     Vertice anterior = verticesHex[(i + 5) % 6];
+
+                    if (siguiente != null) actual.agregarAdyacente(siguiente);
+                    if (anterior != null) actual.agregarAdyacente(anterior);
+                }
+            }
+        }
+    }
+
+    public static void conectarLadosAdyacentesSimples(Map<Cubic, Lado> ladosUnicos, List<Axial> posicionesHexagonos) {
+        for (Axial posHex : posicionesHexagonos) {
+            Cubic centro = posHex.toCubic();
+
+
+            Lado[] ladosHex = new Lado[6];
+            for (int i = 0; i < 6; i++) {
+                Cubic ladoCoord = centro.add(Vertice_OFFSETS[i]);
+                ladosHex[i] = ladosUnicos.get(ladoCoord);
+            }
+
+
+            for (int i = 0; i < 6; i++) {
+                Lado actual = ladosHex[i];
+                if (actual != null) {
+                    Lado siguiente = ladosHex[(i + 1) % 6];
+                    Lado anterior = ladosHex[(i + 5) % 6];
 
                     if (siguiente != null) actual.agregarAdyacente(siguiente);
                     if (anterior != null) actual.agregarAdyacente(anterior);

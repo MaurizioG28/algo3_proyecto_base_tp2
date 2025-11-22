@@ -5,10 +5,7 @@ import java.util.*;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 
-import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
+import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 import edu.fiuba.algo3.modelo.interfaces.*;
 
@@ -25,15 +22,17 @@ public class Tablero {
 
     //private ArrayList<Hexagono> hexagonos = new ArrayList<>();
     private final Map<Coordenada, Vertice> vertices;
+    Map<Coordenada, Lado> lados;
 
     private Hexagono posicionDelLadron;
 
 //    public Tablero(){
 //    }
 
-    public Tablero(Map<Integer, Terreno> hexagonos, Map<Coordenada, Vertice> vertices) {
+    public Tablero(Map<Integer, Terreno> hexagonos, Map<Coordenada, Vertice> vertices, Map<Coordenada, Lado> ladosPorCoordenada) {
         this.terrenos = hexagonos;
         this.vertices = vertices;
+        this.lados= ladosPorCoordenada;
     }
 
 

@@ -1,10 +1,10 @@
 package edu.fiuba.algo3.modelo.Tablero.Terrenos;
 
-import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 public abstract class Terreno {
@@ -13,6 +13,8 @@ public abstract class Terreno {
     protected String tipoTerreno;
     protected Produccion produccion;
     protected Hexagono hexagono;
+    protected Axial posicion;
+    protected int id;
 
 
     public String getTipoTerreno(){
@@ -66,5 +68,24 @@ public abstract class Terreno {
 
     public Hexagono getHexagono() {
         return this.hexagono;
+    }
+
+
+
+    public void setPosicion(Axial axial) {
+        this.posicion = axial;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void crearVertices(Map<Cubic, Vertice> verticesUnicos, Map<Coordenada, Vertice> verticesPorCoordenada,Cubic[] Vertice_OFFSETS) {
+
+        hexagono.crearVertices(verticesUnicos, verticesPorCoordenada, posicion, id,Vertice_OFFSETS);
+    }
+
+    public void crearLados(Map<Cubic, Lado> ladosUnicos, Map<Coordenada, Lado> ladosPorCoordenada, Cubic[] Lado_OFFSETS) {
+
+        hexagono.crearLados(ladosUnicos, ladosPorCoordenada, posicion, id, Lado_OFFSETS);
     }
 }

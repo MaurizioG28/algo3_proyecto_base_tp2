@@ -19,11 +19,28 @@ public class Lado {
         this.construccion = pieza;
     }
 
-    public void agregarAdyacente(Lado l) {
-        adyacentes.add(l);
+    public void agregarAdyacente(Lado lado) {
+        if (lado != this && !adyacentes.contains(lado)) {
+            adyacentes.add(lado);
+
+            if (!lado.esLadoAdyacenteA(this)) {
+                lado.agregarAdyacente(this);
+            }
+        }
+        ;
+    }
+
+    private boolean esLadoAdyacenteA(Lado lado) {
+        return adyacentes.contains(lado);
     }
 
     public void agregarPunta(Vertice v) {
-        puntas.add(v);
+        if (!puntas.contains(v)) {
+            puntas.add(v);
+        }
+    }
+
+    public boolean esLadoAdyacente(Lado l1) {
+        return adyacentes.contains(l1);
     }
 }

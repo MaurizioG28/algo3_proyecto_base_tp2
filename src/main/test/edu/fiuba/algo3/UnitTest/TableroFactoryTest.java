@@ -65,7 +65,7 @@ public class TableroFactoryTest {
     }
 
     @Test
-    public void test03conectar6VerticesAdyacentesCorrectamenteEn(){
+    public void test03conectar6VerticesAdyacentesCorrectamenteEn1Hex(){
         Map<Cubic, Vertice> vertices = new HashMap<>();
         Cubic[] coordenadasReales = {
                 new Cubic(1, 0, -1),   // Vértice 0 - Este
@@ -149,6 +149,65 @@ public class TableroFactoryTest {
         var tableroEsperado = TableroFactory.crear(hexagonos, fichasNumeradas);
 
         assertEquals(tableroEsperado, tablero);
+    }
+    @Test
+    public void test05conectarLadosNoCreaNuevos(){
+
+
+        Map<Cubic, Lado> lados = new HashMap<>();
+        Cubic[] coordenadasReales = {
+                new Cubic(1, 0, -1),   // Vértice 0 - Este
+                new Cubic(1, -1, 0),   // Vértice 1 - Sureste
+                new Cubic(0, -1, 1),   // Vértice 2 - Suroeste
+                new Cubic(-1, 0, 1),   // Vértice 3 - Oeste
+                new Cubic(-1, 1, 0),   // Vértice 4 - Noroeste
+                new Cubic(0, 1, -1)    // Vértice 5 - Noreste
+        };
+
+        for (Cubic coord : coordenadasReales) {
+            lados.put(coord, new Lado());
+        }
+
+        int cantLadosEsperada = lados.size();
+
+        List<Axial> posicionesHexagono = new LinkedList<>(Arrays.asList(
+                new Axial(0,0)
+        ));
+
+        TableroFactory.conectarLadosAdyacentesSimples(lados, posicionesHexagono);
+
+        assertEquals(cantLadosEsperada, lados.size());
+
+    }
+
+    @Test
+    public void test06conectar6LadosAdyacentesCorrectamenteEn1Hex(){
+        Map<Cubic, Lado> lados = new HashMap<>();
+        Cubic[] coordenadasReales = {
+                new Cubic(1, 0, -1),   // Vértice 0 - Este
+                new Cubic(1, -1, 0),   // Vértice 1 - Sureste
+                new Cubic(0, -1, 1),   // Vértice 2 - Suroeste
+                new Cubic(-1, 0, 1),   // Vértice 3 - Oeste
+                new Cubic(-1, 1, 0),   // Vértice 4 - Noroeste
+                new Cubic(0, 1, -1)    // Vértice 5 - Noreste
+        };
+
+        for (Cubic coord : coordenadasReales) {
+            lados.put(coord, new Lado());
+        }
+
+        List<Axial> posicionesHexagono = Arrays.asList(new Axial(0, 0));
+
+        TableroFactory.conectarLadosAdyacentesSimples(lados, posicionesHexagono);
+
+        Lado l0 = lados.get(new Cubic(1, 0, -1));
+        Lado l1 = lados.get(new Cubic(1, -1, 0));
+        Lado l5 = lados.get(new Cubic(0, 1, -1));
+
+        assertTrue(l0.esLadoAdyacente(l1));
+        assertTrue(l0.esLadoAdyacente(l5));
+
+
     }
 
 
