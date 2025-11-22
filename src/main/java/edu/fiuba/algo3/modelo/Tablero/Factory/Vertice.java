@@ -1,10 +1,10 @@
-package edu.fiuba.algo3.modelo.Tablero;
+package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
-import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,18 +21,18 @@ public class Vertice implements IVertice {
         return (propietario != null || tipo != null);
     }
 
-    @Override
-    public List<ICelda> obtenerCeldasAdyacentes() {
-        return celdasAdyacentes;
-    }
-    @Override
-    public List<Recurso> darRecursos() {
-        List<Recurso> recursos = new LinkedList<>();
-        for (ICelda celda : celdasAdyacentes) {
-            recursos.add(celda.darRecurso());
-        }
-        return recursos;
-    }
+//    @Override
+//    public List<ICelda> obtenerCeldasAdyacentes() {
+//        return celdasAdyacentes;
+//    }
+//    @Override
+//    public List<Recurso> darRecursos() {
+//        List<Recurso> recursos = new LinkedList<>();
+//        for (ICelda celda : celdasAdyacentes) {
+//            recursos.add(celda.darRecurso());
+//        }
+//        return recursos;
+//    }
 
     public boolean tieneConstruccionAdyacente() {
         for (Vertice v : adyacentes) {

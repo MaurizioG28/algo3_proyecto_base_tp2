@@ -2,65 +2,51 @@ package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
 
-import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
-import edu.fiuba.algo3.modelo.Recursos.RecursoBase;
+
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 import edu.fiuba.algo3.modelo.interfaces.*;
 
 
 public class Tablero {
 
-    private static final int CANTIDAD_HEXAGONOS = 19;
-    private final Map<TipoTerreno, Terreno> terrenos = Map.of(
-            TipoTerreno.BOSQUE, new Bosque(),
-            TipoTerreno.COLINA, new Colina(),
-            TipoTerreno.PRADERA, new Pastizal(),
-            TipoTerreno.CAMPO, new Campo(),
-            TipoTerreno.MONTANIA, new Montania(),
-            TipoTerreno.DESIERTO, new Desierto()
-        );
+
+    private final Map<Integer, Terreno> terrenos;
 
     //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
-    private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
+    //private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
     
     private Dados dados = new Dados();
 
-    private ArrayList<Hexagono> hexagonos = new ArrayList<>();
-    private List<Terreno> listaHexagonos;
+    //private ArrayList<Hexagono> hexagonos = new ArrayList<>();
+    private final Map<Coordenada, Vertice> vertices;
 
     private Hexagono posicionDelLadron;
 
-    public Tablero(){
+//    public Tablero(){
+//    }
+
+    public Tablero(Map<Integer, Terreno> hexagonos, Map<Coordenada, Vertice> vertices) {
+        this.terrenos = hexagonos;
+        this.vertices = vertices;
     }
 
-    public Tablero(List<Terreno> hexagonos, List<Produccion> fichasNumeradas) {
-        this.listaHexagonos = hexagonos;
-        asignarFichas(fichasNumeradas);
-    }
 
-    private void asignarFichas(List<Produccion> fichasNumeradas) {
-        for(Terreno hexagono: this.listaHexagonos){
-            if(!hexagono.esDesierto()){
-                hexagono.setProduccion(fichasNumeradas.iterator().next());
-            }
-        }
-    }
 
     @Override
     public boolean equals(Object object){
         if(this.getClass() != object.getClass()){return false;}
-        return ((Tablero) object).mismosHexagonos(listaHexagonos);
+        return ((Tablero) object).mismosHexagonos(terrenos);
     }
 
-    private boolean mismosHexagonos(List<Terreno> hexagonos){
-        for (int i = 0; i < hexagonos.size(); i++){
-            if(!listaHexagonos.get(i).equals(hexagonos.get(i))){
-                return false;
-            }
-        }
-        return true;
+    private boolean mismosHexagonos(Map<Integer, Terreno> OtroTerreno){
+        return terrenos.equals(OtroTerreno);
+
     }
 
     public void setUp(){

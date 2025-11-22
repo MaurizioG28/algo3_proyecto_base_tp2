@@ -1,12 +1,9 @@
 package edu.fiuba.algo3.UnitTest;
 
-import edu.fiuba.algo3.modelo.Tablero.Desierto;
-import edu.fiuba.algo3.modelo.Tablero.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DesiertoTest {
 

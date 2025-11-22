@@ -1,4 +1,6 @@
-package edu.fiuba.algo3.modelo.Tablero;
+package edu.fiuba.algo3.modelo.Tablero.Terrenos;
+
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
 
 public class Desierto extends Terreno {
 

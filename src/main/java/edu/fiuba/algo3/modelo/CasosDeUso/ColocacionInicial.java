@@ -4,6 +4,7 @@ import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Tablero.*;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 
 public class ColocacionInicial {
     private TableroProduccion tablero;

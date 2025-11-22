@@ -1,7 +1,6 @@
-package edu.fiuba.algo3.modelo.Tablero;
+package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
-import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Jugador;
 
 import java.util.ArrayList;

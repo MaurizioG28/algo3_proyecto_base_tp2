@@ -3,6 +3,10 @@ package edu.fiuba.algo3.modelo.Tablero;
 import edu.fiuba.algo3.modelo.Color;
 import  edu.fiuba.algo3.modelo.Contruccion.*;
 import edu.fiuba.algo3.modelo.Dividendo;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Lado;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 
 import java.util.*;
 
