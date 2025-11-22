@@ -15,7 +15,7 @@ public class Vertice implements IVertice {
     private Jugador propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
     private Construccion tipo = null;
-    private List<ICelda> celdasAdyacentes;
+    //private List<ICelda> celdasAdyacentes;
 
     public boolean tieneConstruccion() {
         return (propietario != null || tipo != null);
@@ -57,6 +57,10 @@ public class Vertice implements IVertice {
         this.adyacentes.add(v2);
     }
 
+    public boolean esVerticeAdyacente(Vertice otroVertice){
+        return this.adyacentes.contains(otroVertice);
+    }
+
     public void colocar(Construccion pieza) throws ConstruccionExistenteException {
         if (this.tipo != null) {
             throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
@@ -65,7 +69,7 @@ public class Vertice implements IVertice {
 
     }
 
-    public int obtenerFactorProduccion() {
-        return this.tipo.obtenerFactorProduccion();
-    }
+//    public int obtenerFactorProduccion() {
+//        return this.tipo.obtenerFactorProduccion();
+//    }
 }

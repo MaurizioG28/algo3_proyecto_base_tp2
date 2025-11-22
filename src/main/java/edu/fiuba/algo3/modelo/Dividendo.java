@@ -1,18 +1,20 @@
 package edu.fiuba.algo3.modelo;
 
 
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class Dividendo {
     private final Color color;
-    private final Map<Recurso, Integer> recursos = new HashMap<>(); // usa tu enum
+    private final Map<TipoDeRecurso, Integer> recursos = new HashMap<>(); // usa tu enum
 
-    public Dividendo(Color color, RecursoBase... recursosEntregables) {
+    public Dividendo(Color color, TipoDeRecurso... recursosEntregables) {
         this.color = color;
         if(recursosEntregables != null){
-            for (RecursoBase r : recursosEntregables) {
+            for (TipoDeRecurso r : recursosEntregables) {
                 agregar(r);
             }
         }
@@ -20,10 +22,10 @@ public class Dividendo {
 
 
 
-    public void agregar(RecursoBase r) {
+    public void agregar(TipoDeRecurso r) {
         recursos.put(
-                r.tipo(),
-                recursos.getOrDefault(r.tipo(), 0) + r.cantidad()
+                r,
+                r.obtenerCantidad()
         );
     }
 

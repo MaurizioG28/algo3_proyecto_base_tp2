@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo.CasosDeUso;
 
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
+import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Tablero.*;
@@ -13,7 +14,7 @@ public class ColocacionInicial {
         this.tablero = unTablero;
     }
 
-    public Dividendo colocarEn(Poblado poblado, Coordenada coordenada) throws ReglaDistanciaException, ConstruccionExistenteException {
+    public Dividendo colocarEn(Construccion poblado, Coordenada coordenada) throws ReglaDistanciaException, ConstruccionExistenteException {
 
             return tablero.colocarPoblado(poblado, coordenada);
 
@@ -21,7 +22,7 @@ public class ColocacionInicial {
     }
 
 
-    public void colocarCarretera(Carretera azul, Coordenada coordenada) throws PosInvalidaParaConstruirException {
+    public void colocarCarretera(Construccion azul, Coordenada coordenada) throws PosInvalidaParaConstruirException {
         tablero.colocarCarretera(azul, coordenada);
     }
 

@@ -4,7 +4,7 @@ public class Colina extends Terreno {
 
     public Colina(){
         super();
-        tipoTerreno = TipoTerreno.COLINA;
+        tipoTerreno = this.getClass().getSimpleName();
         cantidadMaxima = 3;
     }
 }

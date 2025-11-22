@@ -4,7 +4,7 @@ public class Campo extends Terreno {
 
     public Campo(){
         super();
-        tipoTerreno = TipoTerreno.CAMPO;
+        tipoTerreno = this.getClass().getSimpleName();
         cantidadMaxima = 4;
     }
 }

@@ -4,7 +4,7 @@ public class Pastizal extends Terreno {
 
     public Pastizal(){
         super();
-        tipoTerreno = TipoTerreno.PRADERA;
+        tipoTerreno = this.getClass().getSimpleName();
         cantidadMaxima = 4;
     }
 }

@@ -49,38 +49,15 @@ public class Tablero {
 
     }
 
-    public void setUp(){
-        while(hexagonos.size() < CANTIDAD_HEXAGONOS){
-            Terreno terreno = sortearTerreno();
 
-            terreno.agregarTerreno(hexagonos, fichasNumeradas);
-        }
-        this.posicionDelLadron = buscarHexagonoDesierto();
-        if(this.posicionDelLadron == null){
-            throw new IllegalStateException("No se encontro el Ladron");
-        }
-    }
   
     public int tirarDados(){
         return dados.tirar();
     }
 
-    private Hexagono buscarHexagonoDesierto() {
-        for (Hexagono hex : hexagonos) {
-            if (hex.getTipo() == TipoTerreno.DESIERTO) {
-                return hex;
-            }
-        }
-        return null;
-    }
 
-    private Terreno sortearTerreno(){
-        Random rand = new Random();
-        int numeroAleatorio = rand.nextInt(terrenos.size());
-        TipoTerreno tipoSorteado = (TipoTerreno) terrenos.keySet().toArray()[numeroAleatorio];
 
-        return terrenos.get(tipoSorteado);
-    }
+
 
     public boolean tableroCorrectamenteInicializado(){
         boolean correcto = true;
@@ -111,39 +88,36 @@ public class Tablero {
         //jugador.sumarRecursos(recursos);
     }
 
-    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
-        Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
+//    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
+//        Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
+//
+//        for (Hexagono h : hexagonos) {
+//            if (h.getNumero() != numeroLanzado) continue;
+//            if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
+//            if (!h.sePuedeProducir()) continue;          // si usás ladrón
+//
+//            RecursoBase r = h.getTipo().recursoOtorgado();
+//
+//            for (Vertice v : h.getVertices()) {
+//                if (!v.tieneConstruccion()) continue;
+//
+//                int cant = v.obtenerFactorProduccion();
+//                Jugador j = v.getPropietario();
+//
+//                assert r != null;
+//                produccion
+//                        .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
+//                        .merge(r.tipo(), cant, Integer::sum);
+//            }
+//        }
+//        return produccion;
+//    }
 
-        for (Hexagono h : hexagonos) {
-            if (h.getNumero() != numeroLanzado) continue;
-            if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
-            if (!h.sePuedeProducir()) continue;          // si usás ladrón
+//    public void repartirProduccion(int numeroLanzado){
+//        Map<Jugador, EnumMap<Recurso, Integer>> bolsa = calcularProduccion(numeroLanzado);
+//        bolsa.forEach((jug, mapa) -> mapa.forEach(jug::agregarRecurso)); // (recurso,cantidad)
+//    }
 
-            RecursoBase r = h.getTipo().recursoOtorgado();
-
-            for (Vertice v : h.getVertices()) {
-                if (!v.tieneConstruccion()) continue;
-
-                int cant = v.obtenerFactorProduccion();
-                Jugador j = v.getPropietario();
-
-                assert r != null;
-                produccion
-                        .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
-                        .merge(r.tipo(), cant, Integer::sum);
-            }
-        }
-        return produccion;
-    }
-
-    public void repartirProduccion(int numeroLanzado){
-        Map<Jugador, EnumMap<Recurso, Integer>> bolsa = calcularProduccion(numeroLanzado);
-        bolsa.forEach((jug, mapa) -> mapa.forEach(jug::agregarRecurso)); // (recurso,cantidad)
-    }
-
-    public void agregarHexagono(Hexagono h) {
-        this.hexagonos.add(h);
-    }
 
     public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
 //        if (!tableroInicializado) {
@@ -168,16 +142,16 @@ public class Tablero {
     private void validarLado(ILado lado, Jugador jugador) {
         ILado.validar(lado, jugador);
     }
-    private void colocar(Camino camino, ILado lado){}
+    //private void colocar(Camino camino, ILado lado){}
 
-    public void colocarCaminoEn(ILado lado, Jugador jugador){
-
-        FabricaConstrucciones fabrica = new FabricaConstrucciones();
-        Costo costo = fabrica.costoDeCamino();
-        this.validarLado(lado, jugador);
-        jugador.pagar(costo);
-        Camino camino = fabrica.crearCamino(jugador);
-        this.colocar(camino,lado);
-    }
+//    public void colocarCaminoEn(ILado lado, Jugador jugador){
+//
+//        FabricaConstrucciones fabrica = new FabricaConstrucciones();
+//        Costo costo = fabrica.costoDeCamino();
+//        this.validarLado(lado, jugador);
+//        jugador.pagar(costo);
+//        Camino camino = fabrica.crearCamino(jugador);
+//        this.colocar(camino,lado);
+//    }
 }
 

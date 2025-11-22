@@ -21,7 +21,7 @@ public class Ciudad implements Construccion {
         return this.color;
     }
 
-    @Override
+
     public int obtenerFactorProduccion() {
         return 2;
     }

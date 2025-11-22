@@ -4,7 +4,7 @@ public class Montania extends Terreno {
 
     public Montania(){
         super();
-        tipoTerreno = TipoTerreno.MONTANIA;
+        tipoTerreno = this.getClass().getSimpleName();
         cantidadMaxima = 3;
     }
 }
