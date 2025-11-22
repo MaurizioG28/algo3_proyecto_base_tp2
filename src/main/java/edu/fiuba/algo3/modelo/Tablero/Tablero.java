@@ -5,9 +5,7 @@ import java.util.*;
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
-import edu.fiuba.algo3.modelo.Recursos.RecursoBase;
-import edu.fiuba.algo3.modelo.interfaces.*;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 
 public class Tablero {
@@ -22,45 +20,17 @@ public class Tablero {
             TipoTerreno.DESIERTO, new Desierto()
         );
 
+    boolean tableroInicializado = false;
     //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
     private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
     
     private Dados dados = new Dados();
 
-    private ArrayList<Hexagono> hexagonos = new ArrayList<>();
-    private List<Terreno> listaHexagonos;
+    private final ArrayList<Hexagono> hexagonos = new ArrayList<>();
 
     private Hexagono posicionDelLadron;
 
     public Tablero(){
-    }
-
-    public Tablero(List<Terreno> hexagonos, List<Produccion> fichasNumeradas) {
-        this.listaHexagonos = hexagonos;
-        asignarFichas(fichasNumeradas);
-    }
-
-    private void asignarFichas(List<Produccion> fichasNumeradas) {
-        for(Terreno hexagono: this.listaHexagonos){
-            if(!hexagono.esDesierto()){
-                hexagono.setProduccion(fichasNumeradas.iterator().next());
-            }
-        }
-    }
-
-    @Override
-    public boolean equals(Object object){
-        if(this.getClass() != object.getClass()){return false;}
-        return ((Tablero) object).mismosHexagonos(listaHexagonos);
-    }
-
-    private boolean mismosHexagonos(List<Terreno> hexagonos){
-        for (int i = 0; i < hexagonos.size(); i++){
-            if(!listaHexagonos.get(i).equals(hexagonos.get(i))){
-                return false;
-            }
-        }
-        return true;
     }
 
     public void setUp(){
@@ -69,6 +39,7 @@ public class Tablero {
 
             terreno.agregarTerreno(hexagonos, fichasNumeradas);
         }
+        this.tableroInicializado = true;
         this.posicionDelLadron = buscarHexagonoDesierto();
         if(this.posicionDelLadron == null){
             throw new IllegalStateException("No se encontro el Ladron");
@@ -109,20 +80,19 @@ public class Tablero {
     }
 
     public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
-//        }
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
         }
-        /*
-        construye directamente, falta implementar el chequeo de recursos del jugardor.
-        Con algo como jugador.recursosPoblado()
-        */
+
         vertice.colocarPoblado(jugador);
-        //List<Recurso> recursos = vertice.darRecursos();
-        //jugador.sumarRecursos(recursos);
+
+        // Ahora el vértice debe devolver List<TipoDeRecurso>
+        List<TipoDeRecurso> recursos = vertice.darRecursos(); // cada uno con cantidad 1
+
+        for (TipoDeRecurso r : recursos) {
+            jugador.agregarRecurso(r); // new Madera(1), new Grano(1), etc.
+        }
     }
 
     private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
@@ -133,18 +103,17 @@ public class Tablero {
             if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
             if (!h.sePuedeProducir()) continue;          // si usás ladrón
 
-            RecursoBase r = h.getTipo().recursoOtorgado();
+            Recurso r = h.getTipo().recursoOtorgado();
 
             for (Vertice v : h.getVertices()) {
                 if (!v.tieneConstruccion()) continue;
 
-                int cant = v.obtenerFactorProduccion();
+                int cant = (v.getTipoConstruccion() == TipoConstruccion.CIUDAD) ? 2 : 1;
                 Jugador j = v.getPropietario();
 
-                assert r != null;
                 produccion
                         .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
-                        .merge(r.tipo(), cant, Integer::sum);
+                        .merge(r, cant, Integer::sum);
             }
         }
         return produccion;
@@ -163,7 +132,7 @@ public class Tablero {
 //        if (!tableroInicializado) {
 //            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
 //        }
-        posicion.moverLadron();
+
         this.posicionDelLadron = posicion;
         List<Jugador> victimas = new ArrayList<>();
         for (Vertice v : posicion.getVertices()) {
@@ -178,20 +147,4 @@ public class Tablero {
         return victimas;
     }
 
-
-    private void validarLado(ILado lado, Jugador jugador) {
-        ILado.validar(lado, jugador);
-    }
-    private void colocar(Camino camino, ILado lado){}
-
-    public void colocarCaminoEn(ILado lado, Jugador jugador){
-
-        FabricaConstrucciones fabrica = new FabricaConstrucciones();
-        Costo costo = fabrica.costoDeCamino();
-        this.validarLado(lado, jugador);
-        jugador.pagar(costo);
-        Camino camino = fabrica.crearCamino(jugador);
-        this.colocar(camino,lado);
-    }
 }
-

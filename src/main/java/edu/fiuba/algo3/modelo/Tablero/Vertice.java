@@ -1,10 +1,10 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
-import edu.fiuba.algo3.modelo.*;
-import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
-import edu.fiuba.algo3.modelo.Contruccion.Construccion;
-import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Contruccion.TipoConstruccion;
+import edu.fiuba.algo3.modelo.ICelda;
+import edu.fiuba.algo3.modelo.IVertice;
+import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,11 +14,11 @@ public class Vertice implements IVertice {
 
     private Jugador propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
-    private Construccion tipo = null;
+    private TipoConstruccion tipo;
     private List<ICelda> celdasAdyacentes;
 
     public boolean tieneConstruccion() {
-        return (propietario != null || tipo != null);
+        return propietario != null;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class Vertice implements IVertice {
         return celdasAdyacentes;
     }
     @Override
-    public List<Recurso> darRecursos() {
-        List<Recurso> recursos = new LinkedList<>();
+    public List<TipoDeRecurso> darRecursos() {
+        List<TipoDeRecurso> recursos = new LinkedList<>();
         for (ICelda celda : celdasAdyacentes) {
             recursos.add(celda.darRecurso());
         }
@@ -43,29 +43,16 @@ public class Vertice implements IVertice {
 
     public void colocarPoblado(Jugador jugador) {
         this.propietario = jugador;
-        this.tipo = new Poblado(new Color("negro"));
+        this.tipo = TipoConstruccion.POBLADO;
     }
     public void mejorarACiudad() {
         if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");
-        String color =this.tipo.getColor();
-        this.tipo = new Ciudad(new Color(color));
+        this.tipo = TipoConstruccion.CIUDAD;
     }
     public Jugador getPropietario() { return propietario; }
-    public Construccion getTipoConstruccion() { return tipo; }
+    public TipoConstruccion getTipoConstruccion() { return tipo; }
 
     public void agregarAdyacente(Vertice v2) {
         this.adyacentes.add(v2);
-    }
-
-    public void colocar(Construccion pieza) throws ConstruccionExistenteException {
-        if (this.tipo != null) {
-            throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
-        }
-        this.tipo = pieza;
-
-    }
-
-    public int obtenerFactorProduccion() {
-        return this.tipo.obtenerFactorProduccion();
     }
 }
