@@ -7,7 +7,7 @@ import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recurso;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
-import edu.fiuba.algo3.modelo.Tablero.Vertice;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

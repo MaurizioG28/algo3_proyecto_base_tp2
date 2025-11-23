@@ -4,7 +4,7 @@ import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
-import edu.fiuba.algo3.modelo.Tablero.Vertice;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 
 public class ConsumoRecursos {
 

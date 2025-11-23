@@ -9,4 +9,5 @@ module edu.fiuba.algo3 {
     exports edu.fiuba.algo3.modelo.Mocks;
     exports edu.fiuba.algo3.modelo.interfaces;
     exports edu.fiuba.algo3.modelo.Contruccion;
+    exports edu.fiuba.algo3.modelo.Tablero.Factory;
 }

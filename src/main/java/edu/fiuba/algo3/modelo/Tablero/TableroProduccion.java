@@ -3,6 +3,10 @@ package edu.fiuba.algo3.modelo.Tablero;
 import edu.fiuba.algo3.modelo.Color;
 import  edu.fiuba.algo3.modelo.Contruccion.*;
 import edu.fiuba.algo3.modelo.Dividendo;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Lado;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 
 import java.util.*;
 
@@ -25,11 +29,11 @@ public class TableroProduccion {
         // 1. Crear hexágonos con coordenada FIJA
 
 
-        hexagonos.put(1,new Hexagono(TipoTerreno.COLINA, 4));
+        hexagonos.put(1,new Hexagono());
 
-        hexagonos.put(2,new Hexagono(TipoTerreno.COLINA, 8));
+        hexagonos.put(2,new Hexagono());
 
-        hexagonos.put(3,new Hexagono(TipoTerreno.CAMPO, 6));
+        hexagonos.put(3,new Hexagono());
 
         // 2. Crear vértices FIJOS
         vertices.put(new Coordenada(1,0), new Vertice());
@@ -88,7 +92,7 @@ public class TableroProduccion {
         }
     }
 
-    public Dividendo colocarPoblado(Poblado pieza, Coordenada coord) throws ReglaDistanciaException, ConstruccionExistenteException {
+    public Dividendo colocarPoblado(Construccion pieza, Coordenada coord) throws ReglaDistanciaException, ConstruccionExistenteException {
         Vertice vertice = vertices.get(coord);
         if (vertice == null) throw new IllegalArgumentException("Coordenada inválida");
 
@@ -109,11 +113,11 @@ public class TableroProduccion {
         Vertice v = vertices.get(coord);
         Dividendo d = new Dividendo(colorActual);
 
-        for (Hexagono h : hexagonos.values()) {
-            if (h.getVertices().contains(v) && h.getTipo().produceAlgo()) {
-                d.agregar(Objects.requireNonNull(h.getTipo().recursoOtorgado()));
-            }
-        }
+//        for (Hexagono h : hexagonos.values()) {
+//            if (h.getVertices().contains(v) && h.sePuedeProducir()) {
+//                d.agregar(Objects.requireNonNull(h.getTipo().recursoOtorgado()));
+//            }
+//        }
 
         return d;
     }
@@ -122,7 +126,7 @@ public class TableroProduccion {
         return (pobladosPorColor.get(color)==2);
     }
 
-    public void colocarCarretera(Carretera pieza, Coordenada coordenada) throws PosInvalidaParaConstruirException {
+    public void colocarCarretera(Construccion pieza, Coordenada coordenada) throws PosInvalidaParaConstruirException {
         Lado lado = lados.get(coordenada);
         if (lado == null) {
             throw new IllegalArgumentException("Coordenada invalida para camino");

@@ -1,10 +1,20 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.modelo.CasoDeUsoArmarTablero;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recurso;
 import edu.fiuba.algo3.modelo.Tablero.*;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
+
+import edu.fiuba.algo3.modelo.interfaces.ILado;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +41,57 @@ public class TableroTest {
 
     @Test
     public void test01InicializarTableroConHexagonosCreados() {
-        Tablero tablero = new Tablero();
-        tablero.setUp();
-        assertTrue(tablero.tableroCorrectamenteInicializado());
+
+        List<Terreno> hexagonos = Arrays.asList(
+                new Bosque(),
+                new Campo(),
+                new Bosque(),
+                new Pastizal(),
+                new Bosque(),
+                new Campo(),
+                new Montania(),
+                new Campo(),
+                new Montania(),
+                new Campo(),
+                new Colina(),
+                new Colina(),
+                new Desierto(),
+                new Colina(),
+                new Pastizal(),
+                new Montania(),
+                new Pastizal(),
+                new Bosque(),
+                new Pastizal()
+        );
+
+        List<Produccion> fichasNumeradas = new LinkedList<>(Arrays.asList(
+                new Produccion(2),
+                new Produccion(3),
+                new Produccion(3),
+                new Produccion(4),
+                new Produccion(4),
+                new Produccion(5),
+                new Produccion(5),
+                new Produccion(6),
+                new Produccion(6),
+                new Produccion(8),
+                new Produccion(8),
+                new Produccion(9),
+                new Produccion(9),
+                new Produccion(10),
+                new Produccion(10),
+                new Produccion(11),
+                new Produccion(11),
+                new Produccion(12)
+
+        ));
+
+        CasoDeUsoArmarTablero caso = new CasoDeUsoArmarTablero(hexagonos, fichasNumeradas);
+
+        var tablero = caso.crearTablero();
+        var tableroEsperado = new Tablero(hexagonos, fichasNumeradas);
+
+        assertEquals(tableroEsperado, tablero);
     }
 
     @Test
@@ -66,7 +124,7 @@ public class TableroTest {
         t.agregarHexagono(bosque9);
         t.repartirProduccion(9); // <-- ahora sí se cargan recursos en A
 
-        assertEquals(1, A.CantidadRecurso(Recurso.MADERA)); // 1 por poblado
+        assertEquals(1, A.cantidadRecurso(Recurso.MADERA)); // 1 por poblado
 
 
 
@@ -80,7 +138,7 @@ public class TableroTest {
         t.agregarHexagono(bosque9);
         t.repartirProduccion(9); // <-- ahora sí se cargan recursos en A
 
-        assertEquals(2, A.CantidadRecurso(Recurso.MADERA)); // 1 por poblado
+        assertEquals(2, A.cantidadRecurso(Recurso.MADERA)); // 1 por poblado
 
 
 
@@ -98,8 +156,8 @@ public class TableroTest {
         t.repartirProduccion(9);
         t.repartirProduccion(6);
 
-        assertEquals(cantidadMaderaEsperada, A.CantidadRecurso(Recurso.MADERA));
-        assertEquals(cantidadGranoEsperada,A.CantidadRecurso(Recurso.GRANO));
+        assertEquals(cantidadMaderaEsperada, A.cantidadRecurso(Recurso.MADERA));
+        assertEquals(cantidadGranoEsperada,A.cantidadRecurso(Recurso.GRANO));
 
 
 
@@ -115,7 +173,7 @@ public class TableroTest {
 
         Jugador actual = new Jugador();
          tablero.moverLadron(actual,bosque9);
-        assertFalse(bosque9.isBloqueadoPorLadron());
+        assertTrue(bosque9.isBloqueadoPorLadron());
     }
     @Test
     void Test07MoverladronANuevaPosicionSinVictimas(){
@@ -163,6 +221,20 @@ public class TableroTest {
 
         assertTrue(victimas.containsAll(victimasEsperadas));
 
+    }
+    //Casos de uso del test 1 2do entregable
+    @Test
+    void test10ColocarCaminoYRestoRecursos(){
+        //Arrange
+        Tablero tablero = new Tablero();
+        Jugador jugador = new Jugador();
+        jugador.agregarRecurso(Recurso.MADERA,2);
+        jugador.agregarRecurso(Recurso.LADRILLO,1);
+        ILado lado = Mockito.mock(ILado.class);
+        //Act
+        tablero.colocarCaminoEn(lado,jugador);
+        //Assert
+        assertTrue(jugador.tiene(1,0,0,0,0));
     }
 
 }
