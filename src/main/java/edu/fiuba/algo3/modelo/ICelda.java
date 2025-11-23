@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
-public interface ICelda {
-    Recurso darRecurso();
-}
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+
+//public interface ICelda {
+//    TipoDeRecurso darRecurso();
+//}

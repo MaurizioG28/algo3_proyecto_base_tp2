@@ -4,9 +4,9 @@ import edu.fiuba.algo3.modelo.Jugador;
 import java.util.List;
 
 public interface IVertice {
-    List<ICelda> obtenerCeldasAdyacentes();
+//    List<ICelda> obtenerCeldasAdyacentes();
 
-    List<Recurso> darRecursos();
+//    List<Recurso> darRecursos();
 
     boolean tieneConstruccionAdyacente();
 

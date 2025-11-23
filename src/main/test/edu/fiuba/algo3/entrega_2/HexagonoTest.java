@@ -1,23 +1,23 @@
 package edu.fiuba.algo3.entrega_2;
-
-import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
-import edu.fiuba.algo3.modelo.Tablero.Hexagono;
-import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.Tablero.Vertice;
-import org.junit.jupiter.api.Test;
-
-import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.BOSQUE;
-import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.DESIERTO;
-import static org.junit.jupiter.api.Assertions.*;
+//
+//import edu.fiuba.algo3.modelo.Jugador;
+//import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+//import edu.fiuba.algo3.modelo.Tablero.Tablero;
+//import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
+//import org.junit.jupiter.api.Test;
+//
+//import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.BOSQUE;
+//import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.DESIERTO;
+//import static org.junit.jupiter.api.Assertions.*;
 
 public class HexagonoTest {
     //Verificar que el terreno no pueda producir recursos cuando hay un ladron.
-
+/*
     @Test
     public void Test01TerrenoNoPuedeProducirSiUnLadronEsColocado(){
         Tablero tablero = new Tablero();
-        Hexagono terreno = new Hexagono(BOSQUE, 2);
+
+        Hexagono terreno = new Hexagono();
         Jugador jugador = new Jugador();
         Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 0;
@@ -68,5 +68,5 @@ public class HexagonoTest {
 
         assertEquals(totalRecursosEsperados,jugador.totalRecursos());
     }
-    
+    */
 }

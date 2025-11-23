@@ -2,7 +2,7 @@ package edu.fiuba.algo3.modelo.Contruccion;
 
 import edu.fiuba.algo3.modelo.Color;
 
-public class Poblado implements  Construccion{
+public class Poblado implements  Construccion,Productor{
     private Color  color;
     public Poblado(Color color) {
         this.color = color;

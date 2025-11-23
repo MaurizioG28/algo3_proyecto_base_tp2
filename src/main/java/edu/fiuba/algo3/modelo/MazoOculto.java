@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.*;
+import edu.fiuba.algo3.modelo.Recursos.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,12 @@ public class MazoOculto {
     }
 
     public CartaDesarrollo comprarCarta(Jugador comprador, int turno) {
-        if (!comprador.tiene(0, 0, 1, 1, 1)) {
+        if (!comprador.tiene(new Madera(0), new Ladrillo(0), new Lana(1), new Mineral(1), new Grano(1))) {
             throw new RecursosInsuficientesException("No se tienen suficientes recursos para comprar una carta.");
         }
-        comprador.removerRecurso(Recurso.LANA, 1);
-        comprador.removerRecurso(Recurso.GRANO, 1);
-        comprador.removerRecurso(Recurso.MINERAL, 1);
+        comprador.quitarRecurso(new Lana(1), 1);
+        comprador.quitarRecurso(new Grano(1), 1);
+        comprador.quitarRecurso(new Mineral(1), 1);
 
         //Agarra una carta aleatoria de todas las que podemos comprar.
 
