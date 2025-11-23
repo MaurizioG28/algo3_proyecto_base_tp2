@@ -1,18 +1,17 @@
-package edu.fiuba.algo3.modelo.Tablero;
+package edu.fiuba.algo3.modelo.Tablero.Terrenos;
+
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
 
 public class Desierto extends Terreno {
 
     public Desierto(){
         super();
-        tipoTerreno = TipoTerreno.DESIERTO;
+        tipoTerreno = this.getClass().getSimpleName();
         cantidadMaxima = 1;
         produccion = new Produccion(0);
     }
 
-    @Override
-    protected int sortearFicha(int[] fichasNumeradas){
-        return 0;
-    }
+
 
     @Override
     public boolean esDesierto(){

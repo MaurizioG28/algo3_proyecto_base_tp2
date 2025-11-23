@@ -1,8 +1,9 @@
 package edu.fiuba.algo3.modelo;
 
-import edu.fiuba.algo3.modelo.Tablero.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.Tablero.Terreno;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
 import java.util.List;
 
@@ -15,6 +16,6 @@ public class CasoDeUsoArmarTablero {
     }
 
     public Tablero crearTablero(){
-        return new Tablero(hexagonos, fichas);
+       return  TableroFactory.crear(hexagonos, fichas);
     }
 }

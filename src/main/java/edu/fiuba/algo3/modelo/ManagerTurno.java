@@ -1,11 +1,9 @@
 package edu.fiuba.algo3.modelo;
 
-import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
-import edu.fiuba.algo3.modelo.Tablero.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.Tablero.Vertice;
 
 import java.util.List;
 import java.util.Random;

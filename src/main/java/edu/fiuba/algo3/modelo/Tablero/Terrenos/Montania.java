@@ -1,10 +1,10 @@
-package edu.fiuba.algo3.modelo.Tablero;
+package edu.fiuba.algo3.modelo.Tablero.Terrenos;
 
 public class Montania extends Terreno {
 
     public Montania(){
         super();
-        tipoTerreno = TipoTerreno.MONTANIA;
+        tipoTerreno = this.getClass().getSimpleName();
         cantidadMaxima = 3;
     }
 }

@@ -1,9 +1,9 @@
 package edu.fiuba.algo3.entrega_2;
 
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Tablero.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.Tablero.Vertice;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import org.junit.jupiter.api.Test;
 
 import static edu.fiuba.algo3.modelo.Tablero.TipoTerreno.BOSQUE;
