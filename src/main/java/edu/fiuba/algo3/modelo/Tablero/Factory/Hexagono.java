@@ -1,7 +1,9 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 
+import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 import java.util.*;
 
@@ -98,7 +100,7 @@ public class Hexagono {
         return vertices.contains(v);
     }
 
-    public void producirRecurso() {
+    public void producirRecurso(TipoDeRecurso recurso) {
         if (sePuedeProducir()) {
             List<Jugador> jugadoresLocales = new ArrayList<>();
             for (Vertice v : vertices) {
@@ -107,7 +109,9 @@ public class Hexagono {
                 if (propietario == null) continue;
                 if (!jugadoresLocales.contains(propietario)) {
                     jugadoresLocales.forEach(jugador -> {
-                        jugador.agregarRecurso();
+                        for (int i = 0; i <= v.factorProduccion() - 1; i++) {
+                            jugador.agregarRecurso(recurso);
+                        }
                     });
                 }
             }

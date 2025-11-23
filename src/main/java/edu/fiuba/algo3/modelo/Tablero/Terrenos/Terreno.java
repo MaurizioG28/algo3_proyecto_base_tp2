@@ -83,7 +83,7 @@ public abstract class Terreno {
     }
 
     public void producirRecurso() {
-        hexagono.producirRecurso();
+        hexagono.producirRecurso(recursoOtorgado(1));
     }
 
     public Axial getPosicion() {
