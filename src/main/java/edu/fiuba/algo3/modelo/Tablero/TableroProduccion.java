@@ -78,7 +78,7 @@ public class TableroProduccion {
     private void conectarHexagonosVertices(int indiceHexagono) {
 
         for (int i = 0 ; i < 6 ; i++) {
-            hexagonos.get(indiceHexagono).agregarVertice(vertices.get(new Coordenada(indiceHexagono, i)));
+            //hexagonos.get(indiceHexagono).agregarVertice(vertices.get(new Coordenada(indiceHexagono, i)));
         }
 
     }

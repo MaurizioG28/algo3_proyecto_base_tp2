@@ -7,17 +7,69 @@ import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
 import edu.fiuba.algo3.modelo.Recursos.Ladrillo;
+import edu.fiuba.algo3.modelo.Recursos.Madera;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CasoDeUsoColocacionInicialTest {
 
+    List<Terreno> hexagonos = Arrays.asList(
+            new Bosque(),
+            new Campo(),
+            new Bosque(),
+            new Pastizal(),
+            new Bosque(),
+            new Campo(),
+            new Montania(),
+            new Campo(),
+            new Montania(),
+            new Campo(),
+            new Colina(),
+            new Colina(),
+            new Desierto(),
+            new Colina(),
+            new Pastizal(),
+            new Montania(),
+            new Pastizal(),
+            new Bosque(),
+            new Pastizal()
+    );
+
+    List<Produccion> fichasNumeradas = new LinkedList<>(Arrays.asList(
+            new Produccion(2),
+            new Produccion(3),
+            new Produccion(3),
+            new Produccion(4),
+            new Produccion(4),
+            new Produccion(5),
+            new Produccion(5),
+            new Produccion(6),
+            new Produccion(6),
+            new Produccion(8),
+            new Produccion(8),
+            new Produccion(9),
+            new Produccion(9),
+            new Produccion(10),
+            new Produccion(10),
+            new Produccion(11),
+            new Produccion(11),
+            new Produccion(12)
+
+    ));
+
     @Test
     public void test01CasoDeUsoColocacionInicialDePoblados() throws ReglaDistanciaException, ConstruccionExistenteException {
-        var unTablero = new TableroProduccion();
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
@@ -26,8 +78,8 @@ public class CasoDeUsoColocacionInicialTest {
 
        Dividendo dividendosEsperadoes = new Dividendo(
                 new Color("Azul" ),
-                new Grano(1),
-                new Ladrillo(2)
+                new Madera(1),
+                new Grano(1)
         );
 
         assertEquals( dividendosEsperadoes, dividendo);
@@ -36,7 +88,8 @@ public class CasoDeUsoColocacionInicialTest {
 
     @Test
     public void test02CasoDeUsoColocacionInicialDePobladosValidandoLaReglaDelaDistancia(){
-        var unTablero = new TableroProduccion();
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
@@ -52,13 +105,16 @@ public class CasoDeUsoColocacionInicialTest {
 
     @Test
     public void test03CasoDeUsoColocacionInicialDeCaminos(){
-        var unTablero = new TableroProduccion();
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
         try {
-            caso.colocarCarretera( new Carretera( new Color("Azul")), new Coordenada(2,3));
-        } catch (PosInvalidaParaConstruirException e) {
+            caso.colocarEn( new Carretera( new Color("Azul")), new Coordenada(2,3));
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        } catch (ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
         Coordenada caminoEsperadoEn = new Coordenada(2,3);

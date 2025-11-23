@@ -4,6 +4,7 @@ import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
+import edu.fiuba.algo3.modelo.Contruccion.Productor;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 
 import java.util.ArrayList;
@@ -53,8 +54,18 @@ public class Vertice implements IVertice {
     public Jugador getPropietario() { return propietario; }
     public Construccion getTipoConstruccion() { return tipo; }
 
-    public void agregarAdyacente(Vertice v2) {
-        this.adyacentes.add(v2);
+    public void agregarAdyacente(Vertice vertice) {
+        if (vertice == this) return; // No auto-adyacencia
+        if (adyacentes.contains(vertice)) return; // Ya existe
+        if (adyacentes.size() >= 3) {
+            throw new IllegalStateException("Vértice no puede tener más de 3 adyacentes");
+        }
+
+        adyacentes.add(vertice);
+        // Conexión bidireccional OPcional - si la quitas, quita esta parte
+        if (!vertice.esVerticeAdyacente(this)) {
+            vertice.agregarAdyacente(this);
+        }
     }
 
     public boolean esVerticeAdyacente(Vertice otroVertice){
@@ -67,6 +78,13 @@ public class Vertice implements IVertice {
         }
         this.tipo = pieza;
 
+    }
+
+    public Integer factorProduccion() {
+        if (tipo instanceof Productor) {
+            return ((Productor) tipo).obtenerFactorProduccion();
+        }
+        return 0;
     }
 
 //    public int obtenerFactorProduccion() {
