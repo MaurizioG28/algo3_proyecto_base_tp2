@@ -36,6 +36,13 @@ public class Jugador {
     public void agregarRecurso(TipoDeRecurso recurso) {
         almacenJugador.agregarRecurso(recurso);
     }
+    public void agregarCarta(CartaDesarrollo cartaNueva) {
+        cartas.agregarCarta(cartaNueva);
+    }
+
+    public CartaDesarrollo agarrarCarta(int indice) {
+        return cartas.agarrarCarta(indice);
+    }
 
     public void quitarRecurso(TipoDeRecurso tipo, int cantidad) {
         if (!almacenJugador.quitar(tipo, cantidad)) {

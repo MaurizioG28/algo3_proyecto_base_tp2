@@ -19,12 +19,9 @@ public class Tablero {
 
     private final Map<Integer, Terreno> terrenos;
 
-    //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
-    //private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
-    
     private Dados dados = new Dados();
 
-    //private ArrayList<Hexagono> hexagonos = new ArrayList<>();
+
     private final Map<Coordenada, Vertice> vertices;
     Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
