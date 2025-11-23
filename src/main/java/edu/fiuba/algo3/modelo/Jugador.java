@@ -79,4 +79,22 @@ public class Jugador {
         return cartas.cantidadDeTipo(PuntoDeVictoria.class);
     }
 
+    public void intercambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, Jugador jugador2, TipoDeRecurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
+        if(!jugador2.cambiar(recursoRecibir, cantidadRecibir, recursoEntregar, cantidadEntregar)){
+            throw new RecursosIsuficientesException("El segundo jugador no tiene suficientes recursos.");
+        }
+        if(!this.cambiar(recursoEntregar, cantidadEntregar, recursoRecibir, cantidadRecibir)){
+            jugador2.cambiar(recursoEntregar, cantidadEntregar, recursoRecibir, cantidadRecibir);
+            throw new RecursosIsuficientesException("El primer jugador no tiene suficientes recursos.");
+        };
+    }
+
+    public boolean cambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, TipoDeRecurso recursoRecibir, int cantidadRecibir) {
+        if(!this.almacenJugador.quitar(recursoEntregar,cantidadEntregar)) {
+            return false;
+        }
+        this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
+        return true;
+    }
+
 }
