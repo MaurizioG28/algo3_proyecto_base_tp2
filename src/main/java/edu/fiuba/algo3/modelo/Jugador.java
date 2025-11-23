@@ -2,7 +2,7 @@ package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
-import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Tablero.Costo;
 
 import java.util.Map;
@@ -22,20 +22,22 @@ public class Jugador {
         this.almacenJugador = new AlmacenDeRecursos();
         this.color = color;
     }
-    public int cantidadRecurso(Recurso recurso) {
-        return this.almacenJugador.cantidadDe(recurso);
+    public int cantidadRecurso(TipoDeRecurso tipo) {
+        return this.almacenJugador.cantidadDe(tipo);
     }
 
-    public Map<Recurso, Integer> descartarMitadDeRecursos() {
+    public Map<TipoDeRecurso, Integer> descartarMitadDeRecursos() {
         return this.almacenJugador.descartarPorReglaDelSiete();
     }
 
-    public void agregarRecurso(Recurso recurso, int cantidadRecurso){
-        this.almacenJugador.agregarRecurso(recurso,cantidadRecurso);
+    public void agregarRecurso(TipoDeRecurso recurso){
+        this.almacenJugador.agregarRecurso(recurso);
     }
 
-    public void removerRecurso(Recurso recurso, int cantidadRecurso){
-        this.almacenJugador.removerRecurso(recurso, cantidadRecurso);
+    public void quitarRecurso(TipoDeRecurso tipo, int cantidad) {
+        if (!almacenJugador.quitar(tipo, cantidad)) {
+            throw new IllegalStateException("El jugador no tiene suficientes " + tipo.nombre());
+        }
     }
 
     public int totalRecursos() {
@@ -59,6 +61,7 @@ public class Jugador {
 
     public CartaDesarrollo agarrarCarta(int indice) {
         return mazoCartas.agarrarCarta(indice);
+    }
     public Construccion comprarPoblado() {
         return almacenJugador.comprarPoblado(color);
     }
@@ -84,17 +87,14 @@ public class Jugador {
         this.almacenJugador.agregarRecurso(recursoRecibir, cantidadRecibir);
         return true;
     }
-    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
-
-        Map<Recurso, Integer> requeridos = Map.of(
-                Recurso.MADERA, madera,
-                Recurso.LADRILLO, ladrillo,
-                Recurso.LANA, lana,
-                Recurso.GRANO, grano,
-                Recurso.MINERAL, mineral
+    public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
+        return (
+                (madera.obtenerCantidad() >= cantidadRecurso(madera)) &
+                        (ladrillos.obtenerCantidad() >= cantidadRecurso(ladrillos)) &
+                        (lana.obtenerCantidad() >= cantidadRecurso(lana)) &
+                        (mineral.obtenerCantidad() >= cantidadRecurso(mineral)) &
+                        (grano.obtenerCantidad() >= cantidadRecurso(grano))
         );
-
-        return almacenJugador.tiene(requeridos);
     }
 
     public void sumarRecursos(List<Recurso> recursos) {
