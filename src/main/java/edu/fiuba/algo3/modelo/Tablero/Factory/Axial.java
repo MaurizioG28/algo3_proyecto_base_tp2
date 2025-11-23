@@ -11,10 +11,7 @@ public class Axial {
     }
 
     public Cubic toCubic() {
-        int x = q;
-        int z = r;
-        int y = -x - z;
-        return new Cubic(x, y, z);
+        return new Cubic(q, r, -q - r);
     }
     @Override
     public boolean equals(Object o) {
@@ -32,5 +29,9 @@ public class Axial {
     @Override
     public String toString() {
         return "Axial(" + q + "," + r + ")";
+    }
+
+    public Axial add(Axial neighborOffset) {
+        return new Axial(q + neighborOffset.q, r + neighborOffset.r);
     }
 }

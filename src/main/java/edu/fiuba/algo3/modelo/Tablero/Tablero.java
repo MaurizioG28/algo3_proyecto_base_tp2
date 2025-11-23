@@ -1,7 +1,11 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 
@@ -23,6 +27,7 @@ public class Tablero {
     //private ArrayList<Hexagono> hexagonos = new ArrayList<>();
     private final Map<Coordenada, Vertice> vertices;
     Map<Coordenada, Lado> lados;
+    private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
 
     private Hexagono posicionDelLadron;
 
@@ -51,24 +56,28 @@ public class Tablero {
 
   
     public int tirarDados(){
-        return dados.tirar();
-    }
+        int numeroDados = dados.tirar();
 
-
-
-
-
-    public boolean tableroCorrectamenteInicializado(){
-        boolean correcto = true;
-        Collection<Terreno> todosTerrenos = terrenos.values();
-        for (Terreno terreno : todosTerrenos) {
-            if (!terreno.todosColocados()) {
-                correcto = false;
+        terrenos.forEach((indice, terreno) -> {
+            if (terreno.mismaProduccion(new Produccion(numeroDados))) {
+                terreno.producirRecurso();
             }
-        }
+        });
 
-        return correcto;
+        return numeroDados;
     }
+
+//    public boolean tableroCorrectamenteInicializado(){
+//        boolean correcto = true;
+//        Collection<Terreno> todosTerrenos = terrenos.values();
+//        for (Terreno terreno : todosTerrenos) {
+//            if (!terreno.todosColocados()) {
+//                correcto = false;
+//            }
+//        }
+//
+//        return correcto;
+//    }
 
     public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
 //        if (!tableroInicializado) {
@@ -138,19 +147,57 @@ public class Tablero {
     }
 
 
-    private void validarLado(ILado lado, Jugador jugador) {
-        ILado.validar(lado, jugador);
-    }
-    //private void colocar(Camino camino, ILado lado){}
-
-//    public void colocarCaminoEn(ILado lado, Jugador jugador){
-//
-//        FabricaConstrucciones fabrica = new FabricaConstrucciones();
-//        Costo costo = fabrica.costoDeCamino();
-//        this.validarLado(lado, jugador);
-//        jugador.pagar(costo);
-//        Camino camino = fabrica.crearCamino(jugador);
-//        this.colocar(camino,lado);
+//    private void validarLado(ILado lado, Jugador jugador) {
+//        ILado.validar(lado, jugador);
 //    }
+
+    public Dividendo colocarEnVertice(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException, ReglaDistanciaException {
+        Vertice verticeObjetivo = vertices.get(coordenada);
+        Color colorActual = pieza.getColorActual();
+
+        if (verticeObjetivo.tieneConstruccionAdyacente())
+            throw new ReglaDistanciaException("No se puede colocar el poblado por la regla de distancia");
+
+        verticeObjetivo.colocar(pieza);
+        pobladosColocadosPorColor.put(colorActual, pobladosColocadosPorColor.getOrDefault(colorActual, 0) + 1);
+        List<Terreno> terrenosAdyacentes = terrenos.values().stream()
+                .filter(t -> t.tieneVertice(verticeObjetivo))
+                .collect(Collectors.toList());
+
+        if ( esSegundoPoblado(pieza.getColorActual()))
+            return calcularDividendosIniciales(coordenada,colorActual);
+
+        return Dividendo.vacio();
+    }
+
+    private boolean esSegundoPoblado(Color color) {
+        return (pobladosColocadosPorColor.get(color)==2);
+    }
+
+    private Dividendo calcularDividendosIniciales(Coordenada coord, Color colorActual) {
+        Vertice v = vertices.get(coord);
+        Dividendo d = new Dividendo(colorActual);
+
+        for (Terreno terrenoActual : terrenos.values()) {
+            if (terrenoActual.tieneVertice(v) && terrenoActual.sePuedeProducir()) {
+                int cantidad = v.factorProduccion();
+                d.agregar(Objects.requireNonNull(terrenoActual.recursoOtorgado(cantidad)));
+            }
+        }
+
+        return d;
+    }
+
+    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) {
+
+        Lado l = lados.get(coordenada);
+        l.colocar(pieza);
+        return null;
+    }
+
+    public boolean tieneCarreteraEn(Coordenada caminoEsperadoEn) {
+        Lado l = lados.get(caminoEsperadoEn);
+        return l.tieneConstruccion();
+    }
 }
 

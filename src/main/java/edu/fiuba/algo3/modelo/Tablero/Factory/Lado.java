@@ -5,6 +5,8 @@ import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Jugador;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Lado {
     private Jugador propietario;
@@ -16,6 +18,7 @@ public class Lado {
     }
 
     public void colocar(Construccion pieza) {
+
         this.construccion = pieza;
     }
 
@@ -42,5 +45,16 @@ public class Lado {
 
     public boolean esLadoAdyacente(Lado l1) {
         return adyacentes.contains(l1);
+    }
+    public List<Vertice> getPuntas() {
+        return Collections.unmodifiableList(puntas);
+    }
+
+    public boolean tienePunta(Vertice a) {
+        return puntas.contains(a);
+    }
+
+    public Vertice getPunta(int i) {
+        return puntas.get(i);
     }
 }

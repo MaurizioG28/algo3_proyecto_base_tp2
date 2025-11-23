@@ -3,28 +3,31 @@ package edu.fiuba.algo3.modelo.CasosDeUso;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
+import edu.fiuba.algo3.modelo.Contruccion.Productor;
 import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 
 public class ColocacionInicial {
-    private TableroProduccion tablero;
-    public ColocacionInicial(TableroProduccion unTablero) {
+    private Tablero tablero;
+    public ColocacionInicial(Tablero unTablero) {
 
         this.tablero = unTablero;
     }
 
-    public Dividendo colocarEn(Construccion poblado, Coordenada coordenada) throws ReglaDistanciaException, ConstruccionExistenteException {
+    public Dividendo colocarEn(Construccion pieza, Coordenada coordenada) throws ReglaDistanciaException, ConstruccionExistenteException {
 
-            return tablero.colocarPoblado(poblado, coordenada);
+        if (pieza instanceof Productor) { // Poblado o Ciudad
+            return tablero.colocarEnVertice(pieza, coordenada);
+        } else { // Carretera
+            return tablero.colocarEnLado(pieza, coordenada);
+        }
 
 
     }
 
 
-    public void colocarCarretera(Construccion azul, Coordenada coordenada) throws PosInvalidaParaConstruirException {
-        tablero.colocarCarretera(azul, coordenada);
-    }
+
 
     public boolean tineCarreteraEn(Coordenada caminoEsperadoEn) {
         return tablero.tieneCarreteraEn(caminoEsperadoEn);

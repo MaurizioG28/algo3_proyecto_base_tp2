@@ -1,8 +1,7 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
-import edu.fiuba.algo3.modelo.Contruccion.Contruccion;
-import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
-import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
+
+import edu.fiuba.algo3.modelo.Jugador;
 
 import java.util.*;
 
@@ -13,6 +12,7 @@ public class Hexagono {
 
     private boolean bloqueadoPorLadron = false;
     private final List<Vertice> vertices = new ArrayList<>(6);
+    //private final Vertice[] vertices = new Vertice[6];
     private final List<Lado> lados = new ArrayList<>(6);
 
     public Hexagono() {
@@ -30,15 +30,13 @@ public class Hexagono {
     public boolean sePuedeProducir() {
         return (!bloqueadoPorLadron);
     }
-    public boolean isBloqueadoPorLadron() {
-        return (bloqueadoPorLadron);
-    }
+
     //public Terreno  getTipo() { return tipo; }
 
 
-    public List<Vertice> getVertices() { return vertices; }
+    public List<Vertice> getVertices() { return (vertices); }
 
-    public void agregarVertice(Vertice v) { this.vertices.add(v); }
+    public void agregarVertice( Vertice v) { vertices.add(v) ; }
     public void agregarLado(Lado lado) {
         if (lados.size() < 6) {
             lados.add(lado);
@@ -75,8 +73,12 @@ public class Hexagono {
             Vertice v1 = vertices.get(i);
             Vertice v2 = vertices.get((i + 1) % 6);
 
-            // Calcular coordenada única para el lado
-            Cubic ladoCoord = centro.add(Lado_OFFSETS[i]);
+            Cubic vOffset1 = Lado_OFFSETS[i];
+
+
+            Cubic ladoCoord = centro
+                    .add(vOffset1);
+
 
             // Crear o obtener lado existente
             Lado lado = ladosUnicos.computeIfAbsent(ladoCoord, k -> {
@@ -89,6 +91,26 @@ public class Hexagono {
             this.agregarLado(lado);
 
             ladosPorCoordenada.put(new Coordenada(id, i), lado);
+        }
+    }
+
+    public boolean tieneVertice(Vertice v) {
+        return vertices.contains(v);
+    }
+
+    public void producirRecurso() {
+        if (sePuedeProducir()) {
+            List<Jugador> jugadoresLocales = new ArrayList<>();
+            for (Vertice v : vertices) {
+                if (!v.tieneConstruccion()) continue;
+                Jugador propietario = v.getPropietario();
+                if (propietario == null) continue;
+                if (!jugadoresLocales.contains(propietario)) {
+                    jugadoresLocales.forEach(jugador -> {
+                        jugador.agregarRecurso();
+                    });
+                }
+            }
         }
     }
 

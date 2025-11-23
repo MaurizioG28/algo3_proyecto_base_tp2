@@ -71,4 +71,10 @@ public class ManagerTurno {
 
     }
 
+    public void tirarDados() {
+        tablero.tirarDados();
+
+
+    }
+
 }

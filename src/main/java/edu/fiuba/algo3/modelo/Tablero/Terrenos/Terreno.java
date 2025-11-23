@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.modelo.Tablero.Terrenos;
 
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -8,8 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 public abstract class Terreno {
-    protected int cantidadMaxima;
-    protected int cantidadColocada = 0;
+
     protected String tipoTerreno;
     protected Produccion produccion;
     protected Hexagono hexagono;
@@ -20,22 +20,7 @@ public abstract class Terreno {
     public String getTipoTerreno(){
         return this.getClass().getSimpleName();
     }
-
-    public boolean esCantidadMaxima(int cantidadMaxima) {
-        return  this.cantidadMaxima == cantidadMaxima;
-    }
-
-    public boolean esCantidadColocada(int cantidadColocada) {
-        return  this.cantidadColocada == cantidadColocada;
-    }
-
-    public boolean esTipoTerreno(Terreno tipoTerreno) {
-        return  this == tipoTerreno;
-    }
-
-    public boolean todosColocados(){
-        return cantidadColocada == cantidadMaxima;
-    }
+    public abstract TipoDeRecurso recursoOtorgado(Integer cantidad);
 
 
 
@@ -87,5 +72,25 @@ public abstract class Terreno {
     public void crearLados(Map<Cubic, Lado> ladosUnicos, Map<Coordenada, Lado> ladosPorCoordenada, Cubic[] Lado_OFFSETS) {
 
         hexagono.crearLados(ladosUnicos, ladosPorCoordenada, posicion, id, Lado_OFFSETS);
+    }
+
+    public boolean tieneVertice(Vertice v) {
+        return hexagono.tieneVertice(v);
+    }
+
+    public boolean sePuedeProducir() {
+        return hexagono.sePuedeProducir();
+    }
+
+    public void producirRecurso() {
+        hexagono.producirRecurso();
+    }
+
+    public Axial getPosicion() {
+        return this.posicion;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

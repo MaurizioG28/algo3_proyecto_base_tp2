@@ -16,7 +16,7 @@ public class HexagonoTest {
     @Test
     public void Test01TerrenoNoPuedeProducirSiUnLadronEsColocado(){
         Tablero tablero = new Tablero();
-        Hexagono terreno = new Hexagono(BOSQUE, 2);
+        Hexagono terreno = new Hexagono();
         Jugador jugador = new Jugador();
         Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 0;
