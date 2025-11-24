@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.Madera;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
@@ -19,7 +20,7 @@ public class CasoDeUsoLadronEnTerrenoTest {
     public void Test01TerrenoNoPuedeProducirSiUnLadronEsColocado(){
         Terreno terreno = new Bosque();
         Hexagono hexagono = new Hexagono();
-        Jugador jugador = new Jugador();
+        Jugador jugador = new Jugador("nombre1",new Color("Azul"));
         Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 0;
 
@@ -38,7 +39,7 @@ public class CasoDeUsoLadronEnTerrenoTest {
     public void Test02TerrenoDeberiaProducirNormalmenteSiNoTieneUnLadronBloqueando(){
         Terreno terreno = new Bosque();
         Hexagono hexagono = new Hexagono();
-        Jugador jugador = new Jugador();
+        Jugador jugador = new Jugador("nombre1",new Color("Azul"));
         Vertice vertice = new Vertice();
         int totalRecursosEsperados = 1;
 
@@ -56,7 +57,7 @@ public class CasoDeUsoLadronEnTerrenoTest {
     public void Test03TerrenoDeserticoNoDeberiaProducirRecursosBajoNingunaCircustancia(){
         Terreno terreno = new Desierto();
         Hexagono hexagono = new Hexagono();
-        Jugador jugador = new Jugador();
+        Jugador jugador = new Jugador("nombre1",new Color("Azul"));
         Vertice vertice = new Vertice();
         Integer totalRecursosEsperados = 0;
 

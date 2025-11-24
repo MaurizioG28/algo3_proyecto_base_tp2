@@ -30,7 +30,7 @@ public class ServicioComercio {
 
         int cantidadRecibida = cantidadEntregada / tasa;
 
-        if (jugador.CantidadRecurso(recursoEntregado) < cantidadEntregada) {
+        if (jugador.cantidadRecurso(recursoEntregado) < cantidadEntregada) {
             throw new IntercambioInvalidoException(
                     "El jugador no tiene suficientes " + recursoEntregado);
         }
@@ -70,7 +70,7 @@ public class ServicioComercio {
     // Método auxiliar para no repetir lógica de cobro
     private void procesarPago(Jugador jugador, List<TipoDeRecurso> costo) throws RecursosInsuficientesException {
         for (TipoDeRecurso r : costo) {
-            if (jugador.CantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
+            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
                 throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
             }
         }

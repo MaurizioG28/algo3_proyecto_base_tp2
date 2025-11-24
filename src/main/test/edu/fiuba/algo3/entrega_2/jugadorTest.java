@@ -24,9 +24,9 @@ public class jugadorTest {
 
         ladron.robarRecurso(victima);
 
-        assertEquals(1, ladron.CantidadRecurso(new Madera(0)));
+        assertEquals(1, ladron.cantidadRecurso(new Madera(0)));
 
-        assertEquals(0, victima.CantidadRecurso(new Madera(0)));
+        assertEquals(0, victima.cantidadRecurso(new Madera(0)));
     }
 
     @Test
@@ -49,9 +49,9 @@ public class jugadorTest {
         jugador.agregarRecurso(new Madera(2));
         jugador.agregarRecurso(new Grano(1));
 
-        assertEquals(2, jugador.CantidadRecurso(new Madera(0)));
-        assertEquals(1, jugador.CantidadRecurso(new Grano(0)));
-        assertEquals(0, jugador.CantidadRecurso(new Ladrillo(0))); // No tiene ladrillo
+        assertEquals(2, jugador.cantidadRecurso(new Madera(0)));
+        assertEquals(1, jugador.cantidadRecurso(new Grano(0)));
+        assertEquals(0, jugador.cantidadRecurso(new Ladrillo(0))); // No tiene ladrillo
     }
 
 

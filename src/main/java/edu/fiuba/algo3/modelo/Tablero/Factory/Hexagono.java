@@ -1,6 +1,8 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 
+import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
 import java.util.*;
@@ -103,6 +105,20 @@ public class Hexagono {
 
         for (Vertice v : vertices) {
             v.cosechar(terrenoOrigen); // Delega al vértice
+        }
+    }
+
+    public void producirRecurso(TipoDeRecurso recurso) {
+        if (sePuedeProducir()) {
+            List<Jugador> jugadoresLocales = new ArrayList<>();
+            for (Vertice v : vertices) {
+                if (!v.tieneConstruccion()) continue;
+                Jugador propietario = v.getPropietario();
+                if (propietario == null) continue;
+                for (int i = 0; i <= v.factorProduccion() - 1; i++) {
+                    propietario.agregarRecurso(recurso);
+                }
+            }
         }
     }
 }

@@ -19,8 +19,8 @@ public class casoDeUsoRoboRecursos {
 
         ladron.robarRecurso(victima);
 
-        assertEquals(1, ladron.CantidadRecurso(madera));
-        assertEquals(0, victima.CantidadRecurso(madera));
+        assertEquals(1, ladron.cantidadRecurso(madera));
+        assertEquals(0, victima.cantidadRecurso(madera));
     }
 
     @Test
