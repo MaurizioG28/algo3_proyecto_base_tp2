@@ -33,6 +33,6 @@ public class CasoDeUsoLadron {
     }
 
     public int verificarRecursoRobado(TipoDeRecurso tipoDeRecurso) {
-        return jugador.CantidadRecurso(tipoDeRecurso);
+        return jugador.cantidadRecurso(tipoDeRecurso);
     }
 }

@@ -46,7 +46,7 @@ public class Vertice implements IVertice {
 
     public void colocarPoblado(Jugador jugador) {
         this.propietario = jugador;
-        this.tipo = new Poblado(jugador.obtenerColor());
+        this.tipo = new Poblado(jugador.getColor());
     }
     public void mejorarACiudad() {
         if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");

@@ -112,9 +112,7 @@ public class CasoDeUsoColocacionInicialTest {
 
         try {
             caso.colocarEn( new Carretera( new Color("Azul")), new Coordenada(2,3));
-        } catch (ConstruccionExistenteException e) {
-            throw new RuntimeException(e);
-        } catch (ReglaDistanciaException e) {
+        } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
         Coordenada caminoEsperadoEn = new Coordenada(2,3);

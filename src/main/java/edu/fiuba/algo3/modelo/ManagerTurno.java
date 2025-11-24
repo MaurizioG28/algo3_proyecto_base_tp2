@@ -85,7 +85,7 @@ public class ManagerTurno {
         }
     }
 
-    public void moverLadron(Hexagono posicion){
+    public void moverLadron(Integer posicion){
         Jugador jugadorActual = getJugadorActual();
         List<Color> coloresDeVictimas= tablero.moverLadron(jugadorActual, posicion);
         List<Jugador> victimas =
@@ -104,7 +104,7 @@ public class ManagerTurno {
 
     private Jugador getJugadorPorColor(Color color) {
         return jugadores.stream()
-                .filter(jugador -> jugador.obtenerColor().equals(color) )
+                .filter(jugador -> jugador.getColor().equals(color) )
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró un jugador con el color especificado: " + color));
     }

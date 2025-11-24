@@ -57,7 +57,7 @@ public class CasoDeUsoMoverLadron {
 
         Tablero tablero = new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
 
-        Jugador actual = new Jugador(new Color("Rojo"));
+        Jugador actual = new Jugador("rojo",new Color("Rojo"));
         CasoDeUsoLadron caso = new CasoDeUsoLadron(tablero,actual);
 
         caso.moverLadron(actual,1);
@@ -93,7 +93,7 @@ public class CasoDeUsoMoverLadron {
         terrenoDesierto.agregarVertices(verticesPorCoordenada);
         Tablero tablero = new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
 
-        Jugador actual = new Jugador(new Color("Rojo"));
+        Jugador actual = new Jugador("rojo",new Color("Rojo"));
         CasoDeUsoLadron caso = new CasoDeUsoLadron(tablero,actual);
 
         List<Color> victimas= caso.moverLadron(actual,1);
@@ -130,16 +130,16 @@ public class CasoDeUsoMoverLadron {
         terrenoDesierto.agregarVertices(verticesPorCoordenada);
         Tablero tablero = new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
 
-        Jugador actual = new Jugador(new Color("Rojo"));
-        Jugador victima1 = new Jugador(new Color("Azul"));
+        Jugador actual = new Jugador("rojo",new Color("Rojo"));
+        Jugador victima1 = new Jugador("azul",new Color("Azul"));
         CasoDeUsoLadron caso = new CasoDeUsoLadron(tablero,actual);
         try {
-            caso.colocarVictima(victima1.obtenerColor(),new Coordenada(1,0));
+            caso.colocarVictima(victima1.getColor(),new Coordenada(1,0));
         } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
         List<Color> victimas= caso.moverLadron(actual,1);
-        Color victima = victima1.obtenerColor();
+        Color victima = victima1.getColor();
         assertEquals(1, victimas.size());
         assertTrue(victimas.contains(victima));
 
@@ -175,25 +175,25 @@ public class CasoDeUsoMoverLadron {
         terrenoDesierto.agregarVertices(verticesPorCoordenada);
         Tablero tablero = new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
 
-        Jugador actual = new Jugador(new Color("Rojo"));
-        Jugador victima1 = new Jugador(new Color("Azul"));
-        Jugador victima2 = new Jugador(new Color("Verde"));
+        Jugador actual = new Jugador("rojo",new Color("Rojo"));
+        Jugador victima1 = new Jugador("azul",new Color("Azul"));
+        Jugador victima2 = new Jugador("verde",new Color("Verde"));
         CasoDeUsoLadron caso = new CasoDeUsoLadron(tablero,actual);
         try {
-            caso.colocarVictima(victima1.obtenerColor(),new Coordenada(1,0));
+            caso.colocarVictima(victima1.getColor(),new Coordenada(1,0));
         } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
 
         try {
-            caso.colocarVictima(victima2.obtenerColor(),new Coordenada(1,3));
+            caso.colocarVictima(victima2.getColor(),new Coordenada(1,3));
         } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
 
 
         List<Color> victimas= caso.moverLadron(actual,1);
-        List<Color> victimasEsperadas = List.of(victima1.obtenerColor(), victima2.obtenerColor());
+        List<Color> victimasEsperadas = List.of(victima1.getColor(), victima2.getColor());
 
         assertEquals(2, victimas.size());
 
@@ -230,11 +230,11 @@ public class CasoDeUsoMoverLadron {
         terrenoDesierto.agregarVertices(verticesPorCoordenada);
         Tablero tablero = new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
 
-        Jugador actual = new Jugador(new Color("Rojo"));
-        Jugador victima1 = new Jugador(new Color("Azul"));
+        Jugador actual = new Jugador("rojo",new Color("Rojo"));
+        Jugador victima1 = new Jugador("azul",new Color("Azul"));
         CasoDeUsoLadron caso = new CasoDeUsoLadron(tablero,actual);
         try {
-            caso.colocarVictima(victima1.obtenerColor(),new Coordenada(1,0));
+            caso.colocarVictima(victima1.getColor(),new Coordenada(1,0));
         } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
             throw new RuntimeException(e);
         }
@@ -243,7 +243,7 @@ public class CasoDeUsoMoverLadron {
 
         List<Color> victimas= caso.moverLadron(actual,1);
         Assertions.assertEquals(1, victimas.size());
-        Assertions.assertEquals(victima1.obtenerColor(), victimas.get(0));
+        Assertions.assertEquals(victima1.getColor(), victimas.get(0));
 
         boolean roboExitoso = caso.robarRecursoDeVictima(victima1);
         Assertions.assertTrue(roboExitoso);

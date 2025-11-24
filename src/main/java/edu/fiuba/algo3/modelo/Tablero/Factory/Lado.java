@@ -19,7 +19,7 @@ public class Lado {
     }
 
     public void colocar(Construccion pieza) throws ConstruccionExistenteException {
-        if (pieza != null) {
+        if (construccion != null) {
             throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
         }
         this.construccion = pieza;
