@@ -95,6 +95,10 @@ public abstract class Terreno {
         return hexagono.sePuedeProducir();
     }
 
+    public void producirRecurso() {
+        hexagono.producirRecurso(recursoOtorgado(1));
+    }
+
     public Axial getPosicion() {
         return this.posicion;
     }

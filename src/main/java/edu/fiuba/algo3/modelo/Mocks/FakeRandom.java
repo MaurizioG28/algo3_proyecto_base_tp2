@@ -10,7 +10,7 @@ public class FakeRandom extends Random {
         this.numero = numeroElegido;
     }
 
-    public int nextInt() {
+    public int nextInt(int numeroElegido) {
         return numero;
     }
 }

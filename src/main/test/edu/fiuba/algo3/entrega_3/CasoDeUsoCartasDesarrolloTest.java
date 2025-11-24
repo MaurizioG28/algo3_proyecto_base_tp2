@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.entrega_3;
 
 import edu.fiuba.algo3.modelo.*;
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Mocks.FakeRandom;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
 import edu.fiuba.algo3.modelo.Recursos.Lana;
@@ -102,7 +103,9 @@ public class CasoDeUsoCartasDesarrolloTest {
         comprador.agregarRecurso(new Grano(1));
         comprador.agregarRecurso(new Mineral(1));
 
-        servicio.comprarCarta(comprador, 0);
+        CartaDesarrollo cartaNueva = servicio.comprarCarta(comprador, 0);
+        
+        comprador.agregarCarta(cartaNueva);
 
         assertEquals(cantidadDePuntosEsperada, comprador.totalPuntos());
     }

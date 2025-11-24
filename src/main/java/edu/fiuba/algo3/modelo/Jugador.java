@@ -29,7 +29,7 @@ public class Jugador {
     }
 
 
-    public int CantidadRecurso(TipoDeRecurso tipo) {
+    public int cantidadRecurso(TipoDeRecurso tipo) {
         return almacenJugador.cantidadDe(tipo);
     }
 
@@ -39,11 +39,11 @@ public class Jugador {
     }
     public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
         return (
-                (madera.obtenerCantidad() >= CantidadRecurso(madera)) &
-                        (ladrillos.obtenerCantidad() >= CantidadRecurso(ladrillos)) &
-                        (lana.obtenerCantidad() >= CantidadRecurso(lana)) &
-                        (mineral.obtenerCantidad() >= CantidadRecurso(mineral)) &
-                        (grano.obtenerCantidad() >= CantidadRecurso(grano))
+                (madera.obtenerCantidad() >= cantidadRecurso(madera)) &
+                        (ladrillos.obtenerCantidad() >= cantidadRecurso(ladrillos)) &
+                        (lana.obtenerCantidad() >= cantidadRecurso(lana)) &
+                        (mineral.obtenerCantidad() >= cantidadRecurso(mineral)) &
+                        (grano.obtenerCantidad() >= cantidadRecurso(grano))
         );
     }
 
@@ -120,23 +120,23 @@ public class Jugador {
         return true;
     }
     public int cantidadMadera() {
-        return this.CantidadRecurso(new Madera(0));
+        return this.cantidadRecurso(new Madera(0));
     }
 
     public int cantidadGrano() {
-        return this.CantidadRecurso(new Grano(0));
+        return this.cantidadRecurso(new Grano(0));
     }
 
     public int cantidadLadrillo() {
-        return this.CantidadRecurso(new Ladrillo(0));
+        return this.cantidadRecurso(new Ladrillo(0));
     }
 
     public int cantidadLana() {
-        return this.CantidadRecurso(new Lana(0));
+        return this.cantidadRecurso(new Lana(0));
     }
 
     public int cantidadMineral() {
-        return this.CantidadRecurso(new Mineral(0));
+        return this.cantidadRecurso(new Mineral(0));
     }
 
 }
