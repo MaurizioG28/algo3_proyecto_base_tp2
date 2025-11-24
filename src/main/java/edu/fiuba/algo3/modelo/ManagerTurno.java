@@ -8,6 +8,7 @@ import edu.fiuba.algo3.modelo.MazoOculto;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 public class ManagerTurno {
@@ -59,9 +60,13 @@ public class ManagerTurno {
         }
     }
 
-    public void moverLadron(Hexagono posicion){
+    public void moverLadron(Integer posicion){
         Jugador jugadorActual = getJugadorActual();
-        List<Jugador> victimas= tablero.moverLadron(jugadorActual, posicion);
+        List<Color> coloresDeVictimas= tablero.moverLadron(jugadorActual, posicion);
+        List<Jugador> victimas =
+                coloresDeVictimas.stream()
+                        .map(this::getJugadorPorColor)
+                        .collect(Collectors.toList());
 
         if(!victimas.isEmpty()){
 
@@ -70,6 +75,13 @@ public class ManagerTurno {
             jugadorActual.robarRecurso(victima);
         }
 
+    }
+
+    private Jugador getJugadorPorColor(Color color) {
+        return jugadores.stream()
+                .filter(jugador -> jugador.obtenerColor().equals(color) )
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró un jugador con el color especificado: " + color));
     }
 
 }

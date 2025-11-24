@@ -204,6 +204,9 @@ public class TableroFactoryTest {
         for (int i = 0; i < 6; i++) {
             ladosPorCoordenada.put(new Coordenada(1, i), new Lado());
         }
+        terreno.agregarVertices(verticesPorCoordenada);
+        terreno.agregarLados(ladosPorCoordenada);
+
 
         // Unificar lados (esto no debería crear nuevos, solo unificar duplicados)
         Map<String, Lado> ladosUnicos = TableroFactory.unificarLados(ladosPorCoordenada, verticesPorCoordenada);

@@ -44,7 +44,7 @@ public class Vertice implements IVertice {
 
     public void colocarPoblado(Jugador jugador) {
         this.propietario = jugador;
-        this.tipo = new Poblado(new Color("negro"));
+        this.tipo = new Poblado(jugador.obtenerColor());
     }
     public void mejorarACiudad() {
         if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");
@@ -80,11 +80,19 @@ public class Vertice implements IVertice {
 
     }
 
+
     public Integer factorProduccion() {
         if (tipo instanceof Productor) {
             return ((Productor) tipo).obtenerFactorProduccion();
         }
         return 0;
+    }
+
+    public Color colorDeConstruccion() {
+        if (this.tipo != null) {
+            return this.tipo.getColorActual();
+        }
+        return null;
     }
 
 //    public int obtenerFactorProduccion() {

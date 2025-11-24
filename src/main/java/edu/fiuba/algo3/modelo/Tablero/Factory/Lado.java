@@ -3,6 +3,7 @@ package edu.fiuba.algo3.modelo.Tablero.Factory;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,8 +18,10 @@ public class Lado {
         return construccion != null;
     }
 
-    public void colocar(Construccion pieza) {
-
+    public void colocar(Construccion pieza) throws ConstruccionExistenteException {
+        if (pieza != null) {
+            throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
+        }
         this.construccion = pieza;
     }
 

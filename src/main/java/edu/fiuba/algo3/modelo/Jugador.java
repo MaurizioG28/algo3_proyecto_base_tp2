@@ -14,10 +14,20 @@ public class Jugador {
     private MazoDeCartas cartas;
     private AlmacenDeRecursos almacenJugador;
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
+    private final Color color;
 
-    public Jugador(){
+    public Jugador(Color colorDeJugador) {
+        this.color = colorDeJugador;
         this.almacenJugador = new AlmacenDeRecursos();
         this.cartas = new MazoDeCartas();
+    }
+
+    public boolean esDelColor(Color colorAComparar) {
+        return this.color.equals(colorAComparar);
+    }
+
+    public Color obtenerColor() {
+        return this.color;
     }
     public int CantidadRecurso(TipoDeRecurso tipo) {
         return almacenJugador.cantidadDe(tipo);

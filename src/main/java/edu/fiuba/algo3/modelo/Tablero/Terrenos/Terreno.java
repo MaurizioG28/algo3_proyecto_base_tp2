@@ -1,10 +1,13 @@
 package edu.fiuba.algo3.modelo.Tablero.Terrenos;
 
+import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -98,5 +101,22 @@ public abstract class Terreno {
 
     public int getId() {
         return this.id;
+    }
+
+
+    public void moverLadron() {
+        this.hexagono.moverLadron();
+    }
+
+    public void moverLadronQuitar() {
+        this.hexagono.sacarLadron();
+    }
+
+    public void moverLadronPoner() {
+        this.hexagono.ponerLadron();
+    }
+
+    public List<Color> jugadoresAfectadosPorElLadron(Jugador jugadorActual) {
+        return this.hexagono.jugadoresAfectadosPorElLadron(jugadorActual);
     }
 }

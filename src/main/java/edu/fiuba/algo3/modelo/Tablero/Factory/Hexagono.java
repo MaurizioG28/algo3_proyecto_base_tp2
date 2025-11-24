@@ -1,6 +1,9 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 
+import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Jugador;
+
 import java.util.*;
 
 
@@ -29,7 +32,6 @@ public class Hexagono {
         return (!bloqueadoPorLadron);
     }
 
-    //public Terreno  getTipo() { return tipo; }
 
 
     public List<Vertice> getVertices() { return (vertices); }
@@ -47,53 +49,37 @@ public class Hexagono {
         return lados.get(indice);
     }
 
-    public void crearVertices(Map<Cubic, Vertice> verticesUnicos, Map<Coordenada, Vertice> verticesPorCoordenada, Axial posicion, int terrenoId, Cubic[] Vertice_OFFSETS) {
-
-        Cubic centro = posicion.toCubic();
-
-        for (int i = 0; i < 6; i++) {
-            Cubic vCoord = centro.add(Vertice_OFFSETS[i]);
-            Vertice v = verticesUnicos.computeIfAbsent(vCoord, k -> new Vertice());
-            this.agregarVertice(v);
-
-            Coordenada coord = new Coordenada(terrenoId, i);
-            verticesPorCoordenada.put(coord, v);
-        }
-
-    }
-
-    public void crearLados(Map<Cubic, Lado> ladosUnicos, Map<Coordenada, Lado> ladosPorCoordenada, Axial posicion, int id, Cubic[] Lado_OFFSETS) {
-
-        Cubic centro = posicion.toCubic();
-
-        for (int i = 0; i < 6; i++) {
-
-            Vertice v1 = vertices.get(i);
-            Vertice v2 = vertices.get((i + 1) % 6);
-
-            Cubic vOffset1 = Lado_OFFSETS[i];
 
 
-            Cubic ladoCoord = centro
-                    .add(vOffset1);
 
-
-            // Crear o obtener lado existente
-            Lado lado = ladosUnicos.computeIfAbsent(ladoCoord, k -> {
-                Lado nuevoLado = new Lado();
-                nuevoLado.agregarPunta(v1);
-                nuevoLado.agregarPunta(v2);
-                return nuevoLado;
-            });
-
-            this.agregarLado(lado);
-
-            ladosPorCoordenada.put(new Coordenada(id, i), lado);
-        }
-    }
 
     public boolean tieneVertice(Vertice v) {
         return vertices.contains(v);
+    }
+
+    public void sacarLadron() {
+        this.bloqueadoPorLadron = false;
+    }
+
+    public void ponerLadron() {
+        this.bloqueadoPorLadron = true;
+    }
+
+    public List<Color> jugadoresAfectadosPorElLadron(Jugador jugadorActual) {
+        List<Color> victimas = new ArrayList<>();
+
+        for (Vertice v : vertices) {
+            if (!v.tieneConstruccion()) continue;
+
+            Color propietario = v.colorDeConstruccion();
+            if (propietario == null) continue;
+            if (propietario.equals(jugadorActual.obtenerColor())) continue;
+
+            if (!victimas.contains(propietario))
+                victimas.add(propietario);
+        }
+
+        return victimas;
     }
 
 //    public void producirRecursoAContrucciones() {

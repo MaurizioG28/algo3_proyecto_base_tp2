@@ -26,7 +26,7 @@ public class Tablero {
     Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
 
-    private Hexagono posicionDelLadron;
+    private Integer posicionDelLadron;
 
 //    public Tablero(){
 //    }
@@ -35,8 +35,19 @@ public class Tablero {
         this.terrenos = hexagonos;
         this.vertices = vertices;
         this.lados= ladosPorCoordenada;
+
+        this.posicionDelLadron= encontrarPosicionInicialDelLadron();
     }
 
+    private Integer encontrarPosicionInicialDelLadron() {
+        for (Map.Entry<Integer, Terreno> entry : terrenos.entrySet()) {
+            Terreno terreno = entry.getValue();
+            if (terreno.esDesierto()) {
+                return entry.getKey();
+            }
+        }
+       return 0;
+    }
 
 
     @Override
@@ -60,17 +71,6 @@ public class Tablero {
 
 
 
-//    public boolean tableroCorrectamenteInicializado(){
-//        boolean correcto = true;
-//        Collection<Terreno> todosTerrenos = terrenos.values();
-//        for (Terreno terreno : todosTerrenos) {
-//            if (!terreno.todosColocados()) {
-//                correcto = false;
-//            }
-//        }
-//
-//        return correcto;
-//    }
 
     public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
 //        if (!tableroInicializado) {
@@ -120,29 +120,23 @@ public class Tablero {
 //    }
 
 
-    public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
-//        }
-        posicion.moverLadron();
-        this.posicionDelLadron = posicion;
-        List<Jugador> victimas = new ArrayList<>();
-        for (Vertice v : posicion.getVertices()) {
-            if (!v.tieneConstruccion()) continue;
-            Jugador propietario = v.getPropietario();
-            if (propietario == null) continue;
-            if (propietario.equals(jugadorActual)) continue;
-            if (!victimas.contains(propietario)) {
-                victimas.add(propietario);
-            }
-        }
-        return victimas;
+    public List<Color> moverLadron(Jugador jugadorActual, Integer posicionId) {
+        Terreno nuevo = terrenos.get(posicionId);
+        Terreno anterior = terrenos.get(posicionDelLadron);
+
+        // Quitar ladrón del terreno anterior (si no es desierto)
+        if (!anterior.esDesierto())
+            anterior.moverLadronQuitar();
+
+
+        nuevo.moverLadronPoner();
+        posicionDelLadron = posicionId;
+
+        // Obtener víctimas delegando en Terreno
+        return nuevo.jugadoresAfectadosPorElLadron(jugadorActual);
     }
 
 
-//    private void validarLado(ILado lado, Jugador jugador) {
-//        ILado.validar(lado, jugador);
-//    }
 
     public Dividendo colocarEnVertice(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException, ReglaDistanciaException {
         Vertice verticeObjetivo = vertices.get(coordenada);
@@ -153,9 +147,7 @@ public class Tablero {
 
         verticeObjetivo.colocar(pieza);
         pobladosColocadosPorColor.put(colorActual, pobladosColocadosPorColor.getOrDefault(colorActual, 0) + 1);
-        List<Terreno> terrenosAdyacentes = terrenos.values().stream()
-                .filter(t -> t.tieneVertice(verticeObjetivo))
-                .collect(Collectors.toList());
+
 
         if ( esSegundoPoblado(pieza.getColorActual()))
             return calcularDividendosIniciales(coordenada,colorActual);
@@ -181,7 +173,7 @@ public class Tablero {
         return d;
     }
 
-    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) {
+    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException {
 
         Lado l = lados.get(coordenada);
         l.colocar(pieza);
