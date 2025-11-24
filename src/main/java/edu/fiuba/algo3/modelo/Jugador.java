@@ -25,6 +25,10 @@ public class Jugador {
         return almacenJugador.cantidadDe(tipo);
     }
 
+
+    public Color getColor(){
+        return color;
+    }
     public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
         return (
                 (madera.obtenerCantidad() >= CantidadRecurso(madera)) &

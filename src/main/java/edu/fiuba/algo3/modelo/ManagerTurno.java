@@ -1,7 +1,14 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
+import edu.fiuba.algo3.modelo.Intercambios.Banco;
+import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
+import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import edu.fiuba.algo3.modelo.MazoOculto;
@@ -17,6 +24,7 @@ public class ManagerTurno {
     private final Tablero tablero;
     private final Random azar;
     private final MazoOculto mazoOculto;
+    private ServicioComercio servicioComercio = new ServicioComercio(new Banco());
 
     public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random, MazoOculto mazoOculto) {
         this.jugadores = jugadores;
@@ -77,5 +85,52 @@ public class ManagerTurno {
         // Le delegamos al tablero la responsabilidad de buscar quién produce
         this.tablero.distribuirProduccion(sumaDeDados);
     }
+    public void construirPoblado(Coordenada coordenada) {
+        try {
+            // 1. El servicio valida recursos, cobra al jugador y guarda en el Banco
+            Poblado poblado = servicioComercio.venderPoblado(getJugadorActual());
 
+            try {
+                // 2. El tablero intenta colocarlo
+                // (Requiere que hayas agregado obtenerVertice o modificado colocarEnVertice)
+                Vertice v = tablero.obtenerVertice(coordenada);
+                tablero.construirPoblado(getJugadorActual(), v); // Tu metodo existente
+
+            } catch (ReglaDistanciaException e) {
+                // 3. ¡Error! El lugar estaba ocupado o muy cerca. Devolvemos la plata.
+                servicioComercio.reembolsarPoblado(getJugadorActual());
+                throw e; // Avisamos a la vista
+            }
+
+        } catch (ReglaDistanciaException e) {
+            System.out.println("No alcanza la plata: " + e.getMessage());
+        }
+    }
+    public void mejorarACiudad(Coordenada coordenada) {
+        Jugador jugadorActual = getJugadorActual();
+
+        Ciudad nuevaCiudad = servicioComercio.venderCiudad(jugadorActual);
+
+        try {
+            // IMPACTAR EN TABLERO: Buscamos el vértice y mejoramos
+            Vertice vertice = tablero.obtenerVertice(coordenada);
+
+            // Validaciones de negocio (se pueden mover a Vertice también)
+            if (vertice.getPropietario() != jugadorActual) {
+                throw new IllegalStateException("No puedes mejorar un edificio que no es tuyo.");
+            }
+
+            vertice.mejorarACiudad();
+
+        } catch (IllegalStateException e) {
+            // 3. ROLLBACK: Si falló (no era dueño, no había poblado, etc.), devolvemos la plata.
+            servicioComercio.reembolsarCiudad(jugadorActual);
+            throw e; // Avisar a la vista del error
+        }
+
+    }
+
+    public void setServicioComercio(ServicioComercio servicioComercio) {
+        this.servicioComercio = servicioComercio;
+    }
 }

@@ -50,6 +50,9 @@ public class Vertice implements IVertice {
     }
     public void mejorarACiudad() {
         if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");
+        if (!(this.tipo instanceof Poblado)) {
+            throw new IllegalStateException("Solo se pueden mejorar Poblados.");
+        }
         String color =this.tipo.getColor();
         this.tipo = new Ciudad(new Color(color));
     }
@@ -82,7 +85,7 @@ public class Vertice implements IVertice {
 
     }
 
-    public Integer factorProduccion() {
+    public int factorProduccion() {
         if (tipo instanceof Productor) {
             return ((Productor) tipo).obtenerFactorProduccion();
         }
