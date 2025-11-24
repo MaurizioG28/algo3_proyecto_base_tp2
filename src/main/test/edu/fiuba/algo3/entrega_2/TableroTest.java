@@ -3,16 +3,13 @@ package edu.fiuba.algo3.entrega_2;
 import edu.fiuba.algo3.modelo.CasoDeUsoArmarTablero;
 import edu.fiuba.algo3.modelo.Jugador;
 
-import edu.fiuba.algo3.modelo.Tablero.*;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
 import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 
-import edu.fiuba.algo3.modelo.interfaces.ILado;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -27,12 +24,12 @@ public class TableroTest {
 //        for (Vertice v : vs) h.agregarVertice(v);
 //        return h;
 //    }
-    private Vertice vPoblado(Jugador j) {
+    private Vertice vPoblado(Jugador j) throws ConstruccionExistenteException {
         Vertice v = new Vertice();
         v.colocarPoblado(j);
         return v;
     }
-    private Vertice vCiudad(Jugador j) {
+    private Vertice vCiudad(Jugador j) throws ConstruccionExistenteException {
         Vertice v = new Vertice();
         v.colocarPoblado(j);
         v.mejorarACiudad();

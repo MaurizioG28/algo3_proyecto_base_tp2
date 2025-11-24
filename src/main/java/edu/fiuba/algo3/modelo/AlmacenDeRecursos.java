@@ -156,8 +156,6 @@ public class AlmacenDeRecursos {
                 throw new IllegalArgumentException("El jugador no tiene la suficiente cantidad de Recursos");
             }
         }
-        System.out.println(this.toString());
-
         return true;
     }
     public boolean tieneExactamente(Map<TipoDeRecurso, Integer> requeridos) {

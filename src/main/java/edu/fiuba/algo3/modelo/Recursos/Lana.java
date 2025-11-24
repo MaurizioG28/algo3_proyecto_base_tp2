@@ -7,6 +7,10 @@ public class Lana extends TipoDeRecurso{
     public Lana(int cantidad) {
         super(cantidad);
     }
+    public Lana() {
+        this(0);
+
+    }
 
     @Override
     public String nombre() {

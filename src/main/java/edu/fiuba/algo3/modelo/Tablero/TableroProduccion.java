@@ -99,7 +99,7 @@ public class TableroProduccion {
         if (vertice.tieneConstruccionAdyacente())
             throw new ReglaDistanciaException("No se puede colocar el poblado por la regla de distancia");
 
-        vertice.colocar(pieza);
+        vertice.colocarConstruccion(pieza);
         pobladosPorColor.put(pieza.getColorActual(), pobladosPorColor.getOrDefault(pieza.getColorActual(), 0) + 1);
 
 

@@ -9,6 +9,9 @@ public class Madera extends TipoDeRecurso {
     public Madera(int cantidad) {
         super(cantidad);
     }
+    public Madera() {
+        this(0);
+    }
 
     @Override
     public TipoDeRecurso nuevo(int cantidad) {

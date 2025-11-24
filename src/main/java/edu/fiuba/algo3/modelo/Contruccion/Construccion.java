@@ -7,6 +7,5 @@ public interface Construccion {
 
     String getColor();
     Color getColorActual();
-
     void produci();
 }

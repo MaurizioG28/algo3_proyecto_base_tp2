@@ -13,6 +13,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MazoOcultoTest {
+
     @Test
     public void Test01UnMazoDebeDevolverUnaCartaSiSeTienenLosRecursosNecesarios() {
         Jugador jugador = new FakeJugador(true);
@@ -33,4 +34,6 @@ public class MazoOcultoTest {
         assertThrows(RecursosInsuficientesException.class,
                 () -> mazo.comprarCarta(jugador, 0));
     }
+
+
 }

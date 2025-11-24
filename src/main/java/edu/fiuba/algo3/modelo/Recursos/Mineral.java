@@ -7,6 +7,9 @@ public class Mineral extends TipoDeRecurso {
     public Mineral(int cantidad) {
         super(cantidad);
     }
+    public Mineral(){
+        this(0);
+    }
 
     @Override
     public String nombre() {

@@ -13,6 +13,7 @@ public class Poblado implements  Construccion,Productor{
 
     public Poblado(Jugador propietario) {
         this.propietario = propietario;
+        this.color = propietario.getColor();
     }
     @Override
     public String getColor() {

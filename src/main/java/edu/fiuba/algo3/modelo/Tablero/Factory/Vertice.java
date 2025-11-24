@@ -6,33 +6,16 @@ import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Contruccion.Productor;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
-import edu.fiuba.algo3.modelo.interfaces.IVertice;
 
 import java.util.ArrayList;
 
-public class Vertice implements IVertice {
-
-    private Jugador propietario;
+public class Vertice {
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
     private Construccion tipo = null;
-    //private List<ICelda> celdasAdyacentes;
 
     public boolean tieneConstruccion() {
-        return (propietario != null || tipo != null);
+        return (tipo != null || tipo != null);
     }
-
-//    @Override
-//    public List<ICelda> obtenerCeldasAdyacentes() {
-//        return celdasAdyacentes;
-//    }
-//    @Override
-//    public List<Recurso> darRecursos() {
-//        List<Recurso> recursos = new LinkedList<>();
-//        for (ICelda celda : celdasAdyacentes) {
-//            recursos.add(celda.darRecurso());
-//        }
-//        return recursos;
-//    }
 
     public boolean tieneConstruccionAdyacente() {
         for (Vertice v : adyacentes) {
@@ -40,18 +23,36 @@ public class Vertice implements IVertice {
         }
         return false;
     }
-
-    public void colocarPoblado(Jugador jugador) {
-        this.propietario = jugador;
-        this.tipo = new Poblado(new Color("negro"));
+    public boolean pobladoAyacente(Color color) {
+        if (tipo != null) {
+            if (tipo.getColorActual().esMismoColor(color)) {
+                return true;
+            }
+        }
+        return false;
     }
+
+    public void colocarPoblado(Jugador jugador) throws ConstruccionExistenteException {
+        for (Vertice vertice : adyacentes) {
+            if (vertice.tipo != null) {
+                throw new ConstruccionExistenteException("No se puede construir: vértice adyacente ocupado (regla de distancia 1)");
+            }
+        }
+        colocarConstruccion(new Poblado(jugador));
+
+    }
+
+
     public void mejorarACiudad() {
-        if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");
-        String color =this.tipo.getColor();
+        if (this.tipo.getColor() == null) throw new IllegalStateException("No hay poblado para mejorar");
+        String color = this.tipo.getColor();
         this.tipo = new Ciudad(new Color(color));
     }
-    public Jugador getPropietario() { return propietario; }
-    public Construccion getTipoConstruccion() { return tipo; }
+
+
+    public Construccion getTipoConstruccion() {
+        return tipo;
+    }
 
     public void agregarAdyacente(Vertice vertice) {
         if (vertice == this) return; // No auto-adyacencia
@@ -67,11 +68,11 @@ public class Vertice implements IVertice {
         }
     }
 
-    public boolean esVerticeAdyacente(Vertice otroVertice){
+    public boolean esVerticeAdyacente(Vertice otroVertice) {
         return this.adyacentes.contains(otroVertice);
     }
 
-    public void colocar(Construccion pieza) throws ConstruccionExistenteException {
+    public void colocarConstruccion(Construccion pieza) throws ConstruccionExistenteException {
         if (this.tipo != null) {
             throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
         }
@@ -88,13 +89,15 @@ public class Vertice implements IVertice {
 
     public void construir(Poblado poblado) {
     }
+
     public void produci(int valor) {
         if (tipo instanceof Poblado) {
             tipo.produci();
         }
     }
 
-//    public int obtenerFactorProduccion() {
-//        return this.tipo.obtenerFactorProduccion();
-//    }
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

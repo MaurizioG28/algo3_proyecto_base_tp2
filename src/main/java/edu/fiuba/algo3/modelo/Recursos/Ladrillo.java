@@ -7,6 +7,9 @@ public class Ladrillo extends TipoDeRecurso {
     public Ladrillo(int cantidad) {
         super(cantidad);
     }
+    public Ladrillo() {
+        this(0);
+    }
 
     @Override
     public String nombre() {

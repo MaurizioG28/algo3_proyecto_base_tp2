@@ -1,7 +1,9 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
+import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Lado {
-    private Jugador propietario;
+    Color color;
     private ArrayList<Lado> adyacentes = new ArrayList<>();
     private ArrayList<Vertice> puntas = new ArrayList<>();
     private Construccion construccion = null;
@@ -57,4 +59,35 @@ public class Lado {
     public Vertice getPunta(int i) {
         return puntas.get(i);
     }
+
+    public void colocarCamino(Jugador jugador) {
+
+        if (this.construccion != null) {
+            throw new IllegalStateException("Este lado ya tiene una construcción");
+        }
+        boolean puedeConstruir = false;
+            for (Lado lado : adyacentes) {
+                if (lado.construccion instanceof Carretera && (lado.construccion.getColor().equals(jugador.getColor()))) {
+                    puedeConstruir = true;
+                    break;
+                }
+            }
+
+        if (!puedeConstruir) {
+            for (Vertice v : puntas) {
+                if (v.pobladoAyacente(jugador.getColor())){
+                    puedeConstruir = true;
+                    break;
+                }
+            }
+        }
+
+        if (!puedeConstruir) {
+            throw new IllegalStateException("No se puede construir el camino: no está conectado a un poblado/camino del jugador");
+        }
+
+        this.color = jugador.getColor();
+        this.construccion = new Carretera(jugador.getColor());
+    }
+
 }

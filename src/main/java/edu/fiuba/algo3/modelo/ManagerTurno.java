@@ -1,11 +1,8 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
-import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.interfaces.IVertice;
 
 import java.util.List;
 import java.util.Random;
@@ -52,17 +49,17 @@ public class ManagerTurno {
     }
 
 
-    public void moverLadron(Hexagono posicion){
-        Jugador jugadorActual = getJugadorActual();
-        List<Jugador> victimas= tablero.moverLadron(jugadorActual, posicion);
-
-        if(!victimas.isEmpty()){
-
-            Jugador victima = victimas.get(azar.nextInt(victimas.size()));
-            //Selecciona una victima al azar por ahora, depues vemos como hacer para que el jugador elija desde la interfaz
-            jugadorActual.robarRecurso(victima);
-        }
-
-    }
+//    public void moverLadron(Hexagono posicion){
+//        Jugador jugadorActual = getJugadorActual();
+//        List<Jugador> victimas= tablero.moverLadron(jugadorActual, posicion);
+//
+//        if(!victimas.isEmpty()){
+//
+//            Jugador victima = victimas.get(azar.nextInt(victimas.size()));
+//            //Selecciona una victima al azar por ahora, depues vemos como hacer para que el jugador elija desde la interfaz
+//            jugadorActual.robarRecurso(victima);
+//        }
+//
+//    }
 
 }

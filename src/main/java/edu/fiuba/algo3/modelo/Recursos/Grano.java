@@ -8,6 +8,10 @@ public class Grano extends TipoDeRecurso {
     public Grano(int cantidad) {
         super(cantidad);
     }
+    public Grano() {
+        this(0);
+
+    }
 
     @Override
     public String nombre() {

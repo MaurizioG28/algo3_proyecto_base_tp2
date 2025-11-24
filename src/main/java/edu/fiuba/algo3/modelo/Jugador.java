@@ -116,29 +116,34 @@ public class Jugador {
     public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
 
         Map<TipoDeRecurso, Integer> requeridos = Map.of(
-                new Madera(0), madera,
-                new Ladrillo(0), ladrillo,
-                new Lana(0), lana,
-                new Grano(0), grano,
-                new Mineral(0), mineral
+                new Madera(), madera,
+                new Ladrillo(), ladrillo,
+                new Lana(), lana,
+                new Grano(), grano,
+                new Mineral(), mineral
         );
         return almacenJugador.tiene(requeridos);
     }
     public void puedeCosntruirPoblado(){
         this.tiene(1,1,1,1,0);
-        almacenJugador.quitar(new Madera(0),1);
-        almacenJugador.quitar(new Grano(0),1);
-        almacenJugador.quitar(new Ladrillo(0),1);
-        almacenJugador.quitar(new Lana(0),1);
+        almacenJugador.quitar(new Madera(),1);
+        almacenJugador.quitar(new Grano(),1);
+        almacenJugador.quitar(new Ladrillo(),1);
+        almacenJugador.quitar(new Lana(),1);
+    }
+    public void puedeCosntruirCamino(){
+        this.tiene(1,1,0,0,0);
+        almacenJugador.quitar(new Madera(),1);
+        almacenJugador.quitar(new Ladrillo(),1);
     }
 
     public boolean tieneExactamente(int madera, int ladrillo, int lana, int grano, int mineral) {
         Map<TipoDeRecurso, Integer> requeridos = Map.of(
-                new Madera(0), madera,
-                new Ladrillo(0), ladrillo,
-                new Lana(0), lana,
-                new Grano(0), grano,
-                new Mineral(0), mineral
+                new Madera(), madera,
+                new Ladrillo(), ladrillo,
+                new Lana(), lana,
+                new Grano(), grano,
+                new Mineral(), mineral
         );
         return almacenJugador.tieneExactamente(requeridos);
     }
@@ -146,11 +151,11 @@ public class Jugador {
     public void agregarRecursos(int madera, int grano, int ladrillo, int lana, int mineral) {
 
         Map<TipoDeRecurso, Integer> entrada = Map.of(
-                new Madera(0), madera,
-                new Grano(0), grano,
-                new Ladrillo(0), ladrillo,
-                new Lana(0), lana,
-                new Mineral(0), mineral
+                new Madera(), madera,
+                new Grano(), grano,
+                new Ladrillo(), ladrillo,
+                new Lana(), lana,
+                new Mineral(), mineral
         );
 
         for (Map.Entry<TipoDeRecurso, Integer> e : entrada.entrySet()) {
