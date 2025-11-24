@@ -64,14 +64,24 @@ public abstract class Terreno {
         this.id = id;
     }
 
-    public void crearVertices(Map<Cubic, Vertice> verticesUnicos, Map<Coordenada, Vertice> verticesPorCoordenada,Cubic[] Vertice_OFFSETS) {
-
-        hexagono.crearVertices(verticesUnicos, verticesPorCoordenada, posicion, id,Vertice_OFFSETS);
+    public void agregarVertices(Map<Coordenada, Vertice> verticesPorCoordenada) {
+        for (int i = 0; i < 6; i++) {
+            Coordenada coord = new Coordenada(this.id, i);
+            Vertice vertice = verticesPorCoordenada.get(coord);
+            if (vertice != null) {
+                this.hexagono.agregarVertice(vertice);
+            }
+        }
     }
 
-    public void crearLados(Map<Cubic, Lado> ladosUnicos, Map<Coordenada, Lado> ladosPorCoordenada, Cubic[] Lado_OFFSETS) {
-
-        hexagono.crearLados(ladosUnicos, ladosPorCoordenada, posicion, id, Lado_OFFSETS);
+    public void agregarLados(Map<Coordenada, Lado> ladosPorCoordenada) {
+        for (int i = 0; i < 6; i++) {
+            Coordenada coord = new Coordenada(this.id, i);
+            Lado lado = ladosPorCoordenada.get(coord);
+            if (lado != null) {
+                this.hexagono.agregarLado(lado);
+            }
+        }
     }
 
     public boolean tieneVertice(Vertice v) {
