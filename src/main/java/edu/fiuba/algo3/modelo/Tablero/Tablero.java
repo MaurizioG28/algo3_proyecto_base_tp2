@@ -5,13 +5,12 @@ import java.util.stream.Collectors;
 
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
-import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
 
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
-import edu.fiuba.algo3.modelo.interfaces.*;
 
 
 public class Tablero {
@@ -52,8 +51,14 @@ public class Tablero {
 
 
   
-    public int tirarDados(){
-        return dados.tirar();
+    public void tirarDados(Dados dados){
+        int valor = dados.tirar();
+        for (Vertice vertice : new HashSet<>(vertices.values())){
+            vertice.produci(valor);
+            System.out.println(vertice);
+        }
+        //para todos los vertices dar el mensaje produci
+
     }
 
 
@@ -72,21 +77,27 @@ public class Tablero {
 //        return correcto;
 //    }
 
-    public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
+    public void construirPoblado(Jugador jugador,  Coordenada coordenada) throws ReglaDistanciaException, ConstruccionExistenteException {
+        Vertice vertice = this.vertices.get(coordenada);
+        if(vertice==null) throw new IllegalArgumentException("Vertice inexistente");
+        jugador.puedeCosntruirPoblado();
+        Color color = jugador.getColor();
+        vertice.colocar(new Poblado(jugador));
+////        if (!tableroInicializado) {
+////            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
+////        }
+//
+//        if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
+//            throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
 //        }
+//        /*
+//        construye directamente, falta implementar el chequeo de recursos del jugardor.
+//        Con algo como jugador.recursosPoblado()
+//        */
+//        vertice.colocarPoblado(jugador);
+//        //List<Recurso> recursos = vertice.darRecursos();
+//        //jugador.sumarRecursos(recursos);
 
-        if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
-            throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
-        }
-        /*
-        construye directamente, falta implementar el chequeo de recursos del jugardor.
-        Con algo como jugador.recursosPoblado()
-        */
-        vertice.colocarPoblado(jugador);
-        //List<Recurso> recursos = vertice.darRecursos();
-        //jugador.sumarRecursos(recursos);
     }
 
 //    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){

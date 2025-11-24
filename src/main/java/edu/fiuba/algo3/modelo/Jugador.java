@@ -2,6 +2,7 @@ package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
 
@@ -14,10 +15,19 @@ public class Jugador {
     private MazoDeCartas cartas;
     private AlmacenDeRecursos almacenJugador;
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
+    private  Color color;
 
     public Jugador(){
         this.almacenJugador = new AlmacenDeRecursos();
         this.cartas = new MazoDeCartas();
+        this.color = null;
+    }
+    public Jugador(String nombre, Color color){
+        this();
+        this.color = color;
+    }
+    public Color getColor(){
+        return color;
     }
     public int CantidadRecurso(TipoDeRecurso tipo) {
         return almacenJugador.cantidadDe(tipo);
@@ -102,6 +112,25 @@ public class Jugador {
         }
         this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
         return true;
+    }
+    public boolean tiene(int madera, int ladrillo, int lana, int grano, int mineral) {
+
+        Map<TipoDeRecurso, Integer> requeridos = Map.of(
+                new Madera(0), madera,
+                new Ladrillo(0), ladrillo,
+                new Lana(0), lana,
+                new Grano(0), grano,
+                new Mineral(0), mineral
+        );
+        this.toString();
+        return almacenJugador.tiene(requeridos);
+    }
+    public void puedeCosntruirPoblado(){
+        this.tiene(1,1,1,1,0);
+        almacenJugador.quitar(new Madera(0),1);
+        almacenJugador.quitar(new Grano(0),1);
+        almacenJugador.quitar(new Ladrillo(0),1);
+        almacenJugador.quitar(new Lana(0),1);
     }
 
 }

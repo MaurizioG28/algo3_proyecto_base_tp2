@@ -22,6 +22,11 @@ public class Ciudad implements Construccion,Productor {
     }
 
     @Override
+    public void produci() {
+
+    }
+
+    @Override
     public int obtenerFactorProduccion() {
         return 2;
     }

@@ -6,10 +6,9 @@ import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Contruccion.Productor;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
+import edu.fiuba.algo3.modelo.interfaces.IVertice;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Vertice implements IVertice {
 
@@ -85,6 +84,14 @@ public class Vertice implements IVertice {
             return ((Productor) tipo).obtenerFactorProduccion();
         }
         return 0;
+    }
+
+    public void construir(Poblado poblado) {
+    }
+    public void produci(int valor) {
+        if (tipo instanceof Poblado) {
+            tipo.produci();
+        }
     }
 
 //    public int obtenerFactorProduccion() {

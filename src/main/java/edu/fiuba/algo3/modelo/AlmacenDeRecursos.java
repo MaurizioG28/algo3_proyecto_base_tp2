@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 import java.util.EnumMap;
@@ -15,7 +17,20 @@ public class AlmacenDeRecursos {
     private final Random azar;
 
     public AlmacenDeRecursos() {
+
         this(new Random());
+        for (TipoDeRecurso tipo : tiposBase()) {
+            recursos.put(tipo, tipo.nuevo(0));
+        }
+    }
+    private List<TipoDeRecurso> tiposBase() {
+        return List.of(
+                new Madera(0),
+                new Grano(0),
+                new Ladrillo(0),
+                new Lana(0),
+                new Mineral(0)
+        );
     }
 
     public AlmacenDeRecursos(Random azar) {
@@ -120,4 +135,45 @@ public class AlmacenDeRecursos {
         }
         return descartados;
     }
+    public boolean tiene(Map<TipoDeRecurso, Integer> requeridos) {
+        if (requeridos == null) {
+            throw new IllegalArgumentException("La lista de requeridos no puede ser null");
+        }
+
+        for (Map.Entry<TipoDeRecurso, Integer> entry : requeridos.entrySet()) {
+
+            TipoDeRecurso tipo = entry.getKey();
+            int cantidadRequerida = entry.getValue();
+
+            if (cantidadRequerida <= 0) {
+                continue; // no es necesario tener este recurso
+            }
+
+            // Normaliza tipo → new Tipo(0)
+            int disponible = cantidadDe(tipo);
+
+            if (disponible < cantidadRequerida) {
+                throw new IllegalArgumentException("El jugador no tiene la suficiente cantidad de Recursos");
+            }
+        }
+        System.out.println(this.toString());
+
+        return true;
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Almacén de Recursos:\n");
+
+        recursos.forEach((clave, recurso) -> {
+            sb.append(" - ")
+                    .append(recurso.nombre())
+                    .append(": ")
+                    .append(recurso.obtenerCantidad())
+                    .append("\n");
+        });
+
+        return sb.toString();
+    }
+
+
 }
