@@ -82,13 +82,13 @@ public class CasoDeUsoMejorarPoblado {
 
         // 3. ASSERT
 
-        // A. Recursos gastados
+        //  Recursos gastados
         assertEquals(0, jugador.cantidadGrano());
         assertEquals(0, jugador.cantidadMineral());
 
         assertTrue(banco.tieneStock(new Mineral(0), 3));
 
-        // C. El vértice ahora tiene una CIUDAD y produce DOBLE
+        // El vértice ahora tiene una CIUDAD y produce DOBLE
         assertTrue(vertice.getTipoConstruccion() instanceof Ciudad);
         assertEquals(2, vertice.factorProduccion()); // Verifica que produce 2
     }
@@ -112,7 +112,7 @@ public class CasoDeUsoMejorarPoblado {
         manager.construirPoblado(coord);
 
 
-        // A. Recursos gastados para construir el poblado
+        // Recursos gastados para construir el poblado
         assertEquals(4, jugador.cantidadGrano());
         assertEquals(5, jugador.cantidadMineral());
         assertEquals(4, jugador.cantidadLana());
@@ -120,14 +120,15 @@ public class CasoDeUsoMejorarPoblado {
         assertEquals(4, jugador.cantidadLadrillo());
 
         manager.mejorarACiudad(coord);
+        // recursos gastados restantes por haber mejorado el pueblo a ciudad
         assertEquals(2, jugador.cantidadGrano());
         assertEquals(2, jugador.cantidadMineral());
 
-        // B. Banco recibió los recursos (opcional si tienes getter en Banco)
+        // Banco recibió los recursos (opcional si tienes getter en Banco)
         assertTrue(banco.tieneStock(new Mineral(0), 23));
 
 
-        // C. El vértice ahora tiene una CIUDAD y produce DOBLE
+        // El vértice ahora tiene una CIUDAD y produce DOBLE
         assertTrue(vertice.getTipoConstruccion() instanceof Ciudad);
         assertEquals(2, vertice.factorProduccion()); // Verifica que produce 2
 
