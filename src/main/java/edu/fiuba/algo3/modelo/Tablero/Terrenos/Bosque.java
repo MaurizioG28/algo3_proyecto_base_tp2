@@ -20,4 +20,5 @@ public class Bosque extends Terreno {
     public TipoDeRecurso recursoOtorgado(Integer cantidad) {
         return new Madera(cantidad);
     }
+
 }

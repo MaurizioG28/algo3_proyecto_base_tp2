@@ -12,8 +12,8 @@ public class casoDeUsoRoboRecursos {
     private final TipoDeRecurso madera = new Madera(0);
     @Test
     public void Test04jugadorDebeRobarUnRecursoDeLaVictima() {
-        Jugador ladron = new Jugador(new Color("Azul"));
-        Jugador victima = new Jugador(new Color("Rojo"));
+        Jugador ladron = new Jugador("nombre1",new Color("Azul"));
+        Jugador victima = new Jugador("nombre2",new Color("Rojo"));
 
         victima.agregarRecurso(new Madera(1));
 
@@ -25,8 +25,8 @@ public class casoDeUsoRoboRecursos {
 
     @Test
     public void Test05noDebeRobarSiLaVictimaNoTieneRecursos() {
-        Jugador ladron = new Jugador(new Color("Azul"));
-        Jugador victima = new Jugador(new Color("Rojo"));
+        Jugador ladron = new Jugador("nombre1",new Color("Azul"));
+        Jugador victima = new Jugador("nombre2",new Color("Rojo"));
 
         ladron.robarRecurso(victima);
 

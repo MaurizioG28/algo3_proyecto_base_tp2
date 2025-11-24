@@ -119,4 +119,12 @@ public abstract class Terreno {
     public List<Color> jugadoresAfectadosPorElLadron(Jugador jugadorActual) {
         return this.hexagono.jugadoresAfectadosPorElLadron(jugadorActual);
     }
+
+    public void verificarYProducir(int numeroDado) {
+        // Validar si el número de producción coincide (y no es Desierto/Null)
+        if (this.produccion != null && this.produccion.tieneMismoNumero(numeroDado)) {
+            // Si coincide, le avisa al Hexágono, PASÁNDOSE A SÍ MISMO (this)
+            this.hexagono.activarVertices(this);
+        }
+    }
 }

@@ -14,25 +14,29 @@ public class Jugador {
     private MazoDeCartas cartas;
     private AlmacenDeRecursos almacenJugador;
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
-    private final Color color;
+    private Color color;
+    private String nombre;
 
-    public Jugador(Color colorDeJugador) {
-        this.color = colorDeJugador;
+    public Jugador(String nombre, Color color){
         this.almacenJugador = new AlmacenDeRecursos();
         this.cartas = new MazoDeCartas();
+        this.color= color;
+        this.nombre = nombre;
     }
 
     public boolean esDelColor(Color colorAComparar) {
         return this.color.equals(colorAComparar);
     }
 
-    public Color obtenerColor() {
-        return this.color;
-    }
+
     public int CantidadRecurso(TipoDeRecurso tipo) {
         return almacenJugador.cantidadDe(tipo);
     }
 
+
+    public Color getColor(){
+        return color;
+    }
     public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
         return (
                 (madera.obtenerCantidad() >= CantidadRecurso(madera)) &
@@ -114,6 +118,25 @@ public class Jugador {
         }
         this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
         return true;
+    }
+    public int cantidadMadera() {
+        return this.CantidadRecurso(new Madera(0));
+    }
+
+    public int cantidadGrano() {
+        return this.CantidadRecurso(new Grano(0));
+    }
+
+    public int cantidadLadrillo() {
+        return this.CantidadRecurso(new Ladrillo(0));
+    }
+
+    public int cantidadLana() {
+        return this.CantidadRecurso(new Lana(0));
+    }
+
+    public int cantidadMineral() {
+        return this.CantidadRecurso(new Mineral(0));
     }
 
 }

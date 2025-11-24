@@ -28,7 +28,7 @@ public class casoDeUsoComercioMaritimo {
     public void test01JugadorSinPuertosIntercambia4a1ConBanco() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         // El jugador recibe 4 maderas
         jugador.agregarRecurso(new Madera(4));
@@ -42,7 +42,7 @@ public class casoDeUsoComercioMaritimo {
     public void test02JugadorConPuertoGenericoIntercambia3a1() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(3));
         jugador.agregarPolitica(new PuertoGenerico(3)); // 3:1 cualquiera
@@ -60,7 +60,7 @@ public class casoDeUsoComercioMaritimo {
     public void test03JugadorConPuertoEspecificoIntercambia2a1SoloEseRecurso() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // 2:1 madera
         jugador.agregarRecurso(new Madera(2));
@@ -78,7 +78,7 @@ public class casoDeUsoComercioMaritimo {
     public void test04PuertoEspecificoNoMejoraOtrosRecursos() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // solo madera
         jugador.agregarRecurso(new Grano(4));
@@ -97,7 +97,7 @@ public class casoDeUsoComercioMaritimo {
     public void test05JugadorConPuertoGenericoYEspecificoUsaLaMejorTasa() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoGenerico(3));             // 3:1 cualquiera
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2));   // 2:1 madera
@@ -116,7 +116,7 @@ public class casoDeUsoComercioMaritimo {
     public void test06FallaSiCantidadNoEsMultiploDeLaTasa() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoGenerico(3)); // 3:1
         jugador.agregarRecurso(new Madera(4));
@@ -131,7 +131,7 @@ public class casoDeUsoComercioMaritimo {
     public void test07FallaSiJugadorNoTieneSuficienteRecurso() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(3)); // menos de 4
 
@@ -148,7 +148,7 @@ public class casoDeUsoComercioMaritimo {
         banco.recibir(new Madera(20));
 
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador(new Color("Azul"));
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(4));
 

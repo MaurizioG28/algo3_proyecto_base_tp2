@@ -4,6 +4,8 @@ package edu.fiuba.algo3.modelo.Tablero.Factory;
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
 
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
+
 import java.util.*;
 
 
@@ -57,6 +59,13 @@ public class Hexagono {
         return vertices.contains(v);
     }
 
+    public void activarVertices(Terreno terrenoOrigen) {
+        if (bloqueadoPorLadron) return; // Lógica del ladrón
+
+        for (Vertice v : vertices) {
+            v.cosechar(terrenoOrigen); // Delega al vértice
+        }
+    }
     public void sacarLadron() {
         this.bloqueadoPorLadron = false;
     }
@@ -73,7 +82,7 @@ public class Hexagono {
 
             Color propietario = v.colorDeConstruccion();
             if (propietario == null) continue;
-            if (propietario.equals(jugadorActual.obtenerColor())) continue;
+            if (propietario.equals(jugadorActual.getColor())) continue;
 
             if (!victimas.contains(propietario))
                 victimas.add(propietario);
