@@ -10,6 +10,7 @@ import edu.fiuba.algo3.modelo.Tablero.Terrenos.Bosque;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Colina;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Desierto;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -199,4 +200,56 @@ public class CasoDeUsoMoverLadron {
         assertTrue(victimas.containsAll(victimasEsperadas));
 
     }
+
+    @Test
+    void test05MoverLadronYrobarRecurso(){
+        Map<Integer, Terreno> terrenosPorId = new HashMap<>();
+        Map<Coordenada, Vertice> verticesPorCoordenada = new HashMap<>();
+        Map<Coordenada, Lado> ladosPorCoordenada = new HashMap<>();
+
+        Terreno terreno = new Colina();
+        terreno.setId(1);
+        terreno.setPosicion(new Axial(0, 0));
+        terreno.asignarHexagono(new Hexagono());
+        terreno.setProduccion(new Produccion(3));
+        terrenosPorId.put(1, terreno);
+
+        Terreno terrenoDesierto = new Desierto();
+        terrenoDesierto.setId(2);
+        terrenoDesierto.setPosicion(new Axial(1, 0));
+        terrenoDesierto.asignarHexagono(new Hexagono());
+        terrenosPorId.put(2, terrenoDesierto);
+
+        for (int i = 0; i < 6; i++) {
+            verticesPorCoordenada.put(new Coordenada(1, i), new Vertice());
+        }
+        for (int i = 0; i < 6; i++) {
+            verticesPorCoordenada.put(new Coordenada(2, i), new Vertice());
+        }
+        terreno.agregarVertices(verticesPorCoordenada);
+        terrenoDesierto.agregarVertices(verticesPorCoordenada);
+        Tablero tablero = new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
+
+        Jugador actual = new Jugador(new Color("Rojo"));
+        Jugador victima1 = new Jugador(new Color("Azul"));
+        CasoDeUsoLadron caso = new CasoDeUsoLadron(tablero,actual);
+        try {
+            caso.colocarVictima(victima1.obtenerColor(),new Coordenada(1,0));
+        } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
+            throw new RuntimeException(e);
+        }
+        victima1.agregarRecurso(terreno.recursoOtorgado(2));
+
+
+        List<Color> victimas= caso.moverLadron(actual,1);
+        Assertions.assertEquals(1, victimas.size());
+        Assertions.assertEquals(victima1.obtenerColor(), victimas.get(0));
+
+        boolean roboExitoso = caso.robarRecursoDeVictima(victima1);
+        Assertions.assertTrue(roboExitoso);
+
+        int cantidadRobada=caso.verificarRecursoRobado(terreno.recursoOtorgado(1));
+        Assertions.assertEquals(1, cantidadRobada);
+
+        }
 }

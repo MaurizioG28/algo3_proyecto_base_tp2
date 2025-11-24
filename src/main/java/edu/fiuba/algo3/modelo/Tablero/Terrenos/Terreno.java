@@ -39,15 +39,15 @@ public abstract class Terreno {
     @Override
     public boolean equals(Object object) {
         if(this.getClass() != object.getClass()){return false;}
-        return mismaProduccion(((Terreno) object).getProduccion());
+        return mismoTerreno(((Terreno) object).getId());
     }
 
     private Produccion getProduccion() {
         return this.produccion;
     }
 
-    public boolean mismaProduccion(Produccion produccion){
-        return  this.produccion.equals(produccion);
+    public boolean mismoTerreno(Integer otroId){
+        return  this.id==(otroId);
     }
 
     public void asignarHexagono(Hexagono hexagono) {

@@ -123,6 +123,8 @@ public class Tablero {
     public List<Color> moverLadron(Jugador jugadorActual, Integer posicionId) {
         Terreno nuevo = terrenos.get(posicionId);
         Terreno anterior = terrenos.get(posicionDelLadron);
+        if(nuevo==anterior)
+            throw new IllegalStateException("Se debe movera al Ladron.");
 
         // Quitar ladrón del terreno anterior (si no es desierto)
         if (anterior!=null && !anterior.esDesierto())

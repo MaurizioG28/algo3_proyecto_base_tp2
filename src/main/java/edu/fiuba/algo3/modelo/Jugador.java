@@ -83,11 +83,13 @@ public class Jugador {
         return this.almacenJugador.robarRecursoAleatorio();
     }
 
-    public void robarRecurso(Jugador victima) {
+    public boolean robarRecurso(Jugador victima) {
         TipoDeRecurso recursoRobado = victima.entregarRecursoAleatorio();
         if(recursoRobado != null){
             this.almacenJugador.agregarRecurso(recursoRobado);
+            return true;
         }
+        return false;
     }
 
     public int totalPuntos() {
