@@ -23,6 +23,7 @@ public class ManagerTurno {
         this.tablero = tablero;
         this.azar=  Random;
         this.mazoOculto = mazoOculto;
+
     }
 
     public void comprarCarta() {
@@ -50,26 +51,31 @@ public class ManagerTurno {
         numeroTurnoActual += 1;
     }
 
-    public void construirPoblado(IVertice vertice){
-        Jugador jugadorActual = getJugadorActual();
-        try {
-            tablero.construirPoblado(jugadorActual, vertice);
-        } catch (ReglaDistanciaException e) {
-            System.out.println( e.getMessage());
-        }
-    }
+//    public void construirPoblado(IVertice vertice){
+//        Jugador jugadorActual = getJugadorActual();
+//        try {
+//            tablero.construirPoblado(jugadorActual, vertice);
+//        } catch (ReglaDistanciaException e) {
+//            System.out.println( e.getMessage());
+//        }
+//    }
+//
+//    public void moverLadron(Hexagono posicion){
+//        Jugador jugadorActual = getJugadorActual();
+//        List<Jugador> victimas= tablero.moverLadron(jugadorActual, posicion);
+//
+//        if(!victimas.isEmpty()){
+//
+//            Jugador victima = victimas.get(azar.nextInt(victimas.size()));
+//            //Selecciona una victima al azar por ahora, depues vemos como hacer para que el jugador elija desde la interfaz
+//            jugadorActual.robarRecurso(victima);
+//        }
+//
+//    }
 
-    public void moverLadron(Hexagono posicion){
-        Jugador jugadorActual = getJugadorActual();
-        List<Jugador> victimas= tablero.moverLadron(jugadorActual, posicion);
-
-        if(!victimas.isEmpty()){
-
-            Jugador victima = victimas.get(azar.nextInt(victimas.size()));
-            //Selecciona una victima al azar por ahora, depues vemos como hacer para que el jugador elija desde la interfaz
-            jugadorActual.robarRecurso(victima);
-        }
-
+    public void repartirDividendos(int sumaDeDados) {
+        // Le delegamos al tablero la responsabilidad de buscar quién produce
+        this.tablero.distribuirProduccion(sumaDeDados);
     }
 
 }

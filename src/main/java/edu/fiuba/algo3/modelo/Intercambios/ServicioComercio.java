@@ -42,5 +42,7 @@ public class ServicioComercio {
         banco.recibir(recursoEntregado.nuevo(cantidadEntregada));
         banco.entregar(recursoRecibido, cantidadRecibida);
     }
+
+
 }
 

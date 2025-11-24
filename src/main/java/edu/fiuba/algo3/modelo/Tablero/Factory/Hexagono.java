@@ -1,6 +1,8 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
+
 import java.util.*;
 
 
@@ -96,9 +98,11 @@ public class Hexagono {
         return vertices.contains(v);
     }
 
-//    public void producirRecursoAContrucciones() {
-//        for (Vertice v : vertices) {
-//            List<TipoDeRecurso> recursos = v.;
-//        }
-//    }
+    public void activarVertices(Terreno terrenoOrigen) {
+        if (bloqueadoPorLadron) return; // Lógica del ladrón
+
+        for (Vertice v : vertices) {
+            v.cosechar(terrenoOrigen); // Delega al vértice
+        }
+    }
 }

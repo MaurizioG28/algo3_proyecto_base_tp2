@@ -99,4 +99,12 @@ public abstract class Terreno {
     public int getId() {
         return this.id;
     }
+
+    public void verificarYProducir(int numeroDado) {
+        // Validar si el número de producción coincide (y no es Desierto/Null)
+        if (this.produccion != null && this.produccion.tieneMismoNumero(numeroDado)) {
+            // Si coincide, le avisa al Hexágono, PASÁNDOSE A SÍ MISMO (this)
+            this.hexagono.activarVertices(this);
+        }
+    }
 }

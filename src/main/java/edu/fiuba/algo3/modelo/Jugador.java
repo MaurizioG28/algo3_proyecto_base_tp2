@@ -14,8 +14,10 @@ public class Jugador {
     private MazoDeCartas cartas;
     private AlmacenDeRecursos almacenJugador;
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
+    private Color color;
+    private String nombre;
 
-    public Jugador(){
+    public Jugador(String nombre, Color color){
         this.almacenJugador = new AlmacenDeRecursos();
         this.cartas = new MazoDeCartas();
     }
@@ -102,6 +104,25 @@ public class Jugador {
         }
         this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
         return true;
+    }
+    public int cantidadMadera() {
+        return this.CantidadRecurso(new Madera(0));
+    }
+
+    public int cantidadGrano() {
+        return this.CantidadRecurso(new Grano(0));
+    }
+
+    public int cantidadLadrillo() {
+        return this.CantidadRecurso(new Ladrillo(0));
+    }
+
+    public int cantidadLana() {
+        return this.CantidadRecurso(new Lana(0));
+    }
+
+    public int cantidadMineral() {
+        return this.CantidadRecurso(new Mineral(0));
     }
 
 }

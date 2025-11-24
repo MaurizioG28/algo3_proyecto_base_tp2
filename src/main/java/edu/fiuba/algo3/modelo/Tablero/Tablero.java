@@ -18,10 +18,7 @@ public class Tablero {
 
 
     private final Map<Integer, Terreno> terrenos;
-
     private Dados dados = new Dados();
-
-
     private final Map<Coordenada, Vertice> vertices;
     Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
@@ -89,35 +86,12 @@ public class Tablero {
         //jugador.sumarRecursos(recursos);
     }
 
-//    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
-//        Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
-//
-//        for (Hexagono h : hexagonos) {
-//            if (h.getNumero() != numeroLanzado) continue;
-//            if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
-//            if (!h.sePuedeProducir()) continue;          // si usás ladrón
-//
-//            RecursoBase r = h.getTipo().recursoOtorgado();
-//
-//            for (Vertice v : h.getVertices()) {
-//                if (!v.tieneConstruccion()) continue;
-//
-//                int cant = v.obtenerFactorProduccion();
-//                Jugador j = v.getPropietario();
-//
-//                assert r != null;
-//                produccion
-//                        .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
-//                        .merge(r.tipo(), cant, Integer::sum);
-//            }
-//        }
-//        return produccion;
-//    }
-
-//    public void repartirProduccion(int numeroLanzado){
-//        Map<Jugador, EnumMap<Recurso, Integer>> bolsa = calcularProduccion(numeroLanzado);
-//        bolsa.forEach((jug, mapa) -> mapa.forEach(jug::agregarRecurso)); // (recurso,cantidad)
-//    }
+    public void distribuirProduccion(int numeroDado) {
+        // Iteramos sobre los valores del mapa 'terrenos'
+        for (Terreno terreno : this.terrenos.values()) {
+            terreno.verificarYProducir(numeroDado);
+        }
+    }
 
 
     public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
@@ -192,5 +166,9 @@ public class Tablero {
         Lado l = lados.get(caminoEsperadoEn);
         return l.tieneConstruccion();
     }
+    public Vertice obtenerVertice(Coordenada coordenada) {
+        return this.vertices.get(coordenada);
+    }
+
 }
 
