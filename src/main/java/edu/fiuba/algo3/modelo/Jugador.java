@@ -1,9 +1,10 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Recursos.*;
-import edu.fiuba.algo3.modelo.Tablero.Costo;
+//import edu.fiuba.algo3.modelo.Tablero.Costo;
 
 import java.util.Map;
 import java.util.List;
@@ -44,16 +45,16 @@ public class Jugador {
         return this.almacenJugador.totalRecursos();
     }
 
-    private Recurso entregarRecursoAleatorio() {
-        return this.almacenJugador.robarRecursoAleatorio();
-    }
+//    private Recurso entregarRecursoAleatorio() {
+//        return this.almacenJugador.robarRecursoAleatorio();
+//    }
 
-    public void robarRecurso(Jugador victima) {
-        Recurso recursoRobado = victima.entregarRecursoAleatorio();
-        if(recursoRobado != null){
-            this.almacenJugador.agregarRecurso(recursoRobado,1);
-        }
-    }
+//    public void robarRecurso(Jugador victima) {
+//        Recurso recursoRobado = victima.entregarRecursoAleatorio();
+//        if(recursoRobado != null){
+//            this.almacenJugador.agregarRecurso(recursoRobado,1);
+//        }
+//    }
 
     public void agregarCarta(CartaDesarrollo cartaNueva) {
         mazoCartas.agregarCarta(cartaNueva);
@@ -62,9 +63,9 @@ public class Jugador {
     public CartaDesarrollo agarrarCarta(int indice) {
         return mazoCartas.agarrarCarta(indice);
     }
-    public Construccion comprarPoblado() {
-        return almacenJugador.comprarPoblado(color);
-    }
+//    public Construccion comprarPoblado() {
+//        return almacenJugador.comprarPoblado(color);
+//    }
 
     public boolean tieneColor(String color) {
         return this.color.esMismoColor(color);
@@ -87,6 +88,7 @@ public class Jugador {
         this.almacenJugador.agregarRecurso(recursoRecibir, cantidadRecibir);
         return true;
     }
+
     public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
         return (
                 (madera.obtenerCantidad() >= cantidadRecurso(madera)) &
@@ -97,9 +99,17 @@ public class Jugador {
         );
     }
 
+    public int totalPuntos() {
+        return mazoCartas.cantidadDeTipo(PuntoDeVictoria.class);
+
+        //Implementaciones requeridas para cosntrucciones
+
+    }
+
     public void sumarRecursos(List<Recurso> recursos) {
         almacenJugador.sumarRecursos(recursos);
     }
 
     public void pagar(Costo costo) {almacenJugador.pagar(costo);};
+
 }

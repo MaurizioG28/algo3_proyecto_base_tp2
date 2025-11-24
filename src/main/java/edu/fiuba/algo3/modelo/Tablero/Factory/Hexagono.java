@@ -107,12 +107,8 @@ public class Hexagono {
                 if (!v.tieneConstruccion()) continue;
                 Jugador propietario = v.getPropietario();
                 if (propietario == null) continue;
-                if (!jugadoresLocales.contains(propietario)) {
-                    jugadoresLocales.forEach(jugador -> {
-                        for (int i = 0; i <= v.factorProduccion() - 1; i++) {
-                            jugador.agregarRecurso(recurso);
-                        }
-                    });
+                for (int i = 0; i <= v.factorProduccion() - 1; i++) {
+                    propietario.agregarRecurso(recurso);
                 }
             }
         }
