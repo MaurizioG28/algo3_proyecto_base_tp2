@@ -125,7 +125,7 @@ public class Tablero {
         Terreno anterior = terrenos.get(posicionDelLadron);
 
         // Quitar ladrón del terreno anterior (si no es desierto)
-        if (!anterior.esDesierto())
+        if (anterior!=null && !anterior.esDesierto())
             anterior.moverLadronQuitar();
 
 
@@ -133,7 +133,8 @@ public class Tablero {
         posicionDelLadron = posicionId;
 
         // Obtener víctimas delegando en Terreno
-        return nuevo.jugadoresAfectadosPorElLadron(jugadorActual);
+        List<Color> victimas= nuevo.jugadoresAfectadosPorElLadron(jugadorActual);
+        return victimas;
     }
 
 

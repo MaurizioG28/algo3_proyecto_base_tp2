@@ -7,7 +7,7 @@ public class Bosque extends Terreno {
 
     public Bosque(){
         super();
-
+        tipoTerreno = this.getClass().getSimpleName();
 
     }
 

@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.Madera;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ public class casoDeUsoDescartarRecursos {
     @Test
     public void Test01jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
         int cantidadCartasEsperadas  = 4;
-        Jugador jugador = new Jugador();
+        Jugador jugador = new Jugador(new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(8));  // antes: (Recurso.MADERA, 8)
         jugador.descartarMitadDeRecursos();
@@ -23,7 +24,7 @@ public class casoDeUsoDescartarRecursos {
     @Test
     public void Test02jugadorTieneMenosDe7RecursosEnTotalYNoDescarta(){
         int cantidadCartasEsperadas  = 5;
-        Jugador jugador = new Jugador();
+        Jugador jugador = new Jugador(new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(5));
         jugador.descartarMitadDeRecursos();
@@ -36,7 +37,7 @@ public class casoDeUsoDescartarRecursos {
     @Test
     public void Test03jugadorTiene7RecursosEnTotalYNoDescarta(){
         int cantidadCartasEsperadas  = 7;
-        Jugador jugador = new Jugador();
+        Jugador jugador = new Jugador(new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(7));
         jugador.descartarMitadDeRecursos();

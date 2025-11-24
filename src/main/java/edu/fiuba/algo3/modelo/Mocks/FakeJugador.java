@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.modelo.Mocks;
 
+import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
@@ -7,6 +8,7 @@ public class FakeJugador extends Jugador {
     private boolean respuesta;
 
     public FakeJugador(boolean respuestaDefault) {
+        super(new Color("Azul"));
         this.respuesta = respuestaDefault;
     }
 

@@ -23,7 +23,7 @@ public class CasoDeUsoCartasDesarrolloTest {
         int cantidadRecursosEsperada = 0;
         Random numeroRandom = new FakeRandom(0);
         MazoOculto servicio = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador(new Color("Azul"));
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
@@ -38,7 +38,7 @@ public class CasoDeUsoCartasDesarrolloTest {
     public void Test02UnJugadorNoPuedeJugarUnaCartaDeDesarrolloEnElMismoTurnoQueLaCompra() {
         Random numeroRandom = new FakeRandom(0);
         MazoOculto unMazoOculto = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador(new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
         Map<Integer, Terreno> hexagonos = new HashMap<>();
@@ -61,7 +61,7 @@ public class CasoDeUsoCartasDesarrolloTest {
     public void Test03UnJugadorDeberiaPoderUsarUnaCartaQueNoOtorgaPuntosDeVictoriaEnUnTurnoPosteriorALaCompra() {
         Random numeroRandom = new FakeRandom(0);
         MazoOculto unMazoOculto = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador(new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
         Map<Integer, Terreno> hexagonos = new HashMap<>();
@@ -95,7 +95,7 @@ public class CasoDeUsoCartasDesarrolloTest {
         int cantidadDePuntosEsperada = 1;
         Random numeroRandom = new FakeRandom(4);
         MazoOculto servicio = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador(new Color("Azul"));
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
