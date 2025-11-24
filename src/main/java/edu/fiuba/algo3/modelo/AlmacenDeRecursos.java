@@ -160,6 +160,40 @@ public class AlmacenDeRecursos {
 
         return true;
     }
+    public boolean tieneExactamente(Map<TipoDeRecurso, Integer> requeridos) {
+
+        if (requeridos == null) {
+            throw new IllegalArgumentException("La lista de requeridos no puede ser null");
+        }
+
+        // 1) Verificar que cada recurso requerido coincide EXACTAMENTE
+        for (Map.Entry<TipoDeRecurso, Integer> entry : requeridos.entrySet()) {
+
+            TipoDeRecurso tipo = entry.getKey().nuevo(0); // normalización
+            int cantidadRequerida = entry.getValue();
+            int disponible = cantidadDe(tipo);
+
+            if (disponible != cantidadRequerida) {
+                return false; // falta o sobra
+            }
+        }
+
+        // 2) Verificar que NO tiene recursos extra
+        for (Map.Entry<TipoDeRecurso, TipoDeRecurso> entry : recursos.entrySet()) {
+
+            TipoDeRecurso tipo = entry.getKey();     // Madera(0), Grano(0), etc.
+            int cantidadDisponible = entry.getValue().obtenerCantidad();
+            int cantidadRequerida = requeridos.getOrDefault(tipo, 0);
+
+            if (cantidadDisponible != cantidadRequerida) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Almacén de Recursos:\n");
