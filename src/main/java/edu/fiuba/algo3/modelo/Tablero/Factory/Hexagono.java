@@ -1,9 +1,7 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 
-import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
-import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
 import java.util.*;
 
@@ -100,23 +98,11 @@ public class Hexagono {
         return vertices.contains(v);
     }
 
-    public void producirRecurso(TipoDeRecurso recurso) {
-        if (sePuedeProducir()) {
-            List<Jugador> jugadoresLocales = new ArrayList<>();
-            for (Vertice v : vertices) {
-                if (!v.tieneConstruccion()) continue;
-                Jugador propietario = v.getPropietario();
-                if (propietario == null) continue;
-                for (int i = 0; i <= v.factorProduccion() - 1; i++) {
-                    propietario.agregarRecurso(recurso);
-                }
-            }
+    public void activarVertices(Terreno terrenoOrigen) {
+        if (bloqueadoPorLadron) return; // Lógica del ladrón
+
+        for (Vertice v : vertices) {
+            v.cosechar(terrenoOrigen); // Delega al vértice
         }
     }
-
-//    public void producirRecursoAContrucciones() {
-//        for (Vertice v : vertices) {
-//            List<TipoDeRecurso> recursos = v.;
-//        }
-//    }
 }

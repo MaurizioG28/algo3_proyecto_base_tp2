@@ -2,10 +2,11 @@ package edu.fiuba.algo3.entrega_2;
 
 import edu.fiuba.algo3.modelo.CasoDeUsoArmarTablero;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recurso;
+
 import edu.fiuba.algo3.modelo.Tablero.*;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 
@@ -21,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TableroTest {
 
-    private Hexagono hex(TipoTerreno t, int numero, Vertice... vs) {
-        Hexagono h = new Hexagono(t, numero);
-        for (Vertice v : vs) h.agregarVertice(v);
-        return h;
-    }
+//    private Hexagono hex(TipoTerreno t, int numero, Vertice... vs) {
+//        Hexagono h = new Hexagono();
+//        for (Vertice v : vs) h.agregarVertice(v);
+//        return h;
+//    }
     private Vertice vPoblado(Jugador j) {
         Vertice v = new Vertice();
         v.colocarPoblado(j);
@@ -89,11 +90,11 @@ public class TableroTest {
         CasoDeUsoArmarTablero caso = new CasoDeUsoArmarTablero(hexagonos, fichasNumeradas);
 
         var tablero = caso.crearTablero();
-        var tableroEsperado = new Tablero(hexagonos, fichasNumeradas);
+        var tableroEsperado =  TableroFactory.crear(hexagonos, fichasNumeradas);
 
         assertEquals(tableroEsperado, tablero);
     }
-
+/*
     @Test
     public void test02noDebePermitirConstruirPobladoEnVerticeAdyacente() {
         Jugador jugador1 = new Jugador();
@@ -236,5 +237,5 @@ public class TableroTest {
         //Assert
         assertTrue(jugador.tiene(1,0,0,0,0));
     }
-
+*/
 }

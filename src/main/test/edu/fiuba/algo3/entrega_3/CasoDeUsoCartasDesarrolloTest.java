@@ -1,15 +1,16 @@
 package edu.fiuba.algo3.entrega_3;
 
 import edu.fiuba.algo3.modelo.*;
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Mocks.FakeRandom;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
 import edu.fiuba.algo3.modelo.Recursos.Lana;
 import edu.fiuba.algo3.modelo.Recursos.Mineral;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
-import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Lado;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.Tablero.TableroProduccion;
-import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -18,56 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CasoDeUsoCartasDesarrolloTest {
 
-    List<Terreno> hexagonos = Arrays.asList(
-            new Bosque(),
-            new Campo(),
-            new Bosque(),
-            new Pastizal(),
-            new Bosque(),
-            new Campo(),
-            new Montania(),
-            new Campo(),
-            new Montania(),
-            new Campo(),
-            new Colina(),
-            new Colina(),
-            new Desierto(),
-            new Colina(),
-            new Pastizal(),
-            new Montania(),
-            new Pastizal(),
-            new Bosque(),
-            new Pastizal()
-    );
-
-    List<Produccion> fichasNumeradas = new LinkedList<>(Arrays.asList(
-            new Produccion(2),
-            new Produccion(3),
-            new Produccion(3),
-            new Produccion(4),
-            new Produccion(4),
-            new Produccion(5),
-            new Produccion(5),
-            new Produccion(6),
-            new Produccion(6),
-            new Produccion(8),
-            new Produccion(8),
-            new Produccion(9),
-            new Produccion(9),
-            new Produccion(10),
-            new Produccion(10),
-            new Produccion(11),
-            new Produccion(11),
-            new Produccion(12)
-
-    ));
-
     @Test
     public void Test01UnJugadorDebeConsumirSusRecursosAlComprarUnaCartaQueNoOtorgaPuntosDeVictoria() {
         int cantidadRecursosEsperada = 0;
         Random numeroRandom = new FakeRandom(0);
         MazoOculto servicio = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
@@ -82,10 +39,13 @@ public class CasoDeUsoCartasDesarrolloTest {
     public void Test02UnJugadorNoPuedeJugarUnaCartaDeDesarrolloEnElMismoTurnoQueLaCompra() {
         Random numeroRandom = new FakeRandom(0);
         MazoOculto unMazoOculto = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
-        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+        Map<Integer, Terreno> hexagonos = new HashMap<>();
+        Map<Coordenada, Vertice> vertices= new HashMap<>();
+        Map<Coordenada, Lado> ladosPorCoordenada= new HashMap<>();
+        Tablero unTablero = new Tablero(hexagonos, vertices, ladosPorCoordenada);
         ManagerTurno manager = new ManagerTurno(jugadores, unTablero, numeroRandom, unMazoOculto);
 
         comprador.agregarRecurso(new Lana(1));
@@ -98,14 +58,19 @@ public class CasoDeUsoCartasDesarrolloTest {
                 () -> manager.usarUnaCarta(0));
     }
 
+
     @Test
     public void Test03UnJugadorDeberiaPoderUsarUnaCartaQueNoOtorgaPuntosDeVictoriaEnUnTurnoPosteriorALaCompra() {
         Random numeroRandom = new FakeRandom(0);
         MazoOculto unMazoOculto = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
-        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+        Map<Integer, Terreno> hexagonos = new HashMap<>();
+        Map<Coordenada, Vertice> vertices= new HashMap<>();
+        Map<Coordenada, Lado> ladosPorCoordenada= new HashMap<>();
+
+        Tablero unTablero = new Tablero(hexagonos, vertices, ladosPorCoordenada);
         ManagerTurno manager = new ManagerTurno(jugadores, unTablero, numeroRandom, unMazoOculto);
 
         comprador.agregarRecurso(new Lana(1));
@@ -132,13 +97,15 @@ public class CasoDeUsoCartasDesarrolloTest {
         int cantidadDePuntosEsperada = 1;
         Random numeroRandom = new FakeRandom(4);
         MazoOculto servicio = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
         comprador.agregarRecurso(new Mineral(1));
 
-        comprador.agregarCarta(servicio.comprarCarta(comprador, 0));
+        CartaDesarrollo cartaNueva = servicio.comprarCarta(comprador, 0);
+        
+        comprador.agregarCarta(cartaNueva);
 
         assertEquals(cantidadDePuntosEsperada, comprador.totalPuntos());
     }

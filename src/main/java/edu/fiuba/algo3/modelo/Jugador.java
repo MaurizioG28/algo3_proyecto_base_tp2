@@ -2,37 +2,52 @@ package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
-import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
-//import edu.fiuba.algo3.modelo.Tablero.Costo;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
 public class Jugador {
-    private Color color;
 
+    private MazoDeCartas cartas;
     private AlmacenDeRecursos almacenJugador;
-    private MazoDeCartas mazoCartas;
+    private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
+    private Color color;
+    private String nombre;
 
-    public Jugador(){
+    public Jugador(String nombre, Color color){
         this.almacenJugador = new AlmacenDeRecursos();
-        this.mazoCartas = new MazoDeCartas();
+        this.cartas = new MazoDeCartas();
     }
-    public Jugador(Color color){
-        this.almacenJugador = new AlmacenDeRecursos();
-        this.color = color;
-    }
-    public int cantidadRecurso(TipoDeRecurso tipo) {
-        return this.almacenJugador.cantidadDe(tipo);
+    public int CantidadRecurso(TipoDeRecurso tipo) {
+        return almacenJugador.cantidadDe(tipo);
     }
 
-    public Map<TipoDeRecurso, Integer> descartarMitadDeRecursos() {
-        return this.almacenJugador.descartarPorReglaDelSiete();
+
+    public Color getColor(){
+        return color;
+    }
+    public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
+        return (
+                (madera.obtenerCantidad() >= CantidadRecurso(madera)) &
+                        (ladrillos.obtenerCantidad() >= CantidadRecurso(ladrillos)) &
+                        (lana.obtenerCantidad() >= CantidadRecurso(lana)) &
+                        (mineral.obtenerCantidad() >= CantidadRecurso(mineral)) &
+                        (grano.obtenerCantidad() >= CantidadRecurso(grano))
+        );
     }
 
-    public void agregarRecurso(TipoDeRecurso recurso){
-        this.almacenJugador.agregarRecurso(recurso);
+    public void agregarRecurso(TipoDeRecurso recurso) {
+        almacenJugador.agregarRecurso(recurso);
+    }
+    public void agregarCarta(CartaDesarrollo cartaNueva) {
+        cartas.agregarCarta(cartaNueva);
+    }
+
+    public CartaDesarrollo agarrarCarta(int indice) {
+        return cartas.agarrarCarta(indice);
     }
 
     public void quitarRecurso(TipoDeRecurso tipo, int cantidad) {
@@ -41,37 +56,43 @@ public class Jugador {
         }
     }
 
+    public int mejorTasaPara(TipoDeRecurso recursoEntregado) {
+        return politicas.stream()
+                .filter(p -> p.aplicaA(this, recursoEntregado))
+                .mapToInt(PoliticaDeIntercambio::tasa)
+                .min()
+                .orElse(4); // base 4:1
+    }
+    public void agregarPolitica(PoliticaDeIntercambio politica) {
+        politicas.add(politica);
+    }
+
+    public Map<TipoDeRecurso, Integer> descartarMitadDeRecursos() {
+        return this.almacenJugador.descartarPorReglaDelSiete();
+    }
+
     public int totalRecursos() {
         return this.almacenJugador.totalRecursos();
     }
 
-//    private Recurso entregarRecursoAleatorio() {
-//        return this.almacenJugador.robarRecursoAleatorio();
-//    }
-
-//    public void robarRecurso(Jugador victima) {
-//        Recurso recursoRobado = victima.entregarRecursoAleatorio();
-//        if(recursoRobado != null){
-//            this.almacenJugador.agregarRecurso(recursoRobado,1);
-//        }
-//    }
-
-    public void agregarCarta(CartaDesarrollo cartaNueva) {
-        mazoCartas.agregarCarta(cartaNueva);
+    private TipoDeRecurso entregarRecursoAleatorio() {
+        return this.almacenJugador.robarRecursoAleatorio();
     }
 
-    public CartaDesarrollo agarrarCarta(int indice) {
-        return mazoCartas.agarrarCarta(indice);
-    }
-//    public Construccion comprarPoblado() {
-//        return almacenJugador.comprarPoblado(color);
-//    }
-
-    public boolean tieneColor(String color) {
-        return this.color.esMismoColor(color);
+    public void robarRecurso(Jugador victima) {
+        TipoDeRecurso recursoRobado = victima.entregarRecursoAleatorio();
+        if(recursoRobado != null){
+            this.almacenJugador.agregarRecurso(recursoRobado);
+        }
     }
 
-    public void intercambiar(Recurso recursoEntregar, int cantidadEntregar, Jugador jugador2, Recurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
+    public int totalPuntos() {
+        // Falta agregar mas implementaciones
+
+        return cartas.cantidadDeTipo(PuntoDeVictoria.class);
+    }
+
+    public void intercambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, Jugador jugador2, TipoDeRecurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
         if(!jugador2.cambiar(recursoRecibir, cantidadRecibir, recursoEntregar, cantidadEntregar)){
             throw new RecursosIsuficientesException("El segundo jugador no tiene suficientes recursos.");
         }
@@ -81,35 +102,31 @@ public class Jugador {
         };
     }
 
-    public boolean cambiar(Recurso recursoEntregar, int cantidadEntregar, Recurso recursoRecibir, int cantidadRecibir) {
+    public boolean cambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, TipoDeRecurso recursoRecibir, int cantidadRecibir) {
         if(!this.almacenJugador.quitar(recursoEntregar,cantidadEntregar)) {
             return false;
         }
-        this.almacenJugador.agregarRecurso(recursoRecibir, cantidadRecibir);
+        this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
         return true;
     }
-
-    public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
-        return (
-                (madera.obtenerCantidad() >= cantidadRecurso(madera)) &
-                        (ladrillos.obtenerCantidad() >= cantidadRecurso(ladrillos)) &
-                        (lana.obtenerCantidad() >= cantidadRecurso(lana)) &
-                        (mineral.obtenerCantidad() >= cantidadRecurso(mineral)) &
-                        (grano.obtenerCantidad() >= cantidadRecurso(grano))
-        );
+    public int cantidadMadera() {
+        return this.CantidadRecurso(new Madera(0));
     }
 
-    public int totalPuntos() {
-        return mazoCartas.cantidadDeTipo(PuntoDeVictoria.class);
-
-        //Implementaciones requeridas para cosntrucciones
-
+    public int cantidadGrano() {
+        return this.CantidadRecurso(new Grano(0));
     }
 
-    public void sumarRecursos(List<Recurso> recursos) {
-        almacenJugador.sumarRecursos(recursos);
+    public int cantidadLadrillo() {
+        return this.CantidadRecurso(new Ladrillo(0));
     }
 
-    public void pagar(Costo costo) {almacenJugador.pagar(costo);};
+    public int cantidadLana() {
+        return this.CantidadRecurso(new Lana(0));
+    }
+
+    public int cantidadMineral() {
+        return this.CantidadRecurso(new Mineral(0));
+    }
 
 }

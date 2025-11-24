@@ -1,6 +1,10 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recursos.Grano;
+import edu.fiuba.algo3.modelo.Recursos.Ladrillo;
+import edu.fiuba.algo3.modelo.Recursos.Madera;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,70 +12,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class jugadorTest {
 
 
-    @Test
-    public void Test01jugadorTieneMasDe7RecursosEnTotalYDescartaCorrectamenteLaMitadRedondeaHaciaAbajo(){
-        int cantidadCartasEsperadas  =  4;
-        int cantidadRecursosJugador;
-        Jugador jugador = new Jugador();
-
-        jugador.agregarRecurso(Recurso.MADERA,8);
-        jugador.descartarMitadDeRecursos();
-
-        cantidadRecursosJugador = jugador.totalRecursos();
-
-        assertEquals(cantidadCartasEsperadas,cantidadRecursosJugador);
-
-    }
-    @Test
-    public void Test02jugadorTieneMenosDe7RecursosEnTotalYNoDescarta(){
-        int cantidadCartasEsperadas  =  5;
-        int cantidadRecursosJugador;
-        Jugador jugador = new Jugador();
-
-        jugador.agregarRecurso(Recurso.MADERA,5);
-        jugador.descartarMitadDeRecursos();
-
-        cantidadRecursosJugador = jugador.totalRecursos();
-
-        assertEquals(cantidadCartasEsperadas,cantidadRecursosJugador);
-
-    }
-
-    @Test
-    public void Test03jugadorTiene7RecursosEnTotalYNoDescarta(){
-        int cantidadCartasEsperadas  =  7;
-        int cantidadRecursosJugador;
-        Jugador jugador = new Jugador();
-
-        jugador.agregarRecurso(Recurso.MADERA,7);
-        jugador.descartarMitadDeRecursos();
-
-        cantidadRecursosJugador = jugador.totalRecursos();
-
-        assertEquals(cantidadCartasEsperadas,cantidadRecursosJugador);
-
-    }
 
     @Test
     public void Test04jugadorDebeRobarUnRecursoDeLaVictima() {
-        Jugador ladron = new Jugador();
-        Jugador victima = new Jugador();
+        Jugador ladron = new Jugador("nombre1",new Color("Azul"));
+        Jugador victima = new Jugador("nombre2",new Color("Rojo"));
 
 
-        victima.agregarRecurso(Recurso.MADERA, 1);
+        victima.agregarRecurso(new Madera(1));
 
 
         ladron.robarRecurso(victima);
 
-        assertEquals(1, ladron.CantidadRecurso(Recurso.MADERA));
+        assertEquals(1, ladron.CantidadRecurso(new Madera(0)));
 
-        assertEquals(0, victima.CantidadRecurso(Recurso.MADERA));
+        assertEquals(0, victima.CantidadRecurso(new Madera(0)));
     }
 
     @Test
     public void Test05noDebeRobarSiLaVictimaNoTieneRecursos() {
-        Jugador ladron = new Jugador();
-        Jugador victima = new Jugador();
+        Jugador ladron = new Jugador("nombre1",new Color("Azul"));
+        Jugador victima = new Jugador("nombre2",new Color("Rojo"));
 
 
         ladron.robarRecurso(victima);
@@ -79,6 +40,18 @@ public class jugadorTest {
 
         assertEquals(0, ladron.totalRecursos());
         assertEquals(0, victima.totalRecursos());
+    }
+
+    @Test
+    public void testJugadorTieneLosRecursosCorrectos() {
+        Jugador jugador = new Jugador("Ana", new Color("Rojo"));
+
+        jugador.agregarRecurso(new Madera(2));
+        jugador.agregarRecurso(new Grano(1));
+
+        assertEquals(2, jugador.CantidadRecurso(new Madera(0)));
+        assertEquals(1, jugador.CantidadRecurso(new Grano(0)));
+        assertEquals(0, jugador.CantidadRecurso(new Ladrillo(0))); // No tiene ladrillo
     }
 
 

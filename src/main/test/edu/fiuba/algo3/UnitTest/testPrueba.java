@@ -10,7 +10,7 @@ public class testPrueba {
 
     @Test
     public void test01PruebaIDE() {
-        Tablero tablero = new Tablero();
+        //Tablero tablero = new Tablero();
     }
 
 

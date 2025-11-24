@@ -18,13 +18,7 @@ public class Tablero {
 
 
     private final Map<Integer, Terreno> terrenos;
-
-    //la distribucion de fichas numeradas son las siguientes: un 2 y un 12, luego dos de cada una entre 3 y 11, el 7 está excluido
-    //private int[] fichasNumeradas = {2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12};
-    
     private Dados dados = new Dados();
-
-    //private ArrayList<Hexagono> hexagonos = new ArrayList<>();
     private final Map<Coordenada, Vertice> vertices;
     Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
@@ -56,16 +50,12 @@ public class Tablero {
 
   
     public int tirarDados(){
-        int numeroDados = dados.tirar();
-
-        terrenos.forEach((indice, terreno) -> {
-            if (terreno.mismaProduccion(new Produccion(numeroDados))) {
-                terreno.producirRecurso();
-            }
-        });
-
-        return numeroDados;
+        return dados.tirar();
     }
+
+
+
+
 
 //    public boolean tableroCorrectamenteInicializado(){
 //        boolean correcto = true;
@@ -96,35 +86,12 @@ public class Tablero {
         //jugador.sumarRecursos(recursos);
     }
 
-//    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
-//        Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
-//
-//        for (Hexagono h : hexagonos) {
-//            if (h.getNumero() != numeroLanzado) continue;
-//            if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
-//            if (!h.sePuedeProducir()) continue;          // si usás ladrón
-//
-//            RecursoBase r = h.getTipo().recursoOtorgado();
-//
-//            for (Vertice v : h.getVertices()) {
-//                if (!v.tieneConstruccion()) continue;
-//
-//                int cant = v.obtenerFactorProduccion();
-//                Jugador j = v.getPropietario();
-//
-//                assert r != null;
-//                produccion
-//                        .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
-//                        .merge(r.tipo(), cant, Integer::sum);
-//            }
-//        }
-//        return produccion;
-//    }
-
-//    public void repartirProduccion(int numeroLanzado){
-//        Map<Jugador, EnumMap<Recurso, Integer>> bolsa = calcularProduccion(numeroLanzado);
-//        bolsa.forEach((jug, mapa) -> mapa.forEach(jug::agregarRecurso)); // (recurso,cantidad)
-//    }
+    public void distribuirProduccion(int numeroDado) {
+        // Iteramos sobre los valores del mapa 'terrenos'
+        for (Terreno terreno : this.terrenos.values()) {
+            terreno.verificarYProducir(numeroDado);
+        }
+    }
 
 
     public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
@@ -199,5 +166,9 @@ public class Tablero {
         Lado l = lados.get(caminoEsperadoEn);
         return l.tieneConstruccion();
     }
+    public Vertice obtenerVertice(Coordenada coordenada) {
+        return this.vertices.get(coordenada);
+    }
+
 }
 
