@@ -22,23 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TableroTest {
 
-//    private Hexagono hex(TipoTerreno t, int numero, Vertice... vs) {
-//        Hexagono h = new Hexagono();
-//        for (Vertice v : vs) h.agregarVertice(v);
-//        return h;
-//    }
-    private Vertice vPoblado(Jugador j) {
-        Vertice v = new Vertice();
-        v.colocarPoblado(j);
-        return v;
-    }
-    private Vertice vCiudad(Jugador j) {
-        Vertice v = new Vertice();
-        v.colocarPoblado(j);
-        v.mejorarACiudad();
-        return v;
-    }
-    private Vertice vLibre() { return new Vertice(); }
+
+
 
     @Test
     public void test01InicializarTableroConHexagonosCreados() {

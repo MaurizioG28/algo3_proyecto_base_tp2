@@ -4,6 +4,7 @@ package edu.fiuba.algo3.modelo;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,4 +47,11 @@ public class Dividendo {
         return Objects.hash(color, recursos);
     }
 
+    public Color getColor() {
+        return this.color;
+    }
+
+    public List<TipoDeRecurso> getRecursos() {
+        return List.copyOf(this.recursos.keySet());
+    }
 }

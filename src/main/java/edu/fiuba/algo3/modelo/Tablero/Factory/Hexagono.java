@@ -1,10 +1,10 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
 
+import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Color;
-import edu.fiuba.algo3.modelo.Jugador;
 
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
@@ -61,27 +61,32 @@ public class Hexagono {
         return vertices.contains(v);
     }
 
-    public void activarVertices(Terreno terrenoOrigen) {
-        if (bloqueadoPorLadron) return; // Lógica del ladrón
+    public List<Dividendo> activarVertices(Terreno terrenoOrigen) {
+        if (bloqueadoPorLadron) return null;
+        List<Dividendo> listaDividendos = new ArrayList<>();
 
         for (Vertice v : vertices) {
-            v.cosechar(terrenoOrigen); // Delega al vértice
+            Dividendo dividendo = v.cosechar(terrenoOrigen);
+            
+            if (dividendo != null)
+             listaDividendos.add( dividendo); // Delega al vértice
         }
+        return listaDividendos;
     }
 
-    public void producirRecurso(TipoDeRecurso recurso) {
-        if (sePuedeProducir()) {
-            List<Jugador> jugadoresLocales = new ArrayList<>();
-            for (Vertice v : vertices) {
-                if (!v.tieneConstruccion()) continue;
-                Jugador propietario = v.getPropietario();
-                if (propietario == null) continue;
-                for (int i = 0; i <= v.factorProduccion() - 1; i++) {
-                    propietario.agregarRecurso(recurso);
-                }
-            }
-        }
-    }
+//    public void producirRecurso(TipoDeRecurso recurso) {
+//        if (sePuedeProducir()) {
+//            List<Jugador> jugadoresLocales = new ArrayList<>();
+//            for (Vertice v : vertices) {
+//                if (!v.tieneConstruccion()) continue;
+//                Jugador propietario = v.getPropietario();
+//                if (propietario == null) continue;
+//                for (int i = 0; i <= v.factorProduccion() - 1; i++) {
+//                    propietario.agregarRecurso(recurso);
+//                }
+//            }
+//        }
+//    }
     public void sacarLadron() {
         this.bloqueadoPorLadron = false;
     }

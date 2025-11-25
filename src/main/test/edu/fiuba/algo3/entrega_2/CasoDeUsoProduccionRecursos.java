@@ -44,12 +44,14 @@ public class CasoDeUsoProduccionRecursos {
     ));
 
     @Test
-    public void test01PobladoProduceUnRecursoYCiudadProduceDos() {
+    public void test01PobladoProduceUnRecursoYCiudadProduceDos() throws ConstruccionExistenteException {
         // 1. ARRANGE (Preparación del escenario)
 
         // Jugadores
         Jugador jugadorPoblado = new Jugador("Jugador 1", new Color("Rojo"));
+        Poblado poblado = new Poblado(jugadorPoblado.getColor());
         Jugador jugadorCiudad = new Jugador("Jugador 2", new Color("Azul"));
+        Poblado ciudad = new Poblado(jugadorCiudad.getColor());
 
         // Terreno: Bosque que produce con el número 6
         Bosque bosque = new Bosque();
@@ -62,12 +64,12 @@ public class CasoDeUsoProduccionRecursos {
 
         // Vértice 1: Tiene un POBLADO del Jugador 1
         Vertice v1 = new Vertice();
-        v1.colocarPoblado(jugadorPoblado);
+        v1.colocar(poblado);
         // Simula que el poblado ya está construido
 
         // Vértice 2: Tiene una CIUDAD del Jugador 2
         Vertice v2 = new Vertice();
-        v2.colocarPoblado(jugadorCiudad);
+        v2.colocar(ciudad);
         v2.mejorarACiudad();
 
         // Conectamos vértices al hexágono
@@ -116,7 +118,12 @@ public class CasoDeUsoProduccionRecursos {
         montania.asignarHexagono(hexagono);
 
         Vertice v1 = new Vertice();
-        v1.colocarPoblado(jugador);
+        Poblado poblado = new Poblado(jugador.getColor());
+        try {
+            v1.colocar(poblado);
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        }
         hexagono.agregarVertice(v1);
 
         Map<Integer, Terreno> terrenos = new HashMap<>();
@@ -156,7 +163,13 @@ public class CasoDeUsoProduccionRecursos {
 
         // Vértice COMPARTIDO
         Vertice verticeCompartido = new Vertice();
-        verticeCompartido.colocarPoblado(jugador);
+        Poblado poblado = new Poblado(jugador.getColor());
+        try {
+            verticeCompartido.colocar(poblado);
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // Agregamos el MISMO vértice a ambos hexágonos
         hexCampo.agregarVertice(verticeCompartido);
@@ -179,7 +192,7 @@ public class CasoDeUsoProduccionRecursos {
 
 
     @Test
-    public void testProduccionDeRecursosEnTableroCompleto() {
+    public void testProduccionDeRecursosEnTableroCompleto() throws ConstruccionExistenteException {
         // 1. ARRANGE (Preparación)
         Tablero tablero = TableroFactory.crear(hexagonos, fichasNumeradas);
 
@@ -198,13 +211,15 @@ public class CasoDeUsoProduccionRecursos {
         // JUGADOR AZUL: Construye POBLADO en el Campo (ID 8, Ficha 6)
 
         Vertice verticeCampo = tablero.obtenerVertice(new Coordenada(8, 0));
-        verticeCampo.colocarPoblado(jugadorAzul);
+        Poblado poblado1 = new Poblado(jugadorAzul.getColor());
+        verticeCampo.colocar(poblado1);
         // Al usar colocarPoblado, se asigna el dueño y el tipo Poblado (Factor 1)
 
 
         // JUGADOR ROJO: Construye CIUDAD en la Montaña (ID 9, Ficha 6)
         Vertice verticeMontania = tablero.obtenerVertice(new Coordenada(9, 3));
-        verticeMontania.colocarPoblado(jugadorRojo);
+        Poblado poblado = new Poblado(jugadorRojo.getColor());
+        verticeMontania.colocar(poblado);
         verticeMontania.mejorarACiudad();
         // Ahora es dueño 'Rojo' y tipo Ciudad (Factor 2)
 

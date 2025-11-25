@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.IVertice;
 import edu.fiuba.algo3.modelo.Jugador;
@@ -69,10 +70,8 @@ public class Tablero {
 
 
 
-    public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
-//        }
+    public void construirPoblado(Color jugador, Vertice vertice) throws ReglaDistanciaException {
+//
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
@@ -81,16 +80,24 @@ public class Tablero {
         construye directamente, falta implementar el chequeo de recursos del jugardor.
         Con algo como jugador.recursosPoblado()
         */
-        vertice.colocarPoblado(jugador);
-        //List<Recurso> recursos = vertice.darRecursos();
-        //jugador.sumarRecursos(recursos);
+        try {
+            vertice.colocar(new Poblado(jugador));
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public void distribuirProduccion(int numeroDado) {
+    public List<List<Dividendo>> distribuirProduccion(int numeroDado) {
         // Iteramos sobre los valores del mapa 'terrenos'
+        List<List<Dividendo>> listalistaDividendos = new ArrayList<>();
         for (Terreno terreno : this.terrenos.values()) {
-            terreno.verificarYProducir(numeroDado);
+
+            List<Dividendo> listaDividendos =terreno.verificarYProducir(numeroDado);
+            if(listaDividendos!=null)
+                listalistaDividendos.add(listaDividendos );
         }
+        return listalistaDividendos;
     }
 
 

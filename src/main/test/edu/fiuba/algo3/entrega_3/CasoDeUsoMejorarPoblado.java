@@ -2,11 +2,13 @@ package edu.fiuba.algo3.entrega_3;
 
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
 import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.ManagerTurno;
 import edu.fiuba.algo3.modelo.Recursos.*;
+import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
 import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
@@ -68,7 +70,12 @@ public class CasoDeUsoMejorarPoblado {
         // Setup: El jugador YA tiene un poblado en el tablero
         Coordenada coord = new Coordenada(5, 0);
         Vertice vertice = tablero.obtenerVertice(coord);
-        vertice.colocarPoblado(jugador); // Poblado inicial
+        Poblado poblado = new Poblado(jugador.getColor());
+        try {
+            vertice.colocar(poblado); // Poblado inicial
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        }
 
         // Le damos recursos para la CIUDAD (2 Grano, 3 Mineral)
         jugador.agregarRecurso(new Grano(2));
