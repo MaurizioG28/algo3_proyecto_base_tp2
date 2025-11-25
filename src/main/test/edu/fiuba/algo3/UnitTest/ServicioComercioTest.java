@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.UnitTest;
 
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
 import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
@@ -41,8 +42,7 @@ public class ServicioComercioTest {
     }
 
     @Test
-    @DisplayName("Test Real: Jugador entrega 4 Maderas y recibe 1 Ladrillo del Banco")
-    void testIntercambioRealConObjetos() {
+    void test01IntercambioRealConObjetos() {
 
         assertEquals(4, jugador.cantidadRecurso(new Madera(0)));
         assertEquals(0, jugador.cantidadRecurso(new Ladrillo(0)));
@@ -71,8 +71,7 @@ public class ServicioComercioTest {
     }
 
     @Test
-    @DisplayName("Test Real: Comprar un Poblado descuenta recursos reales")
-    void testVenderPobladoReal() throws Exception {
+    void test02VenderPobladoReal() throws Exception {
 
         // Costo: Madera, Ladrillo, Lana, Grano
         jugador.agregarRecurso(new Madera(1)); // Ya tenía 4 del setUp, ahora tiene 5
@@ -92,5 +91,38 @@ public class ServicioComercioTest {
         // Verificamos que el BANCO recibió esos recursos
         // El banco empezó con 10 de Grano (en el setUp), recibió 1 del pago => 11
         assertTrue(banco.tieneStock(new Grano(0), 11));
+    }
+
+    @Test
+    void test03JugadorCompraYAgregaCartaDesarrollo() {
+        //El jugador necesita 1 Grano, 1 Mineral, 1 Lana
+        jugador.agregarRecurso(new Grano(1));
+        jugador.agregarRecurso(new Mineral(1));
+        jugador.agregarRecurso(new Lana(1));
+
+        // Compra la carta
+        // El servicio cobra y nos ENTREGA la carta en la mano
+        CartaDesarrollo cartaNueva = servicio.venderCartaDesarrollo(jugador, 1);
+
+        // Simulamos la acción del juego de guardar la carta en el mazo del jugador
+        jugador.agregarCarta(cartaNueva);
+
+        //  Verificaciones
+
+        // A) Verificamos que se cobraron los recursos (Costo: 1 de cada uno)
+        assertEquals(0, jugador.cantidadRecurso(new Grano(0)));
+        assertEquals(0, jugador.cantidadRecurso(new Mineral(0)));
+        assertEquals(0, jugador.cantidadRecurso(new Lana(0)));
+
+        // B) Verificamos que el banco recibió los recursos
+        assertTrue(banco.tieneStock(new Grano(0), 11)); // 10 iniciales + 1 pago
+        assertTrue(banco.tieneStock(new Mineral(0), 1)); // 0 iniciales + 1 pago
+
+        // C) Verificamos que la carta está realmente dentro del jugador
+        // Usamos agarrarCarta(0) asumiendo que es la primera que tiene
+        CartaDesarrollo cartaEnMano = jugador.agarrarCarta(0);
+
+        assertNotNull(cartaEnMano);
+        assertEquals(cartaNueva, cartaEnMano);
     }
 }
