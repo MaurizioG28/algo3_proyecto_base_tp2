@@ -17,27 +17,18 @@ public class ServicioComercioTest {
     private Banco banco;
     private Jugador jugador;
     private ServicioComercio servicio;
-
-    // Supongamos que usas un String o Enum para el color
     private final Color COLOR_ROJO =  new Color("Rojo");
 
     @BeforeEach
     void setUp() {
-        // 1. Instanciamos las clases REALES
         banco = new Banco();
-        jugador = new Jugador("TestPlayer", COLOR_ROJO); // Ajusta según tu constructor de Color
+        jugador = new Jugador("TestPlayer", COLOR_ROJO);
         servicio = new ServicioComercio(banco);
 
-        // --- CARGA DE DATOS (SETUP) ---
-
-        // 2. Seteamos recursos al BANCO (El banco necesita tener Ladrillo para darnos)
-        // Le damos 10 de cada cosa al banco
         banco.recibir(new Madera(10));
         banco.recibir(new Ladrillo(10));
         banco.recibir(new Grano(10));
 
-        // 3. Seteamos recursos al JUGADOR
-        // Le damos 4 de Madera al jugador para que pueda intercambiar
         jugador.agregarRecurso(new Madera(4));
     }
 
@@ -48,8 +39,6 @@ public class ServicioComercioTest {
         assertEquals(0, jugador.cantidadRecurso(new Ladrillo(0)));
         assertTrue(banco.tieneStock(new Ladrillo(0), 1));
 
-
-        // Jugador da 4 Madera -> Pide 1 Ladrillo
         servicio.intercambiarConBanco(
                 jugador,
                 new Madera(4), // Recurso entregado
