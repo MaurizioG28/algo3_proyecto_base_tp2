@@ -114,4 +114,11 @@ public class Vertice{
         }
         return null;
     }
+
+    public boolean colorDeConstruccionEquals(Color color) {
+        if (this.tipo != null) {
+            return this.propietario.equals(color);
+        }
+        return false;
+    }
 }

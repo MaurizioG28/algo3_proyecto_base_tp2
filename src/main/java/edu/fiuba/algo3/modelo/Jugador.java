@@ -16,12 +16,14 @@ public class Jugador {
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
     private Color color;
     private String nombre;
+    private PuntajeDeVictoria puntos;
 
     public Jugador(String nombre, Color color){
         this.almacenJugador = new AlmacenDeRecursos();
         this.cartas = new MazoDeCartas();
         this.color= color;
         this.nombre = nombre;
+        this.puntos = new PuntajeDeVictoria();
     }
 
     public boolean esDelColor(Color colorAComparar) {

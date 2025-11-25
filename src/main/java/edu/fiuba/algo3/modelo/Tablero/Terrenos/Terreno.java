@@ -40,7 +40,7 @@ public abstract class Terreno {
         return mismoTerreno(((Terreno) object).getId());
     }
 
-    private Produccion getProduccion() {
+    public Produccion getProduccion() {
         return this.produccion;
     }
 
@@ -128,4 +128,6 @@ public abstract class Terreno {
         }
         return null;
     }
+
+
 }

@@ -126,15 +126,11 @@ public class ManagerTurno {
         Ciudad nuevaCiudad = servicioComercio.venderCiudad(jugadorActual);
 
         try {
-            // IMPACTAR EN TABLERO: Buscamos el vértice y mejoramos
-            Vertice vertice = tablero.obtenerVertice(coordenada);
 
-            // Validaciones de negocio (se pueden mover a Vertice también)
-            if (vertice.getPropietario() != jugadorActual.getColor()) {
-                throw new IllegalStateException("No puedes mejorar un edificio que no es tuyo.");
-            }
 
-            vertice.mejorarACiudad();
+
+            tablero.mejoraACiudadEn(coordenada,jugadorActual.getColor());
+
 
         } catch (IllegalStateException e) {
             // 3. ROLLBACK: Si falló (no era dueño, no había poblado, etc.), devolvemos la plata.

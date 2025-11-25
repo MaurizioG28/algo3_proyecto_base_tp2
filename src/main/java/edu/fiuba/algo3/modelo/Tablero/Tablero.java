@@ -3,12 +3,9 @@ package edu.fiuba.algo3.modelo.Tablero;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
-import edu.fiuba.algo3.modelo.Dividendo;
-import edu.fiuba.algo3.modelo.IVertice;
-import edu.fiuba.algo3.modelo.Jugador;
 
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
@@ -46,17 +43,47 @@ public class Tablero {
         }
        return 0;
     }
+    public Integer getPosicionDelLadron() {
+        return posicionDelLadron;
+    }
 
 
     @Override
-    public boolean equals(Object object){
-        if(this.getClass() != object.getClass()){return false;}
-        return ((Tablero) object).mismosHexagonos(terrenos);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tablero)) return false;
+        Tablero otro = (Tablero) o;
+
+
+        if (this.terrenos.size() != otro.terrenos.size())
+            return false;
+
+        // comparar contenido terreno a terreno
+        for (Integer id : terrenos.keySet()) {
+            Terreno t1 = this.terrenos.get(id);
+            Terreno t2 = otro.terrenos.get(id);
+
+            if (t2 == null) return false;
+
+            // compara tipo (Bosque, Colina, etc.)
+            if (!t1.getClass().equals(t2.getClass()))
+                return false;
+
+            // compara producción (excepto desierto)
+            Produccion p1 = t1.getProduccion();
+            Produccion p2 = t2.getProduccion();
+
+            if (p1 == null && p2 != null) return false;
+            if (p1 != null && p2 == null) return false;
+            if (p1 != null && !p1.equals(p2)) return false;
+
+        }
+
+        return true;
     }
-
-    private boolean mismosHexagonos(Map<Integer, Terreno> OtroTerreno){
-        return terrenos.equals(OtroTerreno);
-
+    @Override
+    public int hashCode() {
+        return terrenos.hashCode();
     }
 
 
@@ -150,14 +177,14 @@ public class Tablero {
         for (Terreno terrenoActual : terrenos.values()) {
             if (terrenoActual.tieneVertice(v) && terrenoActual.sePuedeProducir()) {
                 int cantidad = v.factorProduccion();
-                d.agregar(Objects.requireNonNull(terrenoActual.recursoOtorgado(cantidad)));
+                d.agregar(terrenoActual.recursoOtorgado(cantidad));
             }
         }
 
         return d;
     }
 
-    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException {
+    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {
 
         Lado l = lados.get(coordenada);
         l.colocar(pieza);
@@ -172,5 +199,34 @@ public class Tablero {
         return this.vertices.get(coordenada);
     }
 
+    public Produccion getProduccionDelLadron() {
+        Terreno t= terrenos.get(posicionDelLadron);
+        return t.getProduccion();
+    }
+
+    public PuntajeDeVictoria calcularPuntosDeVictoriaPorConstruccion(Color color) {
+        PuntajeDeVictoria puntos=new PuntajeDeVictoria();
+
+        for(Vertice v : new HashSet<>(vertices.values())){
+            if(v.colorDeConstruccionEquals(color) ){
+                puntos.agregarPuntos(v.factorProduccion());
+
+            }
+        }
+
+        return puntos;
+    }
+
+    public void mejoraACiudadEn(Coordenada coordenada,Color colorJugador) throws IllegalStateException {
+        Vertice verticeBuscado= vertices.get(coordenada);
+        if(!verticeBuscado.tieneConstruccion()){
+            throw new IllegalStateException("No hay ninguna construcción en el vértice seleccionado.");
+        }
+        // Validaciones de negocio (se pueden mover a Vertice también)
+        if (verticeBuscado.getPropietario() != colorJugador) {
+            throw new IllegalStateException("No puedes mejorar un edificio que no es tuyo.");
+        }
+        verticeBuscado.mejorarACiudad();
+    }
 }
 

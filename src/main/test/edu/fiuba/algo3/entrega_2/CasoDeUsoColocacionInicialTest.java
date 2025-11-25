@@ -11,6 +11,7 @@ import edu.fiuba.algo3.modelo.Recursos.Madera;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ public class CasoDeUsoColocacionInicialTest {
     ));
 
     @Test
-    public void test01CasoDeUsoColocacionInicialDePoblados() throws ReglaDistanciaException, ConstruccionExistenteException {
+    public void test01CasoDeUsoColocacionInicialDePoblados() throws ReglaDistanciaException, ConstruccionExistenteException, ReglaConstruccionException {
         Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
 
         ColocacionInicial caso = new ColocacionInicial(unTablero);
@@ -95,7 +96,7 @@ public class CasoDeUsoColocacionInicialTest {
 
         try {
             caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(1,0));
-        } catch (ReglaDistanciaException | ConstruccionExistenteException e) {
+        } catch (ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
             throw new RuntimeException(e);
         }
 
@@ -111,8 +112,14 @@ public class CasoDeUsoColocacionInicialTest {
         ColocacionInicial caso = new ColocacionInicial(unTablero);
 
         try {
+            caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
+        } catch (ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
             caso.colocarEn( new Carretera( new Color("Azul")), new Coordenada(2,3));
-        } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
+        } catch (ConstruccionExistenteException | ReglaDistanciaException | ReglaConstruccionException e) {
             throw new RuntimeException(e);
         }
         Coordenada caminoEsperadoEn = new Coordenada(2,3);

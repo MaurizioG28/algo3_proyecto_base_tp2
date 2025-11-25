@@ -24,6 +24,9 @@ public class Dividendo {
 
 
     public void agregar(TipoDeRecurso r) {
+        if(r==null){
+            return;
+        }
         recursos.put(
                 r,
                 r.obtenerCantidad()
