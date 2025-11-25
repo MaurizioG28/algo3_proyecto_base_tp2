@@ -127,4 +127,26 @@ public class CasoDeUsoColocacionInicialTest {
         assertTrue(caso.tineCarreteraEn(caminoEsperadoEn));
 
     }
+
+    @Test
+    public void test04CasoDeUsoColocacionInicialDeCaminosDebeFallar(){
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+
+
+        ColocacionInicial caso = new ColocacionInicial(unTablero);
+
+        try {
+            caso.colocarEn( new Poblado(new Color("Azul" )), new Coordenada(2,3));
+        } catch (ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+
+
+
+        assertThrows(ReglaConstruccionException.class,() ->caso.colocarEn( new Carretera( new Color("Azul")), new Coordenada(1,0)));
+
+    }
 }

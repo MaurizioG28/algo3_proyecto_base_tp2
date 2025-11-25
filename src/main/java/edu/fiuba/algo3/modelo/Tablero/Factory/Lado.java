@@ -26,14 +26,14 @@ public class Lado {
         for (Vertice v : puntas) {
             if (v.tieneConstruccion()) {
                 Color propietario = v.getPropietario();
-                if (!propietario.equals(this.propietario)) {
+                if (!propietario.equals(pieza.getColorActual())) {
                     throw new ReglaConstruccionException("Hay una construcción enemiga bloqueando este lado.");
                 }
             }
         }
 
         // 3. Debe haber conexión con una red propia (poblado propio o carretera adyacente del mismo color)
-        if (!hayConexionCon(this.propietario)) {
+        if (!hayConexionCon(pieza.getColorActual())) {
             throw new ReglaConstruccionException("La carretera debe conectarse con tu red.");
         }
 
