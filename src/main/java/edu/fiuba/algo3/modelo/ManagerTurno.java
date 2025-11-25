@@ -38,7 +38,7 @@ public class ManagerTurno {
 
     public void comprarCarta() {
         Jugador jugador = getJugadorActual();
-        jugador.agregarCarta(mazoOculto.comprarCarta(getJugadorActual(), numeroTurnoActual));
+        jugador.agregarCarta(servicioComercio.venderCartaDesarrollo(jugador,numeroTurnoActual));
     }
 
     public void usarUnaCarta(int indice) {

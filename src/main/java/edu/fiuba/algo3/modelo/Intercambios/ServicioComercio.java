@@ -1,17 +1,20 @@
 package edu.fiuba.algo3.modelo.Intercambios;
 
+import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.MazoOculto;
 import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.RecursosInsuficientesException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ServicioComercio {
 
     private final Banco banco;
-
     public ServicioComercio(Banco banco) {
         this.banco = banco;
     }
@@ -111,6 +114,30 @@ public class ServicioComercio {
     }
 
 
+    private CartaDesarrollo sacarCarta(int turno){
+        Random azar = new Random();
+        List<CartaDesarrollo> cartasDisponibles = new ArrayList<>();
+        cartasDisponibles.add(new CartaCaballero(turno));
+        cartasDisponibles.add(new CartaConstruccionCarreteras(turno));
+        cartasDisponibles.add(new CartaDescubrimiento(turno));
+        cartasDisponibles.add(new CartaMonopolio(turno));
+        cartasDisponibles.add(new PuntoDeVictoria(turno));
 
+        int NumeroAleatorio = azar.nextInt(cartasDisponibles.size());
+
+        return cartasDisponibles.get(NumeroAleatorio);
+    }
+
+
+    public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno){
+
+        List<TipoDeRecurso> costo = List.of(
+            new Grano(1), new Mineral(1),new Lana(1)
+        );
+        procesarPago(comprador, costo);
+
+        return sacarCarta(turno);
+
+    }
 }
 
