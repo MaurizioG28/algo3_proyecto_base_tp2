@@ -5,16 +5,12 @@ import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
 import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
-import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import edu.fiuba.algo3.modelo.MazoOculto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -26,14 +22,12 @@ public class ManagerTurno {
     private int numeroTurnoActual = 0;
     private final Tablero tablero;
     private final Random azar;
-    private final MazoOculto mazoOculto;
     private ServicioComercio servicioComercio = new ServicioComercio(new Banco());
 
-    public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random, MazoOculto mazoOculto) {
+    public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random) {
         this.jugadores = jugadores;
         this.tablero = tablero;
         this.azar=  Random;
-        this.mazoOculto = mazoOculto;
     }
 
     public void comprarCarta() {
