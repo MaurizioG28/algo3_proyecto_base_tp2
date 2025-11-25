@@ -6,7 +6,7 @@ import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 public class Bosque extends TipoTerreno {
 
     public Bosque(){
-        super(new Madera());
+        super(new Madera(0));
 
     }
 

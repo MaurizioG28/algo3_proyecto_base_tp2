@@ -1,13 +1,11 @@
-package edu.fiuba.algo3.vistas;
+package edu.fiuba.algo3;
 
-import edu.fiuba.algo3.SystemInfo;
 import edu.fiuba.algo3.controllers.ControladorTeclaPresionada;
+import edu.fiuba.algo3.vistas.PantallaPrincipal;
 import edu.fiuba.algo3.vistas.vistas.VistaInicial;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
