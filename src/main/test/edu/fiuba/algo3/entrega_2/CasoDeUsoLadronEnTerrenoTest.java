@@ -1,10 +1,7 @@
 package edu.fiuba.algo3.entrega_2;
 
-import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
-import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.ManagerTurno;
-import edu.fiuba.algo3.modelo.MazoOculto;
 import edu.fiuba.algo3.modelo.Recursos.Madera;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
@@ -34,17 +31,22 @@ public class CasoDeUsoLadronEnTerrenoTest {
         Jugador jugador = new Jugador("nombre1",new Color("Azul"));
 
         Vertice vertice = new Vertice();
-        Integer totalRecursosEsperados = 0;
+
         Poblado poblado = new Poblado(jugador.getColor());
         vertice.colocar(poblado);
         hexagono.agregarVertice(vertice);
         terreno.asignarHexagono(hexagono);
         terreno.setProduccion(new Produccion(2));
-        hexagono.moverLadron();
+        hexagono.ponerLadron();
 
-//        terreno.producirRecurso();
-//
-//        assertEquals(totalRecursosEsperados,jugador.cantidadRecurso(new Madera(0)));
+
+
+        List<Dividendo> divendos= terreno.verificarYProducir(2);
+
+
+
+
+        assertNull(divendos);
     }
 
     @Test
@@ -53,7 +55,7 @@ public class CasoDeUsoLadronEnTerrenoTest {
         Hexagono hexagono = new Hexagono();
         Jugador jugador = new Jugador("nombre1",new Color("Azul"));
         Vertice vertice = new Vertice();
-        int totalRecursosEsperados = 1;
+        List<Dividendo> dividendoEsperado =List.of( new Dividendo(jugador.getColor(), new Madera(1)));
 
         Poblado poblado = new Poblado(jugador.getColor());
         vertice.colocar(poblado);
@@ -61,12 +63,12 @@ public class CasoDeUsoLadronEnTerrenoTest {
         terreno.asignarHexagono(hexagono);
         terreno.setProduccion(new Produccion(2));
 
-
+        List<Dividendo> dividendos= terreno.verificarYProducir(2);
 
 
 //        terreno.producirRecurso();
 //
-//        assertEquals(totalRecursosEsperados,jugador.cantidadRecurso(new Madera(0)));
+        assertEquals(dividendoEsperado,dividendos);
     }
 
     @Test
@@ -83,9 +85,12 @@ public class CasoDeUsoLadronEnTerrenoTest {
         terreno.asignarHexagono(hexagono);
         terreno.setProduccion(new Produccion(2));
 
+
+        List<Dividendo> dividendos= terreno.verificarYProducir(2);
+
 //        terreno.producirRecurso();
 //
-//        assertEquals(totalRecursosEsperados,jugador.cantidadRecurso(new Madera(0)));
+        assertNull(dividendos);
     }
 
 }

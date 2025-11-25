@@ -26,9 +26,7 @@ public class Hexagono {
 
     }
 
-    public void moverLadron() {
-        bloqueadoPorLadron = !bloqueadoPorLadron;
-    }
+
 
 
 
@@ -67,7 +65,7 @@ public class Hexagono {
 
         for (Vertice v : vertices) {
             Dividendo dividendo = v.cosechar(terrenoOrigen);
-            
+
             if (dividendo != null)
              listaDividendos.add( dividendo); // Delega al vértice
         }
