@@ -86,7 +86,6 @@ public class ServicioComercio {
         }
     }
 
-    // Método para devolver recursos en caso de error de colocación (Rollback)
     public void reembolsarPoblado(Jugador jugador) {
         List<TipoDeRecurso> costo = List.of(
                 new Madera(1), new Ladrillo(1), new Lana(1), new Grano(1)

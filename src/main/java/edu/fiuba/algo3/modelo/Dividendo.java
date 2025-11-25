@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class Dividendo {
     private final Color color;
-    private final Map<TipoDeRecurso, Integer> recursos = new HashMap<>(); // usa tu enum
+    private final Map<TipoDeRecurso, Integer> recursos = new HashMap<>();
 
     public Dividendo(Color color, TipoDeRecurso... recursosEntregables) {
         this.color = color;
