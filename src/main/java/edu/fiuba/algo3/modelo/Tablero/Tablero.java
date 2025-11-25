@@ -88,8 +88,14 @@ public class Tablero {
 
 
   
-    public int tirarDados(){
-        return dados.tirar();
+    public void tirarDados(Dados dados){
+        int valor = dados.tirar();
+        for (Vertice vertice : new HashSet<>(vertices.values())){
+            vertice.produci(valor);
+            System.out.println(vertice);
+        }
+        //para todos los vertices dar el mensaje produci
+
     }
 
 

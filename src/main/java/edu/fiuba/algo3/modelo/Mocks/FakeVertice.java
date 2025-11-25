@@ -1,10 +1,6 @@
 package edu.fiuba.algo3.modelo.Mocks;
 //import edu.fiuba.algo3.modelo.ICelda;
-import edu.fiuba.algo3.modelo.IVertice;
-import edu.fiuba.algo3.modelo.Jugador;
 
-import java.util.LinkedList;
-import java.util.List;
 
 //public class FakeVertice implements IVertice {
 //

@@ -2,7 +2,9 @@ package edu.fiuba.algo3.modelo.Recursos;
 
 public abstract class TipoDeRecurso {
     protected int cantidad;
-
+    protected TipoDeRecurso(){
+        this(0);
+    }
     protected TipoDeRecurso(int cantidad) {
         if (cantidad < 0) {
             throw new IllegalArgumentException("La cantidad no puede ser negativa");
