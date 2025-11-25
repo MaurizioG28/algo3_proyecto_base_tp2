@@ -1,12 +1,13 @@
 package edu.fiuba.algo3.modelo.Tablero.Terrenos;
 
+import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Dividendo;
+import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
-import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public abstract class Terreno {
 
@@ -36,15 +37,15 @@ public abstract class Terreno {
     @Override
     public boolean equals(Object object) {
         if(this.getClass() != object.getClass()){return false;}
-        return mismaProduccion(((Terreno) object).getProduccion());
+        return mismoTerreno(((Terreno) object).getId());
     }
 
-    private Produccion getProduccion() {
+    public Produccion getProduccion() {
         return this.produccion;
     }
 
-    public boolean mismaProduccion(Produccion produccion){
-        return  this.produccion.equals(produccion);
+    public boolean mismoTerreno(Integer otroId){
+        return  this.id==(otroId);
     }
 
     public void asignarHexagono(Hexagono hexagono) {
@@ -64,14 +65,24 @@ public abstract class Terreno {
         this.id = id;
     }
 
-    public void crearVertices(Map<Cubic, Vertice> verticesUnicos, Map<Coordenada, Vertice> verticesPorCoordenada,Cubic[] Vertice_OFFSETS) {
-
-        hexagono.crearVertices(verticesUnicos, verticesPorCoordenada, posicion, id,Vertice_OFFSETS);
+    public void agregarVertices(Map<Coordenada, Vertice> verticesPorCoordenada) {
+        for (int i = 0; i < 6; i++) {
+            Coordenada coord = new Coordenada(this.id, i);
+            Vertice vertice = verticesPorCoordenada.get(coord);
+            if (vertice != null) {
+                this.hexagono.agregarVertice(vertice);
+            }
+        }
     }
 
-    public void crearLados(Map<Cubic, Lado> ladosUnicos, Map<Coordenada, Lado> ladosPorCoordenada, Cubic[] Lado_OFFSETS) {
-
-        hexagono.crearLados(ladosUnicos, ladosPorCoordenada, posicion, id, Lado_OFFSETS);
+    public void agregarLados(Map<Coordenada, Lado> ladosPorCoordenada) {
+        for (int i = 0; i < 6; i++) {
+            Coordenada coord = new Coordenada(this.id, i);
+            Lado lado = ladosPorCoordenada.get(coord);
+            if (lado != null) {
+                this.hexagono.agregarLado(lado);
+            }
+        }
     }
 
     public boolean tieneVertice(Vertice v) {
@@ -82,6 +93,10 @@ public abstract class Terreno {
         return hexagono.sePuedeProducir();
     }
 
+//    public void producirRecurso() {
+//        hexagono.producirRecurso(recursoOtorgado(1));
+//    }
+
     public Axial getPosicion() {
         return this.posicion;
     }
@@ -89,4 +104,30 @@ public abstract class Terreno {
     public int getId() {
         return this.id;
     }
+
+
+
+
+    public void moverLadronQuitar() {
+        this.hexagono.sacarLadron();
+    }
+
+    public void moverLadronPoner() {
+        this.hexagono.ponerLadron();
+    }
+
+    public List<Color> jugadoresAfectadosPorElLadron(Jugador jugadorActual) {
+        return this.hexagono.jugadoresAfectadosPorElLadron(jugadorActual);
+    }
+
+    public List<Dividendo> verificarYProducir(int numeroDado) {
+        // Validar si el número de producción coincide (y no es Desierto/Null)
+        if (this.produccion != null && this.produccion.tieneMismoNumero(numeroDado)) {
+            // Si coincide, le avisa al Hexágono, PASÁNDOSE A SÍ MISMO (this)
+            return this.hexagono.activarVertices(this);
+        }
+        return null;
+    }
+
+
 }

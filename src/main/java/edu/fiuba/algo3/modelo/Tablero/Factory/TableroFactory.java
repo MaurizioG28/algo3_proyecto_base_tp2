@@ -70,14 +70,7 @@ public class TableroFactory {
         unificarVerticesCompartidos(terrenosPorId, verticesPorCoordenada);
 
         for (Terreno t : terrenosPorId.values()) {
-            Hexagono h = t.getHexagono();
-
-
-
-            for (int i = 0; i < 6; i++) {
-                Vertice v = verticesPorCoordenada.get(new Coordenada(t.getId(), i));
-                h.agregarVertice(v);
-            }
+            t.agregarVertices(verticesPorCoordenada);
         }
 
         for (Integer terrenoId : terrenosPorId.keySet()) {
@@ -90,11 +83,16 @@ public class TableroFactory {
 
 
 
+
         conectarVerticesAdyacentes(terrenosPorId, verticesPorCoordenada);
 
 
 
         conectarPuntasYLados(ladosPorCoordenada, verticesPorCoordenada, ladosUnicos);
+
+        for (Terreno terreno : terrenosPorId.values()) {
+            terreno.agregarLados(ladosPorCoordenada);
+        }
 
         // 3. Asignar fichas de producción (igual que antes)
         Iterator<Produccion> it = fichas.iterator();

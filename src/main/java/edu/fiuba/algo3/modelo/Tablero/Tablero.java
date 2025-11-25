@@ -1,32 +1,25 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
-import edu.fiuba.algo3.modelo.Dividendo;
-import edu.fiuba.algo3.modelo.IVertice;
-import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
-import edu.fiuba.algo3.modelo.interfaces.*;
 
 
 public class Tablero {
 
 
     private final Map<Integer, Terreno> terrenos;
-
     private Dados dados = new Dados();
-
-
     private final Map<Coordenada, Vertice> vertices;
     Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
 
-    private Hexagono posicionDelLadron;
+    private Integer posicionDelLadron;
 
 //    public Tablero(){
 //    }
@@ -35,47 +28,77 @@ public class Tablero {
         this.terrenos = hexagonos;
         this.vertices = vertices;
         this.lados= ladosPorCoordenada;
+
+        this.posicionDelLadron= encontrarPosicionInicialDelLadron();
     }
 
+    private Integer encontrarPosicionInicialDelLadron() {
+        for (Map.Entry<Integer, Terreno> entry : terrenos.entrySet()) {
+            Terreno terreno = entry.getValue();
+            if (terreno.esDesierto()) {
+                return entry.getKey();
+            }
+        }
+       return 0;
+    }
+    public Integer getPosicionDelLadron() {
+        return posicionDelLadron;
+    }
 
 
     @Override
-    public boolean equals(Object object){
-        if(this.getClass() != object.getClass()){return false;}
-        return ((Tablero) object).mismosHexagonos(terrenos);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tablero)) return false;
+        Tablero otro = (Tablero) o;
+
+
+        if (this.terrenos.size() != otro.terrenos.size())
+            return false;
+
+        // comparar contenido terreno a terreno
+        for (Integer id : terrenos.keySet()) {
+            Terreno t1 = this.terrenos.get(id);
+            Terreno t2 = otro.terrenos.get(id);
+
+            if (t2 == null) return false;
+
+            // compara tipo (Bosque, Colina, etc.)
+            if (!t1.getClass().equals(t2.getClass()))
+                return false;
+
+            // compara producción (excepto desierto)
+            Produccion p1 = t1.getProduccion();
+            Produccion p2 = t2.getProduccion();
+
+            if (p1 == null && p2 != null) return false;
+            if (p1 != null && p2 == null) return false;
+            if (p1 != null && !p1.equals(p2)) return false;
+
+        }
+
+        return true;
     }
-
-    private boolean mismosHexagonos(Map<Integer, Terreno> OtroTerreno){
-        return terrenos.equals(OtroTerreno);
-
+    @Override
+    public int hashCode() {
+        return terrenos.hashCode();
     }
 
 
   
-    public int tirarDados(){
-        return dados.tirar();
+    public List<List<Dividendo>> tirarDados(Dados dados){
+        int valor = dados.tirar();
+        return distribuirProduccion(valor);
+
     }
 
 
 
 
 
-//    public boolean tableroCorrectamenteInicializado(){
-//        boolean correcto = true;
-//        Collection<Terreno> todosTerrenos = terrenos.values();
-//        for (Terreno terreno : todosTerrenos) {
-//            if (!terreno.todosColocados()) {
-//                correcto = false;
-//            }
-//        }
-//
-//        return correcto;
-//    }
 
-    public void construirPoblado(Jugador jugador, IVertice vertice) throws ReglaDistanciaException {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de construir poblados.");
-//        }
+    public void construirPoblado(Color jugador, Vertice vertice) throws ReglaDistanciaException {
+//
 
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
@@ -84,65 +107,47 @@ public class Tablero {
         construye directamente, falta implementar el chequeo de recursos del jugardor.
         Con algo como jugador.recursosPoblado()
         */
-        vertice.colocarPoblado(jugador);
-        //List<Recurso> recursos = vertice.darRecursos();
-        //jugador.sumarRecursos(recursos);
+        try {
+            vertice.colocar(new Poblado(jugador));
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-//    private Map<Jugador, EnumMap<Recurso, Integer>> calcularProduccion(int numeroLanzado){
-//        Map<Jugador, EnumMap<Recurso, Integer>> produccion = new HashMap<>();
-//
-//        for (Hexagono h : hexagonos) {
-//            if (h.getNumero() != numeroLanzado) continue;
-//            if (!h.getTipo().produceAlgo()) continue;    // desierto no produce
-//            if (!h.sePuedeProducir()) continue;          // si usás ladrón
-//
-//            RecursoBase r = h.getTipo().recursoOtorgado();
-//
-//            for (Vertice v : h.getVertices()) {
-//                if (!v.tieneConstruccion()) continue;
-//
-//                int cant = v.obtenerFactorProduccion();
-//                Jugador j = v.getPropietario();
-//
-//                assert r != null;
-//                produccion
-//                        .computeIfAbsent(j, k -> new EnumMap<>(Recurso.class))
-//                        .merge(r.tipo(), cant, Integer::sum);
-//            }
-//        }
-//        return produccion;
-//    }
+    public List<List<Dividendo>> distribuirProduccion(int numeroDado) {
+        // Iteramos sobre los valores del mapa 'terrenos'
+        List<List<Dividendo>> listalistaDividendos = new ArrayList<>();
+        for (Terreno terreno : this.terrenos.values()) {
 
-//    public void repartirProduccion(int numeroLanzado){
-//        Map<Jugador, EnumMap<Recurso, Integer>> bolsa = calcularProduccion(numeroLanzado);
-//        bolsa.forEach((jug, mapa) -> mapa.forEach(jug::agregarRecurso)); // (recurso,cantidad)
-//    }
-
-
-    public List<Jugador> moverLadron(Jugador jugadorActual, Hexagono posicion) {
-//        if (!tableroInicializado) {
-//            throw new IllegalStateException("El tablero debe estar inicializado antes de mover al ladrón.");
-//        }
-        posicion.moverLadron();
-        this.posicionDelLadron = posicion;
-        List<Jugador> victimas = new ArrayList<>();
-        for (Vertice v : posicion.getVertices()) {
-            if (!v.tieneConstruccion()) continue;
-            Jugador propietario = v.getPropietario();
-            if (propietario == null) continue;
-            if (propietario.equals(jugadorActual)) continue;
-            if (!victimas.contains(propietario)) {
-                victimas.add(propietario);
-            }
+            List<Dividendo> listaDividendos =terreno.verificarYProducir(numeroDado);
+            if(listaDividendos!=null)
+                listalistaDividendos.add(listaDividendos );
         }
+        return listalistaDividendos;
+    }
+
+
+    public List<Color> moverLadron(Jugador jugadorActual, Integer posicionId) {
+        Terreno nuevo = terrenos.get(posicionId);
+        Terreno anterior = terrenos.get(posicionDelLadron);
+        if(nuevo==anterior)
+            throw new IllegalStateException("Se debe movera al Ladron.");
+
+        // Quitar ladrón del terreno anterior (si no es desierto)
+        if (anterior!=null && !anterior.esDesierto())
+            anterior.moverLadronQuitar();
+
+
+        nuevo.moverLadronPoner();
+        posicionDelLadron = posicionId;
+
+        // Obtener víctimas delegando en Terreno
+        List<Color> victimas= nuevo.jugadoresAfectadosPorElLadron(jugadorActual);
         return victimas;
     }
 
 
-//    private void validarLado(ILado lado, Jugador jugador) {
-//        ILado.validar(lado, jugador);
-//    }
 
     public Dividendo colocarEnVertice(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException, ReglaDistanciaException {
         Vertice verticeObjetivo = vertices.get(coordenada);
@@ -153,9 +158,7 @@ public class Tablero {
 
         verticeObjetivo.colocar(pieza);
         pobladosColocadosPorColor.put(colorActual, pobladosColocadosPorColor.getOrDefault(colorActual, 0) + 1);
-        List<Terreno> terrenosAdyacentes = terrenos.values().stream()
-                .filter(t -> t.tieneVertice(verticeObjetivo))
-                .collect(Collectors.toList());
+
 
         if ( esSegundoPoblado(pieza.getColorActual()))
             return calcularDividendosIniciales(coordenada,colorActual);
@@ -174,14 +177,14 @@ public class Tablero {
         for (Terreno terrenoActual : terrenos.values()) {
             if (terrenoActual.tieneVertice(v) && terrenoActual.sePuedeProducir()) {
                 int cantidad = v.factorProduccion();
-                d.agregar(Objects.requireNonNull(terrenoActual.recursoOtorgado(cantidad)));
+                d.agregar(terrenoActual.recursoOtorgado(cantidad));
             }
         }
 
         return d;
     }
 
-    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) {
+    public Dividendo colocarEnLado(Construccion pieza, Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {
 
         Lado l = lados.get(coordenada);
         l.colocar(pieza);
@@ -191,6 +194,39 @@ public class Tablero {
     public boolean tieneCarreteraEn(Coordenada caminoEsperadoEn) {
         Lado l = lados.get(caminoEsperadoEn);
         return l.tieneConstruccion();
+    }
+    public Vertice obtenerVertice(Coordenada coordenada) {
+        return this.vertices.get(coordenada);
+    }
+
+    public Produccion getProduccionDelLadron() {
+        Terreno t= terrenos.get(posicionDelLadron);
+        return t.getProduccion();
+    }
+
+    public PuntajeDeVictoria calcularPuntosDeVictoriaPorConstruccion(Color color) {
+        PuntajeDeVictoria puntos=new PuntajeDeVictoria();
+
+        for(Vertice v : new HashSet<>(vertices.values())){
+            if(v.colorDeConstruccionEquals(color) ){
+                puntos.agregarPuntos(v.factorProduccion());
+
+            }
+        }
+
+        return puntos;
+    }
+
+    public void mejoraACiudadEn(Coordenada coordenada,Color colorJugador) throws IllegalStateException {
+        Vertice verticeBuscado= vertices.get(coordenada);
+        if(!verticeBuscado.tieneConstruccion()){
+            throw new IllegalStateException("No hay ninguna construcción en el vértice seleccionado.");
+        }
+        // Validaciones de negocio (se pueden mover a Vertice también)
+        if (verticeBuscado.getPropietario() != colorJugador) {
+            throw new IllegalStateException("No puedes mejorar un edificio que no es tuyo.");
+        }
+        verticeBuscado.mejorarACiudad();
     }
 }
 

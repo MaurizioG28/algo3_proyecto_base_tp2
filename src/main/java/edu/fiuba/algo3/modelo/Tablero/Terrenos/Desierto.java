@@ -22,4 +22,15 @@ public class Desierto extends Terreno {
     public boolean esDesierto(){
         return true;
     }
+
+    @Override
+    public void setProduccion(Produccion produccion) {
+
+
+    }
+
+//    @Override
+//    public void producirRecurso() {
+//
+//    }
 }

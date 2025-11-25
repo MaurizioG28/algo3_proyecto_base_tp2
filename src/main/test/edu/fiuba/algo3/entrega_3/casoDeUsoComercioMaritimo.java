@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.entrega_3;
 
+import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Intercambios.*;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
@@ -27,13 +28,13 @@ public class casoDeUsoComercioMaritimo {
     public void test01JugadorSinPuertosIntercambia4a1ConBanco() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         // El jugador recibe 4 maderas
         jugador.agregarRecurso(new Madera(4));
         servicio.intercambiarConBanco(jugador, madera, 4, grano);
-        assertEquals(0, jugador.CantidadRecurso(madera));
-        assertEquals(1, jugador.CantidadRecurso(grano));
+        assertEquals(0, jugador.cantidadRecurso(madera));
+        assertEquals(1, jugador.cantidadRecurso(grano));
     }
 
     // 2) Con puerto genérico  3:1 cualquier recurso
@@ -41,16 +42,16 @@ public class casoDeUsoComercioMaritimo {
     public void test02JugadorConPuertoGenericoIntercambia3a1() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(3));
         jugador.agregarPolitica(new PuertoGenerico(3)); // 3:1 cualquiera
 
         servicio.intercambiarConBanco(jugador, madera, 3, grano);
 
-        assertEquals(0, jugador.CantidadRecurso(madera),
+        assertEquals(0, jugador.cantidadRecurso(madera),
                 "Debe haber entregado las 3 maderas");
-        assertEquals(1, jugador.CantidadRecurso(grano),
+        assertEquals(1, jugador.cantidadRecurso(grano),
                 "Debe haber recibido 1 grano (3:1 por puerto genérico)");
     }
 
@@ -59,16 +60,16 @@ public class casoDeUsoComercioMaritimo {
     public void test03JugadorConPuertoEspecificoIntercambia2a1SoloEseRecurso() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // 2:1 madera
         jugador.agregarRecurso(new Madera(2));
 
         servicio.intercambiarConBanco(jugador, madera, 2, grano);
 
-        assertEquals(0, jugador.CantidadRecurso(madera),
+        assertEquals(0, jugador.cantidadRecurso(madera),
                 "Debe haber entregado las 2 maderas");
-        assertEquals(1, jugador.CantidadRecurso(grano),
+        assertEquals(1, jugador.cantidadRecurso(grano),
                 "Debe haber recibido 1 grano (2:1 por puerto específico)");
     }
 
@@ -77,7 +78,7 @@ public class casoDeUsoComercioMaritimo {
     public void test04PuertoEspecificoNoMejoraOtrosRecursos() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // solo madera
         jugador.agregarRecurso(new Grano(4));
@@ -85,9 +86,9 @@ public class casoDeUsoComercioMaritimo {
         // Como el puerto es de MADERA, para GRANO debe aplicar la tasa base 4:1
         servicio.intercambiarConBanco(jugador, grano, 4, madera);
 
-        assertEquals(0, jugador.CantidadRecurso(grano),
+        assertEquals(0, jugador.cantidadRecurso(grano),
                 "Debe haber entregado los 4 granos");
-        assertEquals(1, jugador.CantidadRecurso(madera),
+        assertEquals(1, jugador.cantidadRecurso(madera),
                 "Debe haber recibido 1 madera (4:1, no 2:1)");
     }
 
@@ -96,7 +97,7 @@ public class casoDeUsoComercioMaritimo {
     public void test05JugadorConPuertoGenericoYEspecificoUsaLaMejorTasa() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoGenerico(3));             // 3:1 cualquiera
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2));   // 2:1 madera
@@ -104,9 +105,9 @@ public class casoDeUsoComercioMaritimo {
 
         servicio.intercambiarConBanco(jugador, madera, 2, grano);
 
-        assertEquals(0, jugador.CantidadRecurso(madera),
+        assertEquals(0, jugador.cantidadRecurso(madera),
                 "Debe haber entregado las 2 maderas");
-        assertEquals(1, jugador.CantidadRecurso(grano),
+        assertEquals(1, jugador.cantidadRecurso(grano),
                 "Debe haber recibido 1 grano (usa mejor tasa 2:1, no 3:1)");
     }
 
@@ -115,7 +116,7 @@ public class casoDeUsoComercioMaritimo {
     public void test06FallaSiCantidadNoEsMultiploDeLaTasa() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarPolitica(new PuertoGenerico(3)); // 3:1
         jugador.agregarRecurso(new Madera(4));
@@ -130,7 +131,7 @@ public class casoDeUsoComercioMaritimo {
     public void test07FallaSiJugadorNoTieneSuficienteRecurso() {
         Banco banco = bancoConStockBasico();
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(3)); // menos de 4
 
@@ -147,7 +148,7 @@ public class casoDeUsoComercioMaritimo {
         banco.recibir(new Madera(20));
 
         ServicioComercio servicio = new ServicioComercio(banco);
-        Jugador jugador = new Jugador();
+        Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
         jugador.agregarRecurso(new Madera(4));
 

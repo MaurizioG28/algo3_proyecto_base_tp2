@@ -5,15 +5,15 @@ import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Contruccion.Productor;
+import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-public class Vertice implements IVertice {
+public class Vertice{
 
-    private Jugador propietario;
+    private Color propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
     private Construccion tipo = null;
     //private List<ICelda> celdasAdyacentes;
@@ -42,16 +42,16 @@ public class Vertice implements IVertice {
         return false;
     }
 
-    public void colocarPoblado(Jugador jugador) {
-        this.propietario = jugador;
-        this.tipo = new Poblado(new Color("negro"));
-    }
+
     public void mejorarACiudad() {
         if (this.propietario == null) throw new IllegalStateException("No hay poblado para mejorar");
+        if (!(this.tipo instanceof Poblado)) {
+            throw new IllegalStateException("Solo se pueden mejorar Poblados.");
+        }
         String color =this.tipo.getColor();
         this.tipo = new Ciudad(new Color(color));
     }
-    public Jugador getPropietario() { return propietario; }
+    public Color getPropietario() { return propietario; }
     public Construccion getTipoConstruccion() { return tipo; }
 
     public void agregarAdyacente(Vertice vertice) {
@@ -77,17 +77,48 @@ public class Vertice implements IVertice {
             throw new ConstruccionExistenteException("El vértice ya tiene una construcción.");
         }
         this.tipo = pieza;
+        this.propietario=pieza.getColorActual();
 
     }
 
-    public Integer factorProduccion() {
+    public int factorProduccion() {
         if (tipo instanceof Productor) {
             return ((Productor) tipo).obtenerFactorProduccion();
         }
         return 0;
     }
 
+    public Color colorDeConstruccion() {
+        if (this.tipo != null) {
+            return this.tipo.getColorActual();
+        }
+        return null;
+    }
+
 //    public int obtenerFactorProduccion() {
 //        return this.tipo.obtenerFactorProduccion();
 //    }
+    public Dividendo cosechar(Terreno terrenoOrigen) {
+        // Si no hay dueño, no hacemos nada
+        if (this.propietario == null || this.tipo == null) return null;
+
+        // Esto devuelve 1 si es Poblado, 2 si es Ciudad
+        int cantidad = this.factorProduccion();
+
+        if (cantidad > 0) {
+            Dividendo dividendo = new Dividendo(this.propietario);
+            // El terreno crea los recursos (Madera, Grano, etc.)
+            TipoDeRecurso recurso = terrenoOrigen.recursoOtorgado(cantidad);
+            dividendo.agregar(recurso);
+            return dividendo;
+        }
+        return null;
+    }
+
+    public boolean colorDeConstruccionEquals(Color color) {
+        if (this.tipo != null) {
+            return this.propietario.equals(color);
+        }
+        return false;
+    }
 }

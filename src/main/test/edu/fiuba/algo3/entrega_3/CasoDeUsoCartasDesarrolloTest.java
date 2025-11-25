@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.entrega_3;
 
 import edu.fiuba.algo3.modelo.*;
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Mocks.FakeRandom;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
 import edu.fiuba.algo3.modelo.Recursos.Lana;
@@ -23,7 +24,7 @@ public class CasoDeUsoCartasDesarrolloTest {
         int cantidadRecursosEsperada = 0;
         Random numeroRandom = new FakeRandom(0);
         MazoOculto servicio = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
@@ -38,7 +39,7 @@ public class CasoDeUsoCartasDesarrolloTest {
     public void Test02UnJugadorNoPuedeJugarUnaCartaDeDesarrolloEnElMismoTurnoQueLaCompra() {
         Random numeroRandom = new FakeRandom(0);
         MazoOculto unMazoOculto = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
         Map<Integer, Terreno> hexagonos = new HashMap<>();
@@ -57,11 +58,12 @@ public class CasoDeUsoCartasDesarrolloTest {
                 () -> manager.usarUnaCarta(0));
     }
 
+
     @Test
     public void Test03UnJugadorDeberiaPoderUsarUnaCartaQueNoOtorgaPuntosDeVictoriaEnUnTurnoPosteriorALaCompra() {
         Random numeroRandom = new FakeRandom(0);
         MazoOculto unMazoOculto = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
         Map<Integer, Terreno> hexagonos = new HashMap<>();
@@ -95,13 +97,15 @@ public class CasoDeUsoCartasDesarrolloTest {
         int cantidadDePuntosEsperada = 1;
         Random numeroRandom = new FakeRandom(4);
         MazoOculto servicio = new MazoOculto(numeroRandom);
-        Jugador comprador = new Jugador();
+        Jugador comprador = new Jugador("nombre1",new Color("Azul"));
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
         comprador.agregarRecurso(new Mineral(1));
 
-        servicio.comprarCarta(comprador, 0);
+        CartaDesarrollo cartaNueva = servicio.comprarCarta(comprador, 0);
+        
+        comprador.agregarCarta(cartaNueva);
 
         assertEquals(cantidadDePuntosEsperada, comprador.totalPuntos());
     }

@@ -14,22 +14,38 @@ public class Jugador {
     private MazoDeCartas cartas;
     private AlmacenDeRecursos almacenJugador;
     private final List<PoliticaDeIntercambio> politicas = new ArrayList<>();
+    private Color color;
+    private String nombre;
+    private PuntajeDeVictoria puntos;
 
-    public Jugador(){
+    public Jugador(String nombre, Color color){
         this.almacenJugador = new AlmacenDeRecursos();
         this.cartas = new MazoDeCartas();
+        this.color= color;
+        this.nombre = nombre;
+        this.puntos = new PuntajeDeVictoria();
     }
-    public int CantidadRecurso(TipoDeRecurso tipo) {
+
+    public boolean esDelColor(Color colorAComparar) {
+        return this.color.equals(colorAComparar);
+    }
+
+
+    public int cantidadRecurso(TipoDeRecurso tipo) {
         return almacenJugador.cantidadDe(tipo);
     }
 
+
+    public Color getColor(){
+        return color;
+    }
     public boolean tiene(Madera madera, Ladrillo ladrillos, Lana lana, Mineral mineral, Grano grano) {
         return (
-                (madera.obtenerCantidad() >= CantidadRecurso(madera)) &
-                        (ladrillos.obtenerCantidad() >= CantidadRecurso(ladrillos)) &
-                        (lana.obtenerCantidad() >= CantidadRecurso(lana)) &
-                        (mineral.obtenerCantidad() >= CantidadRecurso(mineral)) &
-                        (grano.obtenerCantidad() >= CantidadRecurso(grano))
+                (madera.obtenerCantidad() >= cantidadRecurso(madera)) &
+                        (ladrillos.obtenerCantidad() >= cantidadRecurso(ladrillos)) &
+                        (lana.obtenerCantidad() >= cantidadRecurso(lana)) &
+                        (mineral.obtenerCantidad() >= cantidadRecurso(mineral)) &
+                        (grano.obtenerCantidad() >= cantidadRecurso(grano))
         );
     }
 
@@ -73,11 +89,13 @@ public class Jugador {
         return this.almacenJugador.robarRecursoAleatorio();
     }
 
-    public void robarRecurso(Jugador victima) {
+    public boolean robarRecurso(Jugador victima) {
         TipoDeRecurso recursoRobado = victima.entregarRecursoAleatorio();
         if(recursoRobado != null){
             this.almacenJugador.agregarRecurso(recursoRobado);
+            return true;
         }
+        return false;
     }
 
     public int totalPuntos() {
@@ -102,6 +120,25 @@ public class Jugador {
         }
         this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
         return true;
+    }
+    public int cantidadMadera() {
+        return this.cantidadRecurso(new Madera(0));
+    }
+
+    public int cantidadGrano() {
+        return this.cantidadRecurso(new Grano(0));
+    }
+
+    public int cantidadLadrillo() {
+        return this.cantidadRecurso(new Ladrillo(0));
+    }
+
+    public int cantidadLana() {
+        return this.cantidadRecurso(new Lana(0));
+    }
+
+    public int cantidadMineral() {
+        return this.cantidadRecurso(new Mineral(0));
     }
 
 }

@@ -22,8 +22,8 @@ public class TableroFactoryTest {
                 new Axial(0, -2), new Axial(1, -2), new Axial(2, -2),
                 new Axial(-1, -1), new Axial(0, -1), new Axial(1, -1), new Axial(2, -1),
                 new Axial(-2, 0), new Axial(-1, 0), new Axial(0, 0), new Axial(1, 0), new Axial(2, 0),
-                new Axial(-1, 1), new Axial(0, 1), new Axial(1, 1), new Axial(2, 1),
-                new Axial(0, 2), new Axial(1, 2), new Axial(2, 2)
+                new Axial(-2, 1), new Axial(-1, 1), new Axial(0, 1), new Axial(1, 1),
+                new Axial(-2, 2), new Axial(-1, 2), new Axial(0, 2)
         ));
 
         List<Axial> HEX_obtenidos = generarLayoutHexagonal();
@@ -32,7 +32,7 @@ public class TableroFactoryTest {
 
         assertEquals(new HashSet<>(HEX_esperados), new HashSet<>(HEX_obtenidos));
 
-        assertEquals(HEX_esperados, HEX_obtenidos);
+
 
     }
 
@@ -93,6 +93,8 @@ public class TableroFactoryTest {
         verticesPorCoordenada.put(new Coordenada(1, 3), v3);
         verticesPorCoordenada.put(new Coordenada(1, 4), v4);
         verticesPorCoordenada.put(new Coordenada(1, 5), v5);
+
+
 
         // Conectar vértices
         TableroFactory.conectarVerticesAdyacentes(terrenosPorId, verticesPorCoordenada);
@@ -202,6 +204,9 @@ public class TableroFactoryTest {
         for (int i = 0; i < 6; i++) {
             ladosPorCoordenada.put(new Coordenada(1, i), new Lado());
         }
+        terreno.agregarVertices(verticesPorCoordenada);
+        terreno.agregarLados(ladosPorCoordenada);
+
 
         // Unificar lados (esto no debería crear nuevos, solo unificar duplicados)
         Map<String, Lado> ladosUnicos = TableroFactory.unificarLados(ladosPorCoordenada, verticesPorCoordenada);

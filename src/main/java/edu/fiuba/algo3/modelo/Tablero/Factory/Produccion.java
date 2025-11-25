@@ -13,7 +13,7 @@ public class Produccion {
         return ((Produccion)object).tieneMismoNumero(this.numero);
     }
 
-    private boolean tieneMismoNumero(int numero) {
+    public boolean tieneMismoNumero(int numero) {
         return this.numero == numero;
     }
 }

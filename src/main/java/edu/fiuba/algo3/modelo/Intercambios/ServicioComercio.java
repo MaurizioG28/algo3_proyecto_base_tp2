@@ -1,7 +1,12 @@
 package edu.fiuba.algo3.modelo.Intercambios;
 
+import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
+import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+import edu.fiuba.algo3.modelo.Recursos.*;
+import edu.fiuba.algo3.modelo.RecursosInsuficientesException;
+
+import java.util.List;
 
 public class ServicioComercio {
 
@@ -25,7 +30,7 @@ public class ServicioComercio {
 
         int cantidadRecibida = cantidadEntregada / tasa;
 
-        if (jugador.CantidadRecurso(recursoEntregado) < cantidadEntregada) {
+        if (jugador.cantidadRecurso(recursoEntregado) < cantidadEntregada) {
             throw new IntercambioInvalidoException(
                     "El jugador no tiene suficientes " + recursoEntregado);
         }
@@ -42,5 +47,71 @@ public class ServicioComercio {
         banco.recibir(recursoEntregado.nuevo(cantidadEntregada));
         banco.entregar(recursoRecibido, cantidadRecibida);
     }
+
+    public Poblado venderPoblado(Jugador jugador) throws RecursosInsuficientesException {
+        //  Definir Costo (Madera, Ladrillo, Lana, Grano)
+        List<TipoDeRecurso> costo = List.of(
+                new Madera(1), new Ladrillo(1), new Lana(1), new Grano(1)
+        );
+
+        procesarPago(jugador, costo);
+
+        return new Poblado(jugador.getColor()); // Asumiendo que Jugador tiene getColor()
+    }
+
+    public Ciudad venderCiudad(Jugador jugador) throws RecursosInsuficientesException {
+        List<TipoDeRecurso> costo = List.of(
+                new Grano(2), new Mineral(3)
+        );
+        procesarPago(jugador, costo);
+        return new Ciudad(jugador.getColor());
+    }
+
+    // Método auxiliar para no repetir lógica de cobro
+    private void procesarPago(Jugador jugador, List<TipoDeRecurso> costo) throws RecursosInsuficientesException {
+        for (TipoDeRecurso r : costo) {
+            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
+                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
+            }
+        }
+
+        for (TipoDeRecurso recurso : costo) {
+            int cantidad = recurso.obtenerCantidad();
+
+            // Jugador paga
+            jugador.quitarRecurso(recurso.nuevo(0), cantidad);
+
+            // Banco recibe
+            banco.recibir(recurso.nuevo(cantidad));
+        }
+    }
+
+    // Método para devolver recursos en caso de error de colocación (Rollback)
+    public void reembolsarPoblado(Jugador jugador) {
+        List<TipoDeRecurso> costo = List.of(
+                new Madera(1), new Ladrillo(1), new Lana(1), new Grano(1)
+        );
+        reembolsar(jugador, costo);
+    }
+    public void reembolsarCiudad(Jugador jugador) {
+        List<TipoDeRecurso> costo = List.of(new Grano(2), new Mineral(3));
+        reembolsar(jugador, costo);
+    }
+
+    private void reembolsar(Jugador jugador, List<TipoDeRecurso> costo) {
+        for (TipoDeRecurso r : costo) {
+            // El banco devuelve (entregar)
+            try {
+                banco.entregar(r.nuevo(0), r.obtenerCantidad());
+                // El jugador recupera
+                jugador.agregarRecurso(r.nuevo(r.obtenerCantidad()));
+            } catch (IllegalStateException e) {
+                // Manejar caso borde donde el banco no tenga (raro en reembolso inmediato)
+            }
+        }
+    }
+
+
+
 }
 

@@ -17,4 +17,10 @@ public class Carretera implements  Construccion{
     public Color getColorActual() {
         return this.color;
     }
+
+    @Override
+    public void produci() {
+
+    }
+
 }
