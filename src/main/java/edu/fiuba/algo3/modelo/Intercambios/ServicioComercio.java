@@ -111,6 +111,17 @@ public class ServicioComercio {
         }
     }
 
+    public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, TipoDeRecurso recursoArecibir, int cantidadArecibir, List<Jugador> jugadores) {
+        for (Jugador jugador : jugadores) {
+            try {
+                jugador1.intercambiar(recursoAentregar, cantidadAentregar, jugador, recursoArecibir, cantidadArecibir);
+                break;
+            } catch (RecursosIsuficientesException ignored) {
+            }
+
+        }
+    }
+
 
 
 }
