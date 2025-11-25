@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
+import static org.junit.Assert.assertTrue;
+
 public class CasoDeUsoLanzarDadosTest {
 
     @Test
@@ -53,17 +55,23 @@ public class CasoDeUsoLanzarDadosTest {
         ));
         Tablero tablero = tableroFactory.crear(hexagonos, fichasNumeradas);
         Jugador jugadorMarcos = new Jugador("Marcos",new Color("rojo"));
-        jugadorMarcos.agregarRecursos(2,2,2,2,0);
+
+        jugadorMarcos.agregarRecurso(new Madera(2));
+        jugadorMarcos.agregarRecurso(new Ladrillo(2));
+        jugadorMarcos.agregarRecurso(new Lana(2));
+        jugadorMarcos.agregarRecurso(new Grano(2));
+
         ManagerTurno managerTurno = new ManagerTurno(List.of(jugadorMarcos),tablero,new Random(),new MazoOculto(new Random()));
-        tablero.construirPoblado(jugadorMarcos,new Coordenada(10,3));
-        tablero.construirPoblado(jugadorMarcos,new Coordenada(2,3));
+        managerTurno.construirPoblado(new Coordenada(10,3));
+        managerTurno.construirPoblado(new Coordenada(2,3));
+
 
         Dados dadosCargados = Mockito.mock(Dados.class);
         Mockito.when(dadosCargados.tirar()).thenReturn(10);
         //Act
         tablero.tirarDados(dadosCargados);
         //Assert
-        assert (jugadorMarcos.tieneExactamente(2,0,0,0,0));
+        assertTrue(jugadorMarcos.tiene(new Madera(2),new Ladrillo(0),new Lana(0),new Mineral(0),new Grano(0)));
 
     }
 

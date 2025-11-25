@@ -1,7 +1,6 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
@@ -9,7 +8,6 @@ import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
-import edu.fiuba.algo3.modelo.interfaces.*;
 
 
 public class Tablero {
@@ -88,13 +86,9 @@ public class Tablero {
 
 
   
-    public void tirarDados(Dados dados){
+    public List<List<Dividendo>> tirarDados(Dados dados){
         int valor = dados.tirar();
-        for (Vertice vertice : new HashSet<>(vertices.values())){
-            vertice.produci(valor);
-            System.out.println(vertice);
-        }
-        //para todos los vertices dar el mensaje produci
+        return distribuirProduccion(valor);
 
     }
 
