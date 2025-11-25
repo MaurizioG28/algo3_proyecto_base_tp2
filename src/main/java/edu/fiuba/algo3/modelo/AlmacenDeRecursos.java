@@ -8,6 +8,12 @@ import java.util.Random;
 
 import java.util.*;
 
+import java.util.*;
+
+import java.util.*;
+
+import java.util.*;
+
 public class AlmacenDeRecursos {
 
     // 1 entrada por tipo: Madera, Grano, etc.
@@ -121,3 +127,7 @@ public class AlmacenDeRecursos {
         return descartados;
     }
 }
+
+
+
+
