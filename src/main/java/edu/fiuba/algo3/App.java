@@ -22,7 +22,7 @@ public class App extends Application {
         pantallaPrincipal.setCentro(vistaInicial);
         Scene sceneInicio = new Scene(pantallaPrincipal, 1280, 720);
         sceneInicio.setOnKeyPressed(new ControladorTeclaPresionada(stage, pantallaPrincipal.getBarraDeMenu()));
-        Image icono = new Image("file:" + System.getProperty("user.dir") + "edu/fiuba/algo3/resources/catan-game-pantalla.png");
+        Image icono = new Image("file:" + System.getProperty("user.dir") + "edu/fiuba/algo3/resources/pantalla-inicial-fondo.png");
         stage.getIcons().add(icono);
         stage.setScene(sceneInicio);
         stage.setMinWidth(1280);
