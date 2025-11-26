@@ -10,6 +10,7 @@ import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CasoDeUsoPuntosDeVictoria {
 
@@ -83,6 +84,19 @@ public class CasoDeUsoPuntosDeVictoria {
         PuntajeDeVictoria puntajeObtenidoRojo=casoDeUsoPV.obtenerPuntosDeVictoria(jugador2);
         assertEquals(puntosEsperadosRojo,puntajeObtenidoRojo);
 
+    }
+    @Test
+    public void test05jugadorGanaCon10Puntos() {
+        Catan catan = new Catan();
+        Jugador j = new Jugador("Jugador1", new Color("Azul"));
+        catan.agregarJugador(j);
+
+
+        for(int i = 0; i < 10; i++) {
+            j.sumarPuntoDeVictoriaPublico();
+        }
+
+        assertEquals(j,catan.hayGanador());
     }
 
 

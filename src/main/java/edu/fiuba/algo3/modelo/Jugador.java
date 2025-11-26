@@ -151,4 +151,20 @@ public class Jugador {
     public void sumarPuntoDeVictoriaOculto() {
         this.puntos.agregarPuntosOcultos(1);
     }
+
+    public void suscribirACatan(Catan catan) {
+         this.puntos.addListener(catan);
+    }
+
+    public void sumarPuntoDeVictoriaPublico() {
+        this.puntos.agregarPuntos(1);
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public boolean mismoPuntaje(PuntajeDeVictoria puntaje) {
+        return this.puntos.equals(puntaje);
+    }
 }
