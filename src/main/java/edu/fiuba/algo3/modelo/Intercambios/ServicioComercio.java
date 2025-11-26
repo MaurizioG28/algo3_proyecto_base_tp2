@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo.Intercambios;
 
 import edu.fiuba.algo3.modelo.Cartas.*;
+import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
@@ -67,6 +68,28 @@ public class ServicioComercio {
         );
         procesarPago(jugador, costo);
         return new Ciudad(jugador.getColor());
+    }
+
+    public Carretera venderCarretera(Jugador comprador){
+
+        List<TipoDeRecurso> costo = List.of(
+                new Madera(1), new Ladrillo(1)
+        );
+        procesarPago(comprador, costo);
+
+        return new Carretera(comprador.getColor());
+
+    }
+
+    public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno){
+
+        List<TipoDeRecurso> costo = List.of(
+                new Grano(1), new Mineral(1),new Lana(1)
+        );
+        procesarPago(comprador, costo);
+
+        return sacarCarta(turno);
+
     }
 
     // Método auxiliar para no repetir lógica de cobro
@@ -139,15 +162,8 @@ public class ServicioComercio {
     }
 
 
-    public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno){
 
-        List<TipoDeRecurso> costo = List.of(
-            new Grano(1), new Mineral(1),new Lana(1)
-        );
-        procesarPago(comprador, costo);
 
-        return sacarCarta(turno);
 
-    }
 }
 
