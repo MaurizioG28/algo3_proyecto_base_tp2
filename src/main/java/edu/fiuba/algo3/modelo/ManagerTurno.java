@@ -1,6 +1,8 @@
 package edu.fiuba.algo3.modelo;
 
+import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
@@ -14,7 +16,9 @@ import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,7 @@ public class ManagerTurno {
     private final Tablero tablero;
     private final Random azar;
     private ServicioComercio servicioComercio = new ServicioComercio(new Banco());
+    private final Map<Jugador,Integer> registroGranCaballeria= new HashMap<>();
 
     public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random) {
         this.jugadores = jugadores;
@@ -35,7 +40,11 @@ public class ManagerTurno {
 
     public void comprarCarta() {
         Jugador jugador = getJugadorActual();
-        jugador.agregarCarta(servicioComercio.venderCartaDesarrollo(jugador,numeroTurnoActual));
+        CartaDesarrollo cartaComprada = servicioComercio.venderCartaDesarrollo(jugador, numeroTurnoActual);
+        jugador.agregarCarta(cartaComprada);
+        if(cartaComprada instanceof PuntoDeVictoria){
+            jugador.sumarPuntoDeVictoriaOculto();
+        }
     }
 
     public void construirCarretera(Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {
@@ -63,6 +72,12 @@ public class ManagerTurno {
         if (!cartaSeleccionada.SePuedeUsar(numeroTurnoActual)) {
             throw new ReglaDeCompraYUsoException("La carta no puede ser usada el mismo turno en el que se compra.");
         }
+        if(cartaSeleccionada instanceof CartaCaballero ){
+            int caballerosJugados=this.registroGranCaballeria.get(getJugadorActual());
+            caballerosJugados+=1;
+            this.registroGranCaballeria.put(getJugadorActual(),caballerosJugados);
+            //moverLadron(cartaSeleccionada.getPosicionLadron());
+        }
 
         // Utilidad de las cartas
     }
@@ -72,9 +87,14 @@ public class ManagerTurno {
     }
 
     public void siguienteTurno() {
-
+        contarPuntos();
         indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
         numeroTurnoActual += 1;
+    }
+    public void contarPuntos(){
+        Jugador jugador = getJugadorActual();
+        PuntajeDeVictoria pv= tablero.calcularPuntosDeVictoriaPorConstruccion(jugador.getColor());
+        jugador.actualizarPuntosDeVictoria(pv);
     }
 
     public void repartirDividendos(int sumaDeDados) {
