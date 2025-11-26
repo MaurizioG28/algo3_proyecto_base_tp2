@@ -54,4 +54,9 @@ public class PuntajeDeVictoria {
     public int total() {
         return puntosPublicos + puntosOcultos;
     }
+
+    public void restarPuntosPublicos(int i) {
+        this.puntosPublicos -= i;
+        notificar();
+    }
 }

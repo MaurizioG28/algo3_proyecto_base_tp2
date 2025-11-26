@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
@@ -10,13 +11,14 @@ import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
 
+
 public class Tablero {
 
 
     private final Map<Integer, Terreno> terrenos;
     private Dados dados = new Dados();
     private final Map<Coordenada, Vertice> vertices;
-    Map<Coordenada, Lado> lados;
+    private final Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
 
     private Integer posicionDelLadron;
@@ -228,5 +230,13 @@ public class Tablero {
         }
         verticeBuscado.mejorarACiudad();
     }
+
+    public List<Lado> obtenerLadosDeJugador(Color color) {
+        return lados.values().stream()
+                .filter(lado -> lado.colorDeConstruccionEquals(color))
+                .collect(Collectors.toList());
+    }
+
+
 }
 

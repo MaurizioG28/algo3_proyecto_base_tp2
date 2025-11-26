@@ -156,8 +156,8 @@ public class Jugador {
          this.puntos.addListener(catan);
     }
 
-    public void sumarPuntoDeVictoriaPublico() {
-        this.puntos.agregarPuntos(1);
+    public void sumarPuntoDeVictoriaPublico(int i) {
+        this.puntos.agregarPuntos(i);
     }
 
     public String getNombre() {
@@ -166,5 +166,9 @@ public class Jugador {
 
     public boolean mismoPuntaje(PuntajeDeVictoria puntaje) {
         return this.puntos.equals(puntaje);
+    }
+
+    public void restarPuntoDeVictoriaPublico(int i) {
+        this.puntos.restarPuntosPublicos(i);
     }
 }

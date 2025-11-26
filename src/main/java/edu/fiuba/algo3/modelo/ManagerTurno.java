@@ -1,8 +1,6 @@
 package edu.fiuba.algo3.modelo;
 
-import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
-import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
-import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
+import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
@@ -11,6 +9,7 @@ import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Lado;
 import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
@@ -30,7 +29,8 @@ public class ManagerTurno {
     private final Tablero tablero;
     private final Random azar;
     private ServicioComercio servicioComercio = new ServicioComercio(new Banco());
-    private final Map<Jugador,Integer> registroGranCaballeria= new HashMap<>();
+    private GranCaballeria granCaballeria = new GranCaballeria();
+    private GranRutaComercial granRutaComercial = new GranRutaComercial();
 
     public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random) {
         this.jugadores = jugadores;
@@ -55,6 +55,9 @@ public class ManagerTurno {
         try {
             Jugador jugadorActual = getJugadorActual();
             tablero.colocarEnLado(carretera, coordenada);
+            List<Lado> ladosJugador = tablero.obtenerLadosDeJugador(jugadorActual.getColor());
+            int longitud = granRutaComercial.calcular(ladosJugador);
+            granRutaComercial.actualizarRutaDeJugador(jugadorActual, longitud);
 
         } catch (ConstruccionExistenteException| ReglaConstruccionException e){
             // 3. ¡Error! El lugar estaba ocupado o muy cerca. Devolvemos la plata.
@@ -73,14 +76,14 @@ public class ManagerTurno {
             throw new ReglaDeCompraYUsoException("La carta no puede ser usada el mismo turno en el que se compra.");
         }
         if(cartaSeleccionada instanceof CartaCaballero ){
-            int caballerosJugados=this.registroGranCaballeria.get(getJugadorActual());
-            caballerosJugados+=1;
-            this.registroGranCaballeria.put(getJugadorActual(),caballerosJugados);
+            granCaballeria.registrarCaballeroJugado(getJugadorActual());
             //moverLadron(cartaSeleccionada.getPosicionLadron());
         }
 
         // Utilidad de las cartas
     }
+
+
 
     private Jugador getJugadorActual() {
         return jugadores.get(indiceJugadorActual);

@@ -93,7 +93,7 @@ public class CasoDeUsoPuntosDeVictoria {
 
 
         for(int i = 0; i < 10; i++) {
-            j.sumarPuntoDeVictoriaPublico();
+            j.sumarPuntoDeVictoriaPublico(2);
         }
 
         assertEquals(j,catan.hayGanador());
