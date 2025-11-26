@@ -141,4 +141,14 @@ public class Jugador {
         return this.cantidadRecurso(new Mineral(0));
     }
 
+
+
+    public void actualizarPuntosDeVictoria(PuntajeDeVictoria pv) {
+        this.puntos.setPuntosPublicos(pv.getPuntosPublicos());
+
+    }
+
+    public void sumarPuntoDeVictoriaOculto() {
+        this.puntos.agregarPuntosOcultos(1);
+    }
 }

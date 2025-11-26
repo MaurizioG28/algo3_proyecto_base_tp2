@@ -29,4 +29,8 @@ public class PuntajeDeVictoria {
         PuntajeDeVictoria p = (PuntajeDeVictoria) obj;
         return this.puntosPublicos == p.puntosPublicos && this.puntosOcultos == p.puntosOcultos;
     }
+
+    public int getPuntosPublicos() {
+        return puntosPublicos;
+    }
 }
