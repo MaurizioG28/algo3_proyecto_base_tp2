@@ -11,9 +11,7 @@ public class Poblado implements  Construccion,Productor{
     }
     private Jugador propietario;
 
-    public Poblado(Jugador propietario) {
-        this.propietario = propietario;
-    }
+
     @Override
     public String getColor() {
         return this.color.getColor();
@@ -24,10 +22,7 @@ public class Poblado implements  Construccion,Productor{
         return this.color;
     }
 
-    @Override
-    public void produci() {
-         propietario.agregarRecurso(new Madera(1));
-    }
+
 
     @Override
     public int obtenerFactorProduccion() {

@@ -1,18 +1,12 @@
 package edu.fiuba.algo3.entrega_2;
 
-import edu.fiuba.algo3.modelo.CasoDeUsoArmarTablero;
-import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.CasosDeUso.CasoDeUsoArmarTablero;
 
-import edu.fiuba.algo3.modelo.Tablero.*;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
 import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 
-import edu.fiuba.algo3.modelo.interfaces.ILado;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.LinkedList;

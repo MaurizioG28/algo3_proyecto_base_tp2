@@ -1,4 +1,4 @@
-package edu.fiuba.algo3.modelo;
+package edu.fiuba.algo3.modelo.CasosDeUso;
 
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
 import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;

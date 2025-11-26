@@ -1,26 +1,29 @@
 package edu.fiuba.algo3.modelo.CasosDeUso;
 
-import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.*;
 
-import edu.fiuba.algo3.modelo.ManagerTurno;
-import edu.fiuba.algo3.modelo.MazoOculto;
 import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
-import static org.mockito.Mockito.mock;
+
+
 
 import java.util.List;
 import java.util.Random;
+
+import static org.mockito.Mockito.mock;
 
 public class IntercambioEntreJugadores {
 
     private final ManagerTurno manager;
 
     public IntercambioEntreJugadores() {
-        List<Jugador> jugadores = mock(List.class);
-        Tablero tablero = mock(Tablero.class);
-        Random random = mock(Random.class);
-        MazoOculto mazoOculto = mock(MazoOculto.class);
+        List<Jugador> jugadores = List.of( new Jugador("Jugador1", new Color("Azul")),
+         new Jugador("Jugador2", new Color("Rojo")));
+        Catan catan =new Catan();
+        Tablero tablero = catan.crearTablero();
+        Random random = new Random();
+        MazoOculto mazoOculto = new MazoOculto(random);
         this.manager = new ManagerTurno(jugadores, tablero, random, mazoOculto);
     }
 
