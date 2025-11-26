@@ -2,7 +2,6 @@ package edu.fiuba.algo3.entrega_1;
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.ManagerTurno;
-import edu.fiuba.algo3.modelo.MazoOculto;
 import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Dados;
@@ -61,7 +60,7 @@ public class CasoDeUsoLanzarDadosTest {
         jugadorMarcos.agregarRecurso(new Lana(2));
         jugadorMarcos.agregarRecurso(new Grano(2));
 
-        ManagerTurno managerTurno = new ManagerTurno(List.of(jugadorMarcos),tablero,new Random(),new MazoOculto(new Random()));
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugadorMarcos),tablero,new Random());
         managerTurno.construirPoblado(new Coordenada(10,3));
         managerTurno.construirPoblado(new Coordenada(2,3));
 

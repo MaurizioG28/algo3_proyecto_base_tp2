@@ -23,8 +23,7 @@ public class IntercambioEntreJugadores {
         Catan catan =new Catan();
         Tablero tablero = catan.crearTablero();
         Random random = new Random();
-        MazoOculto mazoOculto = new MazoOculto(random);
-        this.manager = new ManagerTurno(jugadores, tablero, random, mazoOculto);
+        this.manager = new ManagerTurno(jugadores, tablero, random);
     }
 
     public void intercambiar(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, Jugador jugador2, TipoDeRecurso recursoArecibir, int cantidadArecibir) throws RecursosIsuficientesException {
