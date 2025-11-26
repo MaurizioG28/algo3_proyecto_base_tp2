@@ -5,6 +5,7 @@ import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
+import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
@@ -122,6 +123,10 @@ public class ManagerTurno {
 
                 Jugador jugadorActual = getJugadorActual();
                 tablero.colocarEnVertice(poblado, coordenada);
+                PoliticaDeIntercambio politica= tablero.verificarPuerto(coordenada);
+                if(politica!=null) {
+                    jugadorActual.agregarPolitica(politica);
+                }
             } catch (ReglaDistanciaException | ConstruccionExistenteException e){
                 // 3. ¡Error! El lugar estaba ocupado o muy cerca. Devolvemos la plata.
                 servicioComercio.reembolsarPoblado(getJugadorActual());

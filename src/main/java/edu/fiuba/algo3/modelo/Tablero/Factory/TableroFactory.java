@@ -1,5 +1,9 @@
 package edu.fiuba.algo3.modelo.Tablero.Factory;
 
+import edu.fiuba.algo3.modelo.Intercambios.Puerto;
+import edu.fiuba.algo3.modelo.Intercambios.PuertoEspecifico;
+import edu.fiuba.algo3.modelo.Intercambios.PuertoGenerico;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
@@ -24,6 +28,23 @@ public class TableroFactory {
             new Axial(-1, 0),  // 4
             new Axial(0, -1)   // 5
     };
+    private static final Coordenada[][] POSICIONES_PUERTOS = {
+            { new Coordenada(1,0), new Coordenada(1,1) },
+            { new Coordenada(2,3), new Coordenada(2,4) },
+            { new Coordenada(4,3), new Coordenada(4,4) },
+            { new Coordenada(7,1), new Coordenada(7,2) },
+            { new Coordenada(8,0), new Coordenada(8,5) },
+            { new Coordenada(11,3), new Coordenada(11,4) },
+            { new Coordenada(14,1), new Coordenada(14,2) },
+            { new Coordenada(16,5), new Coordenada(16,0) },
+            { new Coordenada(19,2), new Coordenada(19,3) }
+    };
+    private static final Puerto[] PUERTOS = {
+            new Puerto(new PuertoGenerico(3)), new Puerto(new PuertoGenerico(3)), new Puerto(new PuertoGenerico(3)), new Puerto(new PuertoGenerico(3)),
+            new Puerto(new PuertoEspecifico(new Madera(0),2)), new Puerto(new PuertoEspecifico(new Lana(0),2)), new Puerto(new PuertoEspecifico(new Ladrillo(0),2)),
+            new Puerto(new PuertoEspecifico(new Grano(0),2)), new Puerto(new PuertoEspecifico(new Mineral(0),2))
+    };
+
 
 
 
@@ -32,12 +53,20 @@ public class TableroFactory {
 
     public static Tablero crear(List<Terreno> terrenos, List<Produccion> fichas) {
 
+        return logicaCrear(terrenos, fichas,new Random());
+    }
+
+    public static Tablero crear(List<Terreno> terrenos, List<Produccion> fichas,Random random) {
+        return logicaCrear(terrenos, fichas,random );
+    }
+
+    private static Tablero logicaCrear(List<Terreno> terrenos, List<Produccion> fichas,Random random) {
         if(terrenos.isEmpty() || fichas.isEmpty() || terrenos.size() < 19) {
             throw new IllegalArgumentException("La lista de terrenos o fichas no puede estar vacía y debe contener al menos 19 terrenos.");
         }
 
         Map<Integer, Terreno> terrenosPorId = new HashMap<>();
-        Map<Cubic, Vertice> verticesUnicos = new HashMap<>();
+        //Map<Cubic, Vertice> verticesUnicos = new HashMap<>();
         Map<Coordenada, Vertice> verticesPorCoordenada = new HashMap<>();
         //Map<Cubic, Lado> ladosUnicos = new HashMap<>();
         Map<Coordenada, Lado> ladosPorCoordenada = new HashMap<>();
@@ -55,15 +84,12 @@ public class TableroFactory {
 
 
 
-//        for (Terreno terreno : terrenosPorId.values()) {
-//            terreno.crearVertices(verticesUnicos, verticesPorCoordenada, Vertice_OFFSETS);
-//        }
 
         for (Integer terrenoId : terrenosPorId.keySet()) {
 
-                for (int i = 0; i < 6; i++) {
-                    verticesPorCoordenada.put(new Coordenada(terrenoId, i), new Vertice());
-                }
+            for (int i = 0; i < 6; i++) {
+                verticesPorCoordenada.put(new Coordenada(terrenoId, i), new Vertice());
+            }
 
         }
 
@@ -94,7 +120,7 @@ public class TableroFactory {
             terreno.agregarLados(ladosPorCoordenada);
         }
 
-        // 3. Asignar fichas de producción (igual que antes)
+
         Iterator<Produccion> it = fichas.iterator();
         for (int id = 1; id <= terrenos.size(); id++) {
             Terreno terrenoActual = terrenosPorId.get(id);
@@ -102,6 +128,8 @@ public class TableroFactory {
                 terrenoActual.setProduccion(it.next());
             }
         }
+
+        asignarPuertos(verticesPorCoordenada, random);
 
         return new Tablero(terrenosPorId, verticesPorCoordenada, ladosPorCoordenada);
     }
@@ -112,25 +140,25 @@ public class TableroFactory {
 
 
 
-//        return Arrays.asList(
-//                new Axial(0, -2), new Axial(1, -2), new Axial(2, -2),
-//                new Axial(-1, -1), new Axial(0, -1), new Axial(1, -1), new Axial(2, -1),
-//                new Axial(-2, 0), new Axial(-1, 0), new Axial(0, 0), new Axial(1, 0), new Axial(2, 0),
-//                new Axial(-2, 1), new Axial(-1, 1), new Axial(0, 1), new Axial(1, 1),
-//                new Axial(-2, 2), new Axial(-1, 2), new Axial(0, 2)
-//        );
-//
-        List<Axial> list = new ArrayList<>();
-        int radius = 2;
+        return Arrays.asList(
+                new Axial(0, -2), new Axial(1, -2), new Axial(2, -2),
+                new Axial(-1, -1), new Axial(0, -1), new Axial(1, -1), new Axial(2, -1),
+                new Axial(-2, 0), new Axial(-1, 0), new Axial(0, 0), new Axial(1, 0), new Axial(2, 0),
+                new Axial(-2, 1), new Axial(-1, 1), new Axial(0, 1), new Axial(1, 1),
+                new Axial(-2, 2), new Axial(-1, 2), new Axial(0, 2)
+        );
 
-        for (int q = -radius; q <= radius; q++) {
-            int r1 = Math.max(-radius, -q - radius);
-            int r2 = Math.min(radius, -q + radius);
-            for (int r = r1; r <= r2; r++) {
-                list.add(new Axial(q, r));
-            }
-        }
-        return list;
+//        List<Axial> list = new ArrayList<>();
+//        int radius = 2;
+//
+//        for (int q = -radius; q <= radius; q++) {
+//            int r1 = Math.max(-radius, -q - radius);
+//            int r2 = Math.min(radius, -q + radius);
+//            for (int r = r1; r <= r2; r++) {
+//                list.add(new Axial(q, r));
+//            }
+//        }
+//        return list;
 
     }
 
@@ -275,6 +303,30 @@ public class TableroFactory {
                     b.agregarAdyacente(a);
                 }
             }
+        }
+    }
+
+    private static void asignarPuertos(Map<Coordenada, Vertice> verticesPorCoordenada,
+                                      Random random) {
+
+        // 1. Copiar lista de puertos y mezclar
+        List<Puerto> lista = new ArrayList<>(Arrays.asList(PUERTOS));
+        Collections.shuffle(lista, random);
+
+        // 2. Copiar y mezclar posiciones fijas de pares de vértices
+        List<Coordenada[]> posiciones = new ArrayList<>(Arrays.asList(POSICIONES_PUERTOS));
+        Collections.shuffle(posiciones, random);
+
+        // 3. Asignar cada puerto a su par de vértices
+        for (int i = 0; i < lista.size(); i++) {
+            Puerto p = lista.get(i);
+            Coordenada[] par = posiciones.get(i);
+
+            Vertice v1 = verticesPorCoordenada.get(par[0]);
+            Vertice v2 = verticesPorCoordenada.get(par[1]);
+
+            v1.asignarPuerto(p);
+            v2.asignarPuerto(p);
         }
     }
 

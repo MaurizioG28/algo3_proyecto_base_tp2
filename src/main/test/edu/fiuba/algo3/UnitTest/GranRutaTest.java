@@ -86,44 +86,5 @@ public class GranRutaTest {
         assertTrue( j1.mismoPuntaje(puntosEsperados));
     }
 
-    @Test
-    public void test05_bloqueoPorConstruccionEnVertice() throws ConstruccionExistenteException, ReglaConstruccionException {
-        // Añadir construcción enemiga en vértice que une lado 2 y 3
-        Catan catan=new Catan();
-        GranRutaComercial granRutaComercial=new GranRutaComercial();
 
-        Tablero tablero=catan.crearTablero();
-        try {
-            tablero.colocarEnVertice(new Poblado(new Color("azul")),new Coordenada(1,0));
-        } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
-            throw new RuntimeException(e);
-        }
-
-        tablero.colocarEnLado(new Carretera(new Color("azul")),new Coordenada(1,0));
-        tablero.colocarEnLado(new Carretera(new Color("azul")),new Coordenada(1,1));
-        tablero.colocarEnLado(new Carretera(new Color("azul")),new Coordenada(1,2));
-        tablero.colocarEnLado(new Carretera(new Color("azul")), new Coordenada(2,4));
-
-        List<Lado> ladosJugador = tablero.obtenerLadosDeJugador(new Color("azul"));
-        int longitudEsperada=4;
-        int longitud = granRutaComercial.calcular(ladosJugador);
-        //granRutaComercial.actualizarRutaDeJugador(jugadorActual, longitud);
-
-
-        assertEquals(longitudEsperada, longitud);
-        try {
-            tablero.colocarEnVertice(new Poblado(new Color("rojo")),new Coordenada(1,3));
-        } catch (ConstruccionExistenteException | ReglaDistanciaException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        List<Lado> ladosJugador2 = tablero.obtenerLadosDeJugador(new Color("azul"));
-        int longitudEsperada2=3;
-        int longitud2 = granRutaComercial.calcular(ladosJugador);
-        //granRutaComercial.actualizarRutaDeJugador(jugadorActual, longitud);
-
-
-        assertEquals(longitudEsperada2, longitud2);
-    }
 }

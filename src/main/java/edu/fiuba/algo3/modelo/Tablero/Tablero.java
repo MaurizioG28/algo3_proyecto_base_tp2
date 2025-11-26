@@ -7,6 +7,7 @@ import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 
+import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
 
@@ -238,5 +239,13 @@ public class Tablero {
     }
 
 
+    public PoliticaDeIntercambio verificarPuerto(Coordenada coordenada) {
+        Vertice vertice = vertices.get(coordenada);
+        if(vertice.esPuerto()) {
+            return vertice.obtenerPoliticaDeIntercambio();
+        }
+        return null;
+
+    }
 }
 
