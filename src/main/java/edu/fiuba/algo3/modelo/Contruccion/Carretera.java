@@ -18,9 +18,5 @@ public class Carretera implements  Construccion{
         return this.color;
     }
 
-    @Override
-    public void produci() {
-
-    }
 
 }

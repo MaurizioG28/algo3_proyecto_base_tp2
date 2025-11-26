@@ -21,10 +21,7 @@ public class Ciudad implements Construccion,Productor {
         return this.color;
     }
 
-    @Override
-    public void produci() {
 
-    }
 
     @Override
     public int obtenerFactorProduccion() {

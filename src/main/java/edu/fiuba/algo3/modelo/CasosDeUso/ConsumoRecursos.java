@@ -12,10 +12,12 @@ import java.util.Random;
 
 import static org.mockito.Mockito.mock;
 
+//import static org.mockito.Mockito.mock;
+
 public class ConsumoRecursos {
     public void construirPoblado(Jugador jugador, Tablero tablero, Coordenada coord) throws RecursosIsuficientesException {
-        Random random = mock(Random.class);
-        MazoOculto mazo =  mock(MazoOculto.class);
+        Random random = new Random();
+        MazoOculto mazo =  new MazoOculto(random);
         ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero, random, mazo);
         managerTurno.construirPoblado(coord);
     }

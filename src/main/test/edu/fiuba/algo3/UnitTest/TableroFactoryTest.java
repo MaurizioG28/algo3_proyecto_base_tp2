@@ -1,11 +1,8 @@
 package edu.fiuba.algo3.UnitTest;
-import edu.fiuba.algo3.modelo.CasoDeUsoArmarTablero;
+import edu.fiuba.algo3.modelo.CasosDeUso.CasoDeUsoArmarTablero;
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
-import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
-import edu.fiuba.algo3.modelo.interfaces.ILado;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.*;
 
