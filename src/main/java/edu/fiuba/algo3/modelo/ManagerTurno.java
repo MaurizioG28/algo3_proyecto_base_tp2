@@ -6,6 +6,7 @@ import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
 import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
@@ -74,19 +75,16 @@ public class ManagerTurno {
             Poblado poblado = servicioComercio.venderPoblado(getJugadorActual());
 
             try {
-                // 2. El tablero intenta colocarlo
-                // (Requiere que hayas agregado obtenerVertice o modificado colocarEnVertice)
-                Vertice v = tablero.obtenerVertice(coordenada);
-                Jugador jugadorActual = getJugadorActual();
-                tablero.construirPoblado(jugadorActual.getColor(), v); // Tu metodo existente
 
-            } catch (ReglaDistanciaException e) {
+                Jugador jugadorActual = getJugadorActual();
+                tablero.colocarEnVertice(poblado, coordenada);
+            } catch (ReglaDistanciaException | ConstruccionExistenteException e){
                 // 3. ¡Error! El lugar estaba ocupado o muy cerca. Devolvemos la plata.
                 servicioComercio.reembolsarPoblado(getJugadorActual());
                 throw e; // Avisamos a la vista
             }
 
-        } catch (ReglaDistanciaException e) {
+        } catch (ReglaDistanciaException | ConstruccionExistenteException e) {
             System.out.println("No alcanza la plata: " + e.getMessage());
         }
     }
