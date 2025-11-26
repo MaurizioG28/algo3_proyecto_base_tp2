@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
@@ -8,6 +9,7 @@ import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
@@ -34,6 +36,25 @@ public class ManagerTurno {
     public void comprarCarta() {
         Jugador jugador = getJugadorActual();
         jugador.agregarCarta(servicioComercio.venderCartaDesarrollo(jugador,numeroTurnoActual));
+    }
+
+    public void construirCarretera(Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {
+
+        // 1. El servicio valida recursos, cobra al jugador y guarda en el Banco
+        Carretera carretera = servicioComercio.venderCarretera(getJugadorActual());
+
+        try {
+            Jugador jugadorActual = getJugadorActual();
+            tablero.colocarEnLado(carretera, coordenada);
+
+        } catch (ConstruccionExistenteException| ReglaConstruccionException e){
+            // 3. ¡Error! El lugar estaba ocupado o muy cerca. Devolvemos la plata.
+            servicioComercio.reembolsarPoblado(getJugadorActual());
+            throw e; // Avisamos a la vista
+
+        }
+
+
     }
 
     public void usarUnaCarta(int indice) {
