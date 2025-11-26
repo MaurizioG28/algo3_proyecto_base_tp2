@@ -2,63 +2,50 @@ package edu.fiuba.algo3.entrega_2;
 
 import edu.fiuba.algo3.modelo.CasosDeUso.CasoColocacionRandom;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CasoDeUsoCreacionRandomDeTablero {
 
-    List<Terreno> hexagonos = Arrays.asList(
-            new Bosque(),
-            new Campo(),
-            new Bosque(),
-            new Pastizal(),
-            new Bosque(),
-            new Campo(),
-            new Montania(),
-            new Campo(),
-            new Montania(),
-            new Campo(),
-            new Colina(),
-            new Colina(),
-            new Desierto(),
-            new Colina(),
-            new Pastizal(),
-            new Montania(),
-            new Pastizal(),
-            new Bosque(),
-            new Pastizal()
-    );
 
-    List<Produccion> fichasNumeradas = new LinkedList<>(Arrays.asList(
-            new Produccion(2),
-            new Produccion(3),
-            new Produccion(3),
-            new Produccion(4),
-            new Produccion(4),
-            new Produccion(5),
-            new Produccion(5),
-            new Produccion(6),
-            new Produccion(6),
-            new Produccion(8),
-            new Produccion(8),
-            new Produccion(9),
-            new Produccion(9),
-            new Produccion(10),
-            new Produccion(10),
-            new Produccion(11),
-            new Produccion(11),
-            new Produccion(12)
-
-    ));
 
     @Test
-    void test01CrearTableroRandomTieneBienLosTerrenos(){
+    void test01Crear2TableroRandomTieneMismosTerrenos(){
         CasoColocacionRandom tableroRandom = new CasoColocacionRandom();
 
-        tableroRandom.iniciarTablero(hexagonos,fichasNumeradas);
+        Tablero tablero1= tableroRandom.iniciarTablero(1234);
+        Tablero tablero2= tableroRandom.iniciarTablero(1234);
+
+        assertEquals(tablero1, tablero2);
     }
+    @Test
+    public void test03SeedsDistintosGeneranTablerosDiferentes() {
+        CasoColocacionRandom tableroRandom = new CasoColocacionRandom();
+
+        Tablero tablero1 = tableroRandom.iniciarTablero(1234);
+        Tablero tablero2 = tableroRandom.iniciarTablero(5678);
+
+        assert(!tablero1.equals(tablero2));
+    }
+
+    @Test
+    public void test04DesiertoNoTieneFichaDeNumero() {
+        CasoColocacionRandom tableroRandom = new CasoColocacionRandom();
+
+        Tablero tablero = tableroRandom.iniciarTablero(1234);
+
+
+
+        assertEquals(new Produccion(0),tableroRandom.buscarDesierto(tablero));
+    }
+
+
 }

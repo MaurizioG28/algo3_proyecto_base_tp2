@@ -23,13 +23,6 @@ public abstract class Terreno {
     }
     public abstract TipoDeRecurso recursoOtorgado(Integer cantidad);
 
-
-
-    public void setProduccion(Produccion produccion) {
-        this.produccion = produccion;
-
-    }
-
     public boolean esDesierto() {
         return false;
     }
@@ -40,30 +33,25 @@ public abstract class Terreno {
         return mismoTerreno(((Terreno) object).getId());
     }
 
-    private Produccion getProduccion() {
-        return this.produccion;
-    }
+    public void setProduccion(Produccion produccion) {this.produccion = produccion;}
 
-    public boolean mismoTerreno(Integer otroId){
-        return  this.id==(otroId);
-    }
+    public Produccion getProduccion() {return this.produccion;}
+
+    public boolean mismoTerreno(Integer otroId){return  this.id==(otroId);}
 
     public void asignarHexagono(Hexagono hexagono) {
         this.hexagono = hexagono;
     }
 
-    public Hexagono getHexagono() {
-        return this.hexagono;
-    }
+    public Hexagono getHexagono() {return this.hexagono;}
 
+    public void setPosicion(Axial axial) {this.posicion = axial;}
 
+    public Axial getPosicion() {return this.posicion;}
 
-    public void setPosicion(Axial axial) {
-        this.posicion = axial;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public void setId(Integer id) {this.id = id;}
+
+    public int getId() {return this.id;}
 
     public void agregarVertices(Map<Coordenada, Vertice> verticesPorCoordenada) {
         for (int i = 0; i < 6; i++) {
@@ -85,29 +73,13 @@ public abstract class Terreno {
         }
     }
 
-    public boolean tieneVertice(Vertice v) {
-        return hexagono.tieneVertice(v);
-    }
+    public boolean tieneVertice(Vertice v) {return hexagono.tieneVertice(v);}
 
-    public boolean sePuedeProducir() {
-        return hexagono.sePuedeProducir();
-    }
+    public boolean sePuedeProducir() {return hexagono.sePuedeProducir();}
 
 //    public void producirRecurso() {
 //        hexagono.producirRecurso(recursoOtorgado(1));
 //    }
-
-    public Axial getPosicion() {
-        return this.posicion;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-
-
-
     public void moverLadronQuitar() {
         this.hexagono.sacarLadron();
     }
@@ -128,4 +100,6 @@ public abstract class Terreno {
         }
         return null;
     }
+
+
 }

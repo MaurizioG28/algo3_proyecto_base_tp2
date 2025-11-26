@@ -1,19 +1,22 @@
 package edu.fiuba.algo3.modelo.CasosDeUso;
 
-import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Jugador;
-import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
-import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
+import edu.fiuba.algo3.modelo.ManagerTurno;
+import edu.fiuba.algo3.modelo.MazoOculto;
+import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Tablero;
 
-//public class ConsumoRecursos {
-//
-//    public void colocarPoblado(Jugador jugador, Vertice vertice) throws ConstruccionExistenteException,ReglaDistanciaException {
-//        if(vertice.tieneConstruccionAdyacente()){throw new ReglaDistanciaException("Un vertice adyacente tiene contruccion");}
-//        Construccion poblado = jugador.comprarPoblado();
-//        if(poblado != null){
-//            vertice.colocar(poblado);
-//        }
-//
-//    }
-//}
+import java.util.List;
+import java.util.Random;
+
+import static org.mockito.Mockito.mock;
+
+public class ConsumoRecursos {
+    public void construirPoblado(Jugador jugador, Tablero tablero, Coordenada coord) throws RecursosIsuficientesException {
+        Random random = mock(Random.class);
+        MazoOculto mazo =  mock(MazoOculto.class);
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero, random, mazo);
+        managerTurno.construirPoblado(coord);
+    }
+}

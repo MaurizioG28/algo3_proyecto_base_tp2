@@ -1,46 +1,42 @@
 package edu.fiuba.algo3.UnitTest;
 
-import edu.fiuba.algo3.modelo.Tablero.Factory.Hexagono;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
+import edu.fiuba.algo3.modelo.Tablero.Terrenos.Desierto;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
+import static org.junit.Assert.*;
 
 public class DesiertoTest {
 
-//    @Test
-//    public void test01DesiertoNuevoTieneTipoTerrenoDesierto(){
-//        TipoTerreno tipoDesierto = TipoTerreno.DESIERTO;
-//        Desierto Desierto = new Desierto();
-//
-//        assertTrue(Desierto.esTipoTerreno(tipoDesierto));
-//    }
-//
-//    @Test
-//    public void test02DesiertoNuevoTieneUnaCantidadMaxima(){
-//        int cantidadMaximaDesierto = 1;
-//        Desierto Desierto = new Desierto();
-//
-//        assertTrue(Desierto.esCantidadMaxima(cantidadMaximaDesierto));
-//    }
-//
-//    @Test
-//    public void test03DesiertoNuevoTieneCeroColocados(){
-//        int cantidadInicialDesierto = 0;
-//        Desierto Desierto = new Desierto();
-//
-//        assertTrue(Desierto.esCantidadColocada(cantidadInicialDesierto));
-//    }
-//
-//    @Test
-//    public void test04AgregarTerrenoSumaTerrenoColocado(){
-//        int cantidadTerrenosColocados = 1;
-//        int[] fichas = {1,2,4};
-//        ArrayList<Hexagono> hexagonos = new ArrayList<>();
-//        Desierto Desierto = new Desierto();
-//
-//        Desierto.agregarTerreno(hexagonos, fichas);
-//
-//
-//        assertTrue(Desierto.esCantidadColocada(cantidadTerrenosColocados));
-//    }
+    @Test
+    public void test01DesiertoDevuelveSuTipo(){
+        Desierto desierto = new Desierto();
+        String tipoEsperado = "Desierto";
+
+        assertEquals(tipoEsperado, desierto.getTipoTerreno());
+    }
+
+    @Test
+    public void test02DesiertoNoDevuelveRecursos(){
+        Desierto desierto = new Desierto();
+        int cantidadDeRecurso = 5;
+
+        assertNull(desierto.recursoOtorgado(cantidadDeRecurso));
+    }
+
+    @Test
+    public void test03DesiertoSabeQueEsUnDesierto(){
+        Desierto desierto = new Desierto();
+
+        assertTrue(desierto.esDesierto());
+    }
+
+    @Test
+    public void test04DesiertoNoCambiaSuProduccion(){
+        Desierto desierto = new Desierto();
+        desierto.setProduccion(new Produccion(4));
+        Produccion produccionEsperada = new Produccion(0);
+
+        assertEquals(produccionEsperada, desierto.getProduccion());
+
+    }
 }
