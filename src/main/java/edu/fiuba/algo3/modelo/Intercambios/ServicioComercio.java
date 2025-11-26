@@ -15,8 +15,15 @@ import java.util.Random;
 public class ServicioComercio {
 
     private final Banco banco;
+    private final Random azar;
+
     public ServicioComercio(Banco banco) {
         this.banco = banco;
+        this.azar = new Random();
+    }
+    public ServicioComercio(Banco banco, Random azar) {
+        this.banco = banco;
+        this.azar = azar;
     }
 
     public void intercambiarConBanco(Jugador jugador,
@@ -148,7 +155,6 @@ public class ServicioComercio {
 
 
     private CartaDesarrollo sacarCarta(int turno){
-        Random azar = new Random();
         List<CartaDesarrollo> cartasDisponibles = new ArrayList<>();
         cartasDisponibles.add(new CartaCaballero(turno));
         cartasDisponibles.add(new CartaConstruccionCarreteras(turno));

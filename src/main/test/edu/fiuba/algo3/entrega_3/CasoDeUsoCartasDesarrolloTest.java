@@ -30,13 +30,14 @@ public class CasoDeUsoCartasDesarrolloTest {
         banco.recibir(new Madera(10));
         banco.recibir(new Ladrillo(10));
         banco.recibir(new Grano(10));
-        servicioComercio = new ServicioComercio(banco);
     }
     @Test
     public void Test01UnJugadorDebeConsumirSusRecursosAlComprarUnaCartaQueNoOtorgaPuntosDeVictoria() {
         int cantidadRecursosEsperada = 0;
         Random numeroRandom = new FakeRandom(0);
         Jugador comprador = new Jugador("nombre1",new Color("Azul"));
+        servicioComercio = new ServicioComercio(banco, numeroRandom);
+
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));
         comprador.agregarRecurso(new Mineral(1));
@@ -106,6 +107,7 @@ public class CasoDeUsoCartasDesarrolloTest {
         int cantidadDePuntosEsperada = 1;
         Random numeroRandom = new FakeRandom(4);
         Jugador comprador = new Jugador("nombre1",new Color("Azul"));
+        servicioComercio = new ServicioComercio(banco, numeroRandom);
 
         comprador.agregarRecurso(new Lana(1));
         comprador.agregarRecurso(new Grano(1));

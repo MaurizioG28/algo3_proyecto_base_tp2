@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.CartaProductora;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
@@ -54,6 +55,9 @@ public class Jugador {
     }
     public void agregarCarta(CartaDesarrollo cartaNueva) {
         cartas.agregarCarta(cartaNueva);
+        if (cartaNueva instanceof CartaProductora) {
+            puntos.agregarPuntosOcultos(((CartaProductora) cartaNueva).obtenerCantidadPV());
+        }
     }
 
     public CartaDesarrollo agarrarCarta(int indice) {
@@ -101,7 +105,7 @@ public class Jugador {
     public int totalPuntos() {
         // Falta agregar mas implementaciones
 
-        return cartas.cantidadDeTipo(PuntoDeVictoria.class);
+        return puntos.obtenerPuntos();
     }
 
     public void intercambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, Jugador jugador2, TipoDeRecurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
