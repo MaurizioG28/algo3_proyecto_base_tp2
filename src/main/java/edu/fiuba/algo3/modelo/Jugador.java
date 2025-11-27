@@ -4,6 +4,8 @@ import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
+import edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoEstandar;
+import edu.fiuba.algo3.modelo.constructoresDeCarreteras.IEstrategiaDePago;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -17,6 +19,7 @@ public class Jugador {
     private Color color;
     private String nombre;
     private PuntajeDeVictoria puntos;
+    private IEstrategiaDePago estrategiaDePago;
 
     public Jugador(String nombre, Color color){
         this.almacenJugador = new AlmacenDeRecursos();
@@ -24,6 +27,7 @@ public class Jugador {
         this.color= color;
         this.nombre = nombre;
         this.puntos = new PuntajeDeVictoria();
+        this.estrategiaDePago = new EstrategiaPagoEstandar();
     }
 
     public boolean esDelColor(Color colorAComparar) {
@@ -170,5 +174,21 @@ public class Jugador {
 
     public void restarPuntoDeVictoriaPublico(int i) {
         this.puntos.restarPuntosPublicos(i);
+    }
+
+    public void pagar(List<TipoDeRecurso> costo) {
+        this.estrategiaDePago = estrategiaDePago.pagar(this.almacenJugador, costo);
+
+    }
+    public void setEstrategiaDePago(IEstrategiaDePago estrategiaDePago) {
+        this.estrategiaDePago = estrategiaDePago;
+    }
+    public int entregarTodo(TipoDeRecurso recursoEntregar) {
+        return this.almacenJugador.entregarTodo(recursoEntregar);
+    }
+    public void recibirBotin(TipoDeRecurso tipo, int cantidad) {
+        if (cantidad > 0) {
+            this.almacenJugador.agregarRecurso(tipo.nuevo(cantidad));
+        }
     }
 }

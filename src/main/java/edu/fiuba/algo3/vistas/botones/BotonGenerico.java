@@ -41,6 +41,7 @@ public class BotonGenerico extends Button {
         sombra.setOffsetY(5);
         super.setEffect(sombra);
         super.setCursor(Cursor.HAND);
+
         super.setOnAction(e -> {
             sfx.reproducirClick();
             controlador.handle(e);
@@ -49,13 +50,14 @@ public class BotonGenerico extends Button {
         // Ajustamos los controladores de hover para que cambien el estilo (no solo el color)
 
         super.setOnMouseEntered(e -> {
+            sfx.reproducirHover();
             super.setStyle("-fx-background-color: linear-gradient(to bottom, #8e24aa, #6a1b9a);" + // Más claro al pasar mouse
                     "-fx-background-radius: 30;" +
                     "-fx-border-color: #FFF;" + // Borde blanco al pasar mouse
                     "-fx-border-width: 3;" +
                     "-fx-border-radius: 30;" +
                     "-fx-padding: 10 40 10 40;");
-            super.setCursor(javafx.scene.Cursor.HAND);
+            super.setCursor(Cursor.HAND);
         });
 
         super.setOnMouseExited(e -> {

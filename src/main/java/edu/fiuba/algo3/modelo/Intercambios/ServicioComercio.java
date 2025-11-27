@@ -94,17 +94,18 @@ public class ServicioComercio {
 
     // Método auxiliar para no repetir lógica de cobro
     private void procesarPago(Jugador jugador, List<TipoDeRecurso> costo) throws RecursosInsuficientesException {
-        for (TipoDeRecurso r : costo) {
-            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
-                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
-            }
-        }
+        jugador.pagar(costo);
+
+        //Posible violacion de Tell Dont Ask
+        //Jugador tienes esto ? -> "NO/Si" -> entonces hago esto
+//        for (TipoDeRecurso r : costo) {
+//            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
+//                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
+//            }
+//        }
 
         for (TipoDeRecurso recurso : costo) {
             int cantidad = recurso.obtenerCantidad();
-
-            // Jugador paga
-            jugador.quitarRecurso(recurso.nuevo(0), cantidad);
 
             // Banco recibe
             banco.recibir(recurso.nuevo(cantidad));

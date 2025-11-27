@@ -9,10 +9,12 @@ import javafx.stage.Stage;
 
 public class BarraDeMenu extends MenuBar {
 
-    MenuItem opcionPantallaCompleta = new MenuItem("Pantalla completa");
-    private String rutaMusica = "\\src\\main\\java\\edu\\fiuba\\algo3\\resources\\musica\\";
+    private MenuItem opcionPantallaCompleta = new MenuItem("Pantalla completa");
+    private String rutaMusica = "/musica/";
+    private ReproductorMusica reproductor;
 
     public BarraDeMenu(Stage stage) {
+
         Menu menuArchivo = new Menu("Archivo");
         Menu menuVer = new Menu("Ver");
         Menu menuMusica = new Menu("Música");
@@ -26,7 +28,7 @@ public class BarraDeMenu extends MenuBar {
         opcionAcercaDe.setOnAction(new ControladorAcercaDeAyuda());
         opcionAyuda.setOnAction(new ControladorAyudaDelJuego());
         opcionPantallaCompleta.setOnAction(new ControladorPantallaCompleta(stage, opcionPantallaCompleta));
-        //agregarMusicas(menuMusica);
+        agregarMusicas(menuMusica);
 
         menuArchivo.getItems().addAll(opcionSalir);
 
@@ -41,37 +43,28 @@ public class BarraDeMenu extends MenuBar {
         opcionPantallaCompleta.setDisable(false);
     }
 
-//    private void agregarMusicas(Menu menuMusica) {
-//        ReproductorMusica unReproductor = new ReproductorMusica();
-//        MenuItem opcionSinMusica = new MenuItem("Sin música");
-//        MenuItem opcionMusicaComun = new MenuItem("Kahoot Original");
-//        MenuItem opcionMusicaArcade = new MenuItem("Kahoot Arcade");
-//        MenuItem opcionMusicaCyberPunk = new MenuItem("Kahoot Cyber-hoot");
-//        MenuItem opcionMusicaHappy = new MenuItem("kahoot happy");
-//        MenuItem opcionMusicaSlow = new MenuItem("kahoot slow");
-//        MenuItem opcionMusicaHalloween = new MenuItem("Kahoot Halloween");
-//        MenuItem opcionMusicaMine = new MenuItem("kahoot Mine");
-//
-//        opcionSinMusica.setOnAction(new ControladorMusica("", unReproductor));
-//        opcionMusicaComun.setOnAction(new ControladorMusica(rutaMusica + "classic.mp3", unReproductor));
-//        opcionMusicaArcade.setOnAction(new ControladorMusica(rutaMusica + "arcade.mp3", unReproductor));
-//        opcionMusicaCyberPunk.setOnAction(new ControladorMusica(rutaMusica + "cyberpunk-bits.mp3", unReproductor));
-//        opcionMusicaHappy.setOnAction(new ControladorMusica(rutaMusica + "happy.mp3", unReproductor));
-//        opcionMusicaSlow.setOnAction(new ControladorMusica(rutaMusica + "slow-bits.mp3", unReproductor));
-//        opcionMusicaHalloween.setOnAction(new ControladorMusica(rutaMusica + "halloween.mp3", unReproductor));
-//        opcionMusicaMine.setOnAction(new ControladorMusica(rutaMusica + "Miner.mp3", unReproductor));
-//
-//
-//        menuMusica.getItems().addAll(opcionSinMusica, opcionMusicaComun,
-//                opcionMusicaArcade,
-//                opcionMusicaCyberPunk,
-//                opcionMusicaHappy,
-//                opcionMusicaSlow,
-//                opcionMusicaHalloween,
-//                opcionMusicaMine
-//        );
+    private void agregarMusicas(Menu menuMusica) {
+        this.reproductor = new ReproductorMusica();
+        MenuItem opcionSinMusica = new MenuItem("Sin música");
+        MenuItem opcionMusicaComun = new MenuItem("Catan clasica");
+        MenuItem opcionMusicaMedieval= new MenuItem("Medieval");
+        MenuItem opcionMusicaHappy = new MenuItem("Happy");
+        MenuItem opcionMusicaTravel = new MenuItem("Travelling");
 
+        opcionSinMusica.setOnAction(e -> reproductor.escucharTema(""));
 
-//    }
+        opcionMusicaComun.setOnAction(e -> reproductor.escucharTema(rutaMusica + "classic.mp3"));
+        opcionMusicaMedieval.setOnAction(e -> reproductor.escucharTema(rutaMusica + "medieval-folk-rpg.mp3"));
+        opcionMusicaHappy.setOnAction(e -> reproductor.escucharTema(rutaMusica + "medieval-happy-music-.mp3"));
+        opcionMusicaTravel.setOnAction(e -> reproductor.escucharTema(rutaMusica + "travelling-on-medievalgame-music.mp3"));
+
+        menuMusica.getItems().addAll(opcionSinMusica,
+                opcionMusicaComun,
+                opcionMusicaMedieval,
+                opcionMusicaHappy,
+                opcionMusicaTravel
+        );
+    }
+
 
 }
