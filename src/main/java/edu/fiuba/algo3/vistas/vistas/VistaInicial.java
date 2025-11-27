@@ -2,6 +2,7 @@ package edu.fiuba.algo3.vistas.vistas;
 
 
 import edu.fiuba.algo3.controllers.ControladorIniciarJuego;
+import edu.fiuba.algo3.controllers.ReproductorMusica;
 import edu.fiuba.algo3.vistas.Grillas.GrillaBase;
 import edu.fiuba.algo3.vistas.PantallaPrincipal;
 import edu.fiuba.algo3.vistas.botones.BotonGenerico;
@@ -15,10 +16,11 @@ public class VistaInicial extends StackPane {
 
     private Stage stage;
 
+
     public VistaInicial(Stage stagePrincipal, PantallaPrincipal contenedorPrincipal) {
         this.stage = stagePrincipal;
 
-        Image imagen = new Image("file:" + System.getProperty("user.dir") + "/src/main/java/edu/fiuba/algo3/resources/Imagenes/pantalla-inicial.png");
+        Image imagen = new Image("Imagenes/pantalla-inicial.png");
         BackgroundImage fondoImagen = new BackgroundImage(imagen,
                 BackgroundRepeat.ROUND,
                 BackgroundRepeat.SPACE,

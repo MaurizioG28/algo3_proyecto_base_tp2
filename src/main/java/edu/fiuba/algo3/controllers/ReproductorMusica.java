@@ -7,43 +7,53 @@ import java.net.URL;
 
 public class ReproductorMusica {
 
+
     private MediaPlayer mediaPlayer;
 
     public ReproductorMusica() {
-        // Ruta relativa desde la carpeta resources
-        String rutaInicial = "/edu/fiuba/algo3/resources/musica/classic.mp3";
-        escucharTema(rutaInicial);
+        String temaInicial = "/musica/classic.mp3";
+        reproducirTema(temaInicial);
     }
-
     public void escucharTema(String direccion) {
-        // 1. Detener el tema anterior si existe
+        // 1. Si ya hay algo sonando, lo detenemos
         if (mediaPlayer != null) {
             mediaPlayer.stop();
         }
 
-        // 2. Si la dirección no está vacía (opción "Sin Música"), reproducir el nuevo
+        // 2. Si la dirección es válida, reproducimos el nuevo tema
         if (direccion != null && !direccion.isEmpty()) {
             reproducirTema(direccion);
         }
     }
 
     private void reproducirTema(String direccion) {
-        // VALIDACIÓN DE RUTA: Esto busca dentro del JAR o carpeta de compilación
         URL url = getClass().getResource(direccion);
 
         if (url == null) {
-            System.err.println("No se encontró el archivo: " + direccion);
-            return; // Evita que explote el programa
+            System.err.println("ERROR DE MÚSICA: No se encontró el archivo: " + direccion);
+            return;
         }
 
         try {
             Media media = new Media(url.toExternalForm());
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // Loop infinito
-            mediaPlayer.setVolume(0.5); // IMPORTANTE: Va de 0.0 a 1.0
+
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+            // Volumen al 50% (0.5).
+            mediaPlayer.setVolume(0.1);
+
             mediaPlayer.play();
+
         } catch (Exception e) {
-            System.err.println("Error al cargar multimedia: " + e.getMessage());
+            System.err.println("Error al cargar la música: " + e.getMessage());
         }
     }
+
+    public void mutear() {
+        if (mediaPlayer != null) {
+            mediaPlayer.setMute(!mediaPlayer.isMute());
+        }
+    }
+
 }

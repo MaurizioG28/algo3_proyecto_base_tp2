@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class VistaPedirNombreJugadores extends StackPane {
 
-    private static final String IMAGEN_RUTA = "/src/main/java/edu/fiuba/algo3/resources/Imagenes/pantalla-inicial.png";
+    private static final String IMAGEN_RUTA = "imagenes/pantalla-inicial.png";
     private static final double ANCHO_VENTANA = 1280;
     private static final double ALTO_VENTANA = 720;
 
@@ -48,7 +48,7 @@ public class VistaPedirNombreJugadores extends StackPane {
     }
 
     private void configurarFondo() {
-        Image imagen = new Image("file:" + System.getProperty("user.dir") + IMAGEN_RUTA);
+        Image imagen = new Image(IMAGEN_RUTA);
         BackgroundImage fondoImagen = new BackgroundImage(imagen,
                 BackgroundRepeat.ROUND,
                 BackgroundRepeat.SPACE,
