@@ -100,7 +100,8 @@ public class ManagerTurno {
                             .collect(Collectors.toList());
 
             ((CartaCaballero) cartaSeleccionada).usarCarta(getJugadorActual(), victimas);
-        } else if (cartaSeleccionada instanceof CartaDescubrimiento) {
+        }
+        if (cartaSeleccionada instanceof CartaDescubrimiento) {
             List<TipoDeRecurso> recursos = getJugadorActual().pedirRecursos();
             ((CartaDescubrimiento) cartaSeleccionada).usarCarta(getJugadorActual(), servicioComercio, recursos);
         }
