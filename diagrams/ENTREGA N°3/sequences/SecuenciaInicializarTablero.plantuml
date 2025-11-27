@@ -1,0 +1,28 @@
+@startuml
+actor "TestRunner" as Runner
+participant "Test01" as Test
+participant ":Tablero" as Tablero
+participant ":Terreno" as Terreno
+
+Runner -> Test: runTest()
+activate Test
+create Tablero
+Test ->Tablero: <<create>>
+Test ->Tablero: setUp()
+activate Tablero
+loop Mientras hayan menos de 19 hexagonos creados
+    Tablero -> Tablero: sortearTerreno()
+    activate Tablero
+    deactivate Tablero
+    Tablero -> Terreno: agregarTerreno(Hexagono[] hexagonos, int[] fichas)
+    activate Terreno
+    Terreno -> Terreno: sortearFicha(int[] fichas)
+    activate Terreno
+    deactivate Terreno
+    deactivate Terreno
+    deactivate Tablero
+end
+Test -> Tablero: tableroCorrectamenteInicializado()
+activate Tablero
+return tableroInicializado:bool
+@enduml

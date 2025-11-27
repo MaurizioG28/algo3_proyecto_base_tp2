@@ -1,0 +1,53 @@
+@startuml
+actor TestCase
+create "tablero :Tablero" as tablero
+TestCase -> tablero: <<create>>
+create "jugador :Jugador" as jugador
+TestCase -> jugador: <<create>>
+create "terreno :Hexagono" as terreno
+TestCase -> terreno: <<create>> Hexagono(BOSQUE, 2)
+create "vertice :Vertice" as vertice
+TestCase -> vertice: <<create>>
+
+TestCase -> tablero: agregarHexagono(terreno)
+activate tablero
+
+tablero -> tablero: this.hexagonos.add(terreno)
+deactivate tablero
+
+TestCase -> terreno: agregarVertice(vertice)
+activate terreno
+
+terreno -> terreno: this.vertices.add(vertice)
+deactivate terreno
+
+TestCase -> vertice: colocarPoblado(jugador)
+activate vertice
+
+vertice -> vertice: this.propietario = jugador
+vertice -> vertice: this.tipo = TipoConstruccion.POBLADO
+deactivate vertice
+
+TestCase -> terreno: moverLadron()
+activate terreno
+
+terreno -> terreno: this.bloqueadoPorLadron = !bloqueadoPorLadron
+deactivate terreno
+
+TestCase -> tablero: repartirProduccion(2)
+activate tablero
+tablero -> tablero: calcularProduccion(2)
+loop por cada Hexagono en hexagonos
+    tablero -> terreno: getNumero()
+    terreno --> tablero: 2
+    tablero -> terreno: sePuedeProducir()
+    terreno --> tablero: false
+end
+deactivate tablero
+
+TestCase -> jugador: cantidadRecurso(Recurso.MADERA)
+activate jugador
+jugador --> TestCase: 0
+deactivate jugador
+
+@enduml
