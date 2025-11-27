@@ -50,16 +50,17 @@ public class VistaTablero extends StackPane {
     private HBox agregarTerrenos(){
         HBox mapa = new HBox();
         mapa.setPadding(new Insets(40, 80, 40 ,80));
+        mapa.setPrefWidth(ANCHO_VENTANA/2);
         Catan catan = new Catan();
         Tablero tablero = catan.crearTablero();
         Map<Integer, Terreno> terrenos = tablero.getTerrenos();
 
-        double centerY =  180.0;
+        double centerY =  200.0;
         double centerX =  320.0;
 
         Group root = new Group();
 
-        double hexRadius = 40;
+        double hexRadius = 50;
 
         Polygon center = createHexagon(centerX, centerY, hexRadius, terrenos.get(1));
         root.getChildren().add(center);
@@ -78,21 +79,21 @@ public class VistaTablero extends StackPane {
             root.getChildren().add(hexagon);
         }
         Translate moverAbajo = new Translate();
-        moverAbajo.setY(20);
+        moverAbajo.setY(25);
         Translate moverAbajoDerecha = new Translate();
-        moverAbajoDerecha.setY(10);
-        moverAbajoDerecha.setX(17);
+        moverAbajoDerecha.setY(13);
+        moverAbajoDerecha.setX(20);
         Translate moverAbajoIzquierda = new Translate();
-        moverAbajoIzquierda.setY(10);
-        moverAbajoIzquierda.setX(-17);
+        moverAbajoIzquierda.setY(13);
+        moverAbajoIzquierda.setX(-20);
         Translate moverArriba = new Translate();
-        moverArriba.setY(-20);
+        moverArriba.setY(-25);
         Translate moverArribaDerecha = new Translate();
-        moverArribaDerecha.setY(-10);
-        moverArribaDerecha.setX(17);
+        moverArribaDerecha.setY(-13);
+        moverArribaDerecha.setX(20);
         Translate moverArribaIzquierda = new Translate();
-        moverArribaIzquierda.setY(-10);
-        moverArribaIzquierda.setX(-17);
+        moverArribaIzquierda.setY(-13);
+        moverArribaIzquierda.setX(-20);
 
         root.getChildren().get(8).getTransforms().add(moverArribaIzquierda);
         root.getChildren().get(10).getTransforms().add(moverArriba);
@@ -130,9 +131,9 @@ public class VistaTablero extends StackPane {
         jugadores.add(new Jugador("Jugador3", new edu.fiuba.algo3.modelo.Color("78dd74")));
 
         VBox vBox = new VBox();
-        vBox.setPadding(new Insets(40));
-        vBox.setPrefWidth(300);
-        vBox.setAlignment(Pos.TOP_RIGHT);
+        vBox.setPadding(new Insets(40, 40    , 0, ANCHO_VENTANA/4));
+        vBox.setPrefWidth(ANCHO_VENTANA/2);
+
 
         jugadores.forEach(jugador -> {
 
@@ -149,6 +150,7 @@ public class VistaTablero extends StackPane {
 
     private HBox agregarJugador(Jugador modeloJugador){
         HBox jugador = new HBox();
+        jugador.setPrefWidth(ANCHO_VENTANA/4);
         jugador.setPadding(new Insets(20));
         jugador.setBackground(new Background(new BackgroundFill(Color.web(modeloJugador.getColor().getColor()), null, null)));
 
