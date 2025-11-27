@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.CartaProductora;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
@@ -58,6 +59,9 @@ public class Jugador {
     }
     public void agregarCarta(CartaDesarrollo cartaNueva) {
         cartas.agregarCarta(cartaNueva);
+        if (cartaNueva instanceof CartaProductora) {
+            puntos.agregarPuntosOcultos(((CartaProductora) cartaNueva).obtenerCantidadPV());
+        }
     }
 
     public CartaDesarrollo agarrarCarta(int indice) {
@@ -68,6 +72,18 @@ public class Jugador {
         if (!almacenJugador.quitar(tipo, cantidad)) {
             throw new IllegalStateException("El jugador no tiene suficientes " + tipo.nombre());
         }
+    }
+
+    public List<TipoDeRecurso> pedirRecursos() {
+        //Aca uno deberá elegir los recursos desde la interfaz
+
+        List<TipoDeRecurso> recursos = List.of(new Madera(1), new Lana(1));
+        return recursos;
+    }
+
+    public int pedirPosicion() {
+        // Deberia elegir una posicion desde la interfaz para mover al ladron desde la interfaz
+        return 1;
     }
 
     public int mejorTasaPara(TipoDeRecurso recursoEntregado) {
@@ -105,7 +121,7 @@ public class Jugador {
     public int totalPuntos() {
         // Falta agregar mas implementaciones
 
-        return cartas.cantidadDeTipo(PuntoDeVictoria.class);
+        return puntos.obtenerPuntos();
     }
 
     public void intercambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, Jugador jugador2, TipoDeRecurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
@@ -146,6 +162,7 @@ public class Jugador {
     }
 
 
+
     public void actualizarPuntosDeVictoria(PuntajeDeVictoria pv) {
         this.puntos.setPuntosPublicos(pv.getPuntosPublicos());
 
@@ -153,6 +170,26 @@ public class Jugador {
 
     public void sumarPuntoDeVictoriaOculto() {
         this.puntos.agregarPuntosOcultos(1);
+    }
+
+    public void suscribirACatan(Catan catan) {
+         this.puntos.addListener(catan);
+    }
+
+    public void sumarPuntoDeVictoriaPublico(int i) {
+        this.puntos.agregarPuntos(i);
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public boolean mismoPuntaje(PuntajeDeVictoria puntaje) {
+        return this.puntos.equals(puntaje);
+    }
+
+    public void restarPuntoDeVictoriaPublico(int i) {
+        this.puntos.restarPuntosPublicos(i);
     }
 
     public void pagar(List<TipoDeRecurso> costo) {

@@ -5,6 +5,8 @@ import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Contruccion.Productor;
+import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
+import edu.fiuba.algo3.modelo.Intercambios.Puerto;
 import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
@@ -16,24 +18,12 @@ public class Vertice{
     private Color propietario;
     private ArrayList<Vertice> adyacentes = new ArrayList<>();
     private Construccion tipo = null;
-    //private List<ICelda> celdasAdyacentes;
+    private Puerto puerto=null;
 
     public boolean tieneConstruccion() {
         return (propietario != null || tipo != null);
     }
 
-//    @Override
-//    public List<ICelda> obtenerCeldasAdyacentes() {
-//        return celdasAdyacentes;
-//    }
-//    @Override
-//    public List<Recurso> darRecursos() {
-//        List<Recurso> recursos = new LinkedList<>();
-//        for (ICelda celda : celdasAdyacentes) {
-//            recursos.add(celda.darRecurso());
-//        }
-//        return recursos;
-//    }
 
     public boolean tieneConstruccionAdyacente() {
         for (Vertice v : adyacentes) {
@@ -120,5 +110,20 @@ public class Vertice{
             return this.propietario.equals(color);
         }
         return false;
+    }
+
+    public void asignarPuerto(Puerto puerto) {
+        this.puerto = puerto;
+    }
+
+
+
+    public boolean esPuerto() {
+        return puerto != null;
+    }
+
+    public PoliticaDeIntercambio obtenerPoliticaDeIntercambio() {
+
+        return this.puerto.getPolitica();
     }
 }
