@@ -231,6 +231,10 @@ public class Tablero {
         verticeBuscado.mejorarACiudad();
     }
 
+    public Map<Integer, Terreno> getTerrenos() {
+        return terrenos;
+    }
+  
     public List<Lado> obtenerLadosDeJugador(Color color) {
         return lados.values().stream()
                 .filter(lado -> lado.colorDeConstruccionEquals(color))
