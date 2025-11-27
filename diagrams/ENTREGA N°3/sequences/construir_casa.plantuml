@@ -1,0 +1,21 @@
+@startuml
+
+actor Jugador
+participant ManagerTurno
+participant Tablero
+participant Vertice
+participant Poblado
+
+Jugador -> ManagerTurno : construirPobladoEn(vertice)
+ManagerTurno -> Tablero : construirPoblado(jugador, vertice)
+ManagerTurno -> Tablero : construirPoblado(jugador, vertice)
+Tablero -> Vertice : validarConstruccion(jugador)
+Vertice --> Tablero : valido / noValido
+Tablero -> Poblado : crear()
+Poblado --> Tablero : nuevaConstruccion
+Tablero -> Jugador : descontarRecursos()
+Jugador --> Tablero : recursosActualizados
+Tablero --> ManagerTurno : construccionExitosa
+ManagerTurno --> Jugador : notificar("poblado construido")
+
+@enduml

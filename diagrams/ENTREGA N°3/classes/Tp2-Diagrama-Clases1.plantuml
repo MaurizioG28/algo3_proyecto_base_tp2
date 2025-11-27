@@ -1,0 +1,342 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Catan
+{
+  + {static} Catan(): Catan
+  + Inicializar(): Void
+  + CrearTablero(): Tablero
+  + agregarJugador(jugador: Jugador): Void
+  + hayGanador(): Jugador
+  - terminarPartida(jugador: Jugador): Void
+}
+
+abstract class Terreno
+{
+    # tipoTerreno: String
+    # id: int
+    + esDesierto(): Boolean
+    + agregarVertices(verticesPorCoordenada: Map<Coordenada, Vertice>)
+    + agregarLados(ladosPorCoordenada: Map<Coordenada, Vertice>)
+    + tieneVertice(vertice: Vertice): Boolean
+    + sePuedeProducir(): Boolean
+    + moverLadronPoner(): Void
+    + moverLadronQuitar(): Void
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+Catan o-d-"19   " Terreno
+
+class Bosque
+{
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+class Campo
+{
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+class Colina
+{
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+class Desierto
+{
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+class Montania
+{
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+class Pastizal
+{
+    + recursoOtorgado(cantidad: int): TipoDeRecurso
+}
+
+Terreno <|-- Bosque
+Terreno <|-- Campo
+Terreno <|-- Colina
+Terreno <|-- Desierto
+Terreno <|-- Montania
+Terreno <|-- Pastizal
+
+class Jugador
+{
+    - nombre: String
+    - color: Color
+    + agregarRecurso(recurso: TipoDeRecurso): Void
+    + quitarRecurso(recurso: TipoDeRecurso, cantidad: int): Void
+    + cantidadRecurso(recurso: TipoDeRecurso): int
+    + totalRecursos(): int
+    + agregarCarta(cartaNueva: CartaDesarrollo): Void
+    + agarrarCarta(indice: int): CartaDesarrollo
+    + totalPuntos(): int
+}
+
+Catan o-d-"0..4 " Jugador
+
+class Produccion
+{
+    - numero: int
+    + tieneMismoNumero(numero: int): boolean
+}
+
+Terreno o-d-"   0..1" Produccion
+Catan o-d-"18  " Produccion
+
+class Tablero
+{
+    - calcularDividendosIniciales(coord: Coordenada, colorActual: Color): Dividendo
+    + construirPoblado(jugador: Jugador, vertice: Vertice): Void
+    + moverLadron(jugadorActual: Jugador, int posicionId): List<Color>
+    + colocarEnVertice(pieza: Construccion, coord: Coordenada): Dividendo
+    + colocarEnLado(pieza: Construccion, coord: Coordenada): Dividendo
+    + calcularPuntosDeVictoriaPorConstruccion(color: Color): PuntajeDeVictoria
+    + mejoraACiudadEn(coordenada: Coordenada,colorJugador: Color): Void
+}
+
+Tablero o-d-"19 " Terreno
+
+class TableroFactory
+{
+    crear(terrenos: ArrayList, fichas: ArrayList): Tablero
+}
+
+Catan -r-> TableroFactory
+TableroFactory -r-> Tablero
+
+class Vertice
+{
+    + cosechar( terrenoOrigen: Terreno): Dividendo
+    + colocar(pieza: Construccion): Void
+    + esVerticeAdyacente(otroVertice: Vertice): Boolean
+    + agregarAdyacente(vertice: Vertice): Void
+    + mejorarACiudad(): Void
+}
+
+Tablero o-d-"* " Vertice
+
+class Lado
+{
+    + colocar(pieza: Construccion): Void
+    + esLadoAdyacente(otroLado: Lado): Boolean
+    + agregarAdyacente(lado: Lado): Void
+    + agregarPunta(vertice: Vertice): Void
+}
+
+Tablero o-d-"* " Lado
+
+class ManagerTurno
+{
+    - indiceJugadorActual: int
+    - numeroTurnoActual: int
+    - azar: Random
+    + {static} ManagerTurno(jugadores: ArrayList, tablero: Tablero, random: Random)
+    + comprarCarta(): Void
+    + usarUnaCarta(indice: int): Void
+    + construirCarretera(coordenada: Coordenada): Void
+    + construirPoblado(coordenada: Coordenada): Void
+    + mejorarACiudad(coordenada: Coordenada): Void
+    + getJugadorActual(): Jugador
+    + siguienteTurno(): Void
+
+}
+
+ManagerTurno o-u- Tablero
+ManagerTurno o-l- Jugador
+
+class Hexagono
+{
+    - bloqueadoPorLadron: Boolean
+    + sePuedeProducir(): Boolean
+    + agregarLado(lado: Lado): Void
+    + agregarVertice(vertice: Vertice): Void
+    + sacarLadron(): Void
+    + ponerLadron(): Void
+    + jugadoresAfectadosPorLadron(jugadorActual: Jugador): List<Color>
+
+}
+
+Terreno o-d- Hexagono
+Hexagono o-u-"* " Vertice
+Hexagono o-u-"*" Lado
+
+class MazoDeCartas
+{
+    + agregarCarta(cartaNueva: CartaDesarrollo): Void
+    + agarrarCarta(indice: int): CartaDesarrollo
+}
+
+Jugador o-d- MazoDeCartas
+
+abstract class CartaDesarrollo
+{
+    sePuedeUsar(turno: int): Boolean
+}
+
+MazoDeCartas o-d- CartaDesarrollo
+
+class CartaDescubrimiento
+{
+    + usarCarta(jugador: Jugador,servicioComercio: ServicioComercio,recursosElegidos: List<TipoDeRecurso> ): Void
+}
+
+class CartaCaballero
+{
+    + usarCarta(jugador: Jugador,victimas: List<Jugador>): Void
+}
+
+class CartaMonopolio
+{
+    + setRecursoElegido(recurso: TipoDeRecurso): Void
+    + ejecutarMonopolio(ladron: Jugador,todasLasVictimas: List<Jugador>): Void
+}
+
+class CartaConstruccionCarreteras
+{
+
+}
+
+class PuntoDeVictoria
+{
+    + obtenerCantidadPV(): int
+}
+
+class GranCaballeria
+{
+    + evaluar(jugador: Jugador,caballerosXJugador: int): Void
+    + asignarA(nuevoLider: Jugador): Void
+    + aNuevoLider(jugador: Jugador): Void
+}
+
+class GranRutaComercial
+{
+    + actualizarRutaDeJugador(jugador: Jugador,nuevaLongitud: int): Void
+    + asignarLider(nuevoLider: Jugador,longitud: int): Void
+    + removerBonus(viejoLider: Jugador): Void
+}
+
+ManagerTurno <-- GranCaballeria
+ManagerTurno <-- GranRutaComercial
+
+CartaDesarrollo <|-- CartaDescubrimiento
+CartaDesarrollo <|-- CartaCaballero
+CartaDesarrollo <|-- CartaMonopolio
+CartaDesarrollo <|-- CartaConstruccionCarreteras
+CartaDesarrollo <|-- PuntoDeVictoria
+
+class AlmacenRecursos
+{
+    + agregarRecurso(recurso: TipoDeRecurso): Void
+    + quitar(recurso: TipoDeRecurso, cantidad: int): Void
+    + totalRecursos(): int
+    + robarRecursoAleatorio(): TipoDeRecurso
+    + tieneSuficiente(recurso: TipoDeRecurso): Boolean
+    + entregarTodo(tipo: TipoDeRecurso): TipoDeRecurso
+}
+
+Jugador o-d- AlmacenRecursos
+
+abstract class TipoDeRecurso
+{
+    - cantidad: int
+    + obtenerCantidad(): int
+    + sumar(delta: int): Void
+    + restar(delta: int): Void
+    + nuevo(cantidad: int): TipoDeRecurso
+}
+
+AlmacenRecursos o-d-"* " TipoDeRecurso
+
+class Grano
+{
+    + nuevo(cantidad: int): TipoDeRecurso
+}
+
+class Ladrillo
+{
+    + nuevo(cantidad: int): TipoDeRecurso
+}
+
+class Lana
+{
+    + nuevo(cantidad: int): TipoDeRecurso
+}
+
+class Madera
+{
+    + nuevo(cantidad: int): TipoDeRecurso
+}
+
+class Mineral
+{
+    + nuevo(cantidad: int): TipoDeRecurso
+}
+
+TipoDeRecurso <|-- Grano
+TipoDeRecurso <|-- Ladrillo
+TipoDeRecurso <|-- Lana
+TipoDeRecurso <|-- Madera
+TipoDeRecurso <|-- Mineral
+
+class PuntajeDeVictoria
+{
+
+}
+
+Jugador o-u- PuntajeDeVictoria
+
+class ServicioComercio
+{
+    {static} ServicioComercio(banco: Banco)
+    + intercambiarConBanco(jugador: Jugador, recursoEntregado: TipoDeRecurso, cantidadEntregada: int, recursoRecibido: TipoDeRecurso): Void
+    + venderPoblado(comprador: Jugador): Poblado
+    + venderCiudad(comprador: Jugador): Ciudad
+    + venderCarretera(comprador: Jugador): Carretera
+    + venderCartaDesarrollo(comprador: Jugador, turno: int): CartaDesarrollo
+    + intercambiarConJugadores(jugador1: Jugador, recursoAentregar: TipoDeRecurso, cantidadAentregar: int, recursoArecibir: TipoDeRecurso, cantidadArecibir: int, jugadores: List<Jugador>): Void
+}
+
+ManagerTurno o-d- ServicioComercio
+
+class Banco
+{
+    + recibir(recurso: TipoDeRecurso): Void
+    + entregar(recurso: TipoDeRecurso, cantidad: int): Void
+    + tieneStock(recurso: TipoDeRecurso, cantidad: int): Boolean
+
+}
+
+ServicioComercio o-d- Banco
+
+interface PoliticaDeIntercambio
+{
+    + aplicaA(jugador: Jugador, recursoEntregado: TipoDeRecurso): Boolean
+}
+
+Jugador o-d-" * " PoliticaDeIntercambio
+
+class Puerto
+{
+    puedeIntercambiar(jugador: Jugador,recursoOfrecido: TipoDeRecurso): Boolean
+}
+
+class PuertoEspecifico
+{
+    + aplicaA(jugador: Jugador, recursoEntregado: TipoDeRecurso): Boolean
+}
+
+class PuertoGenerico
+{
+    + aplicaA(jugador: Jugador, recursoEntregado: TipoDeRecurso): Boolean
+}
+
+Vertice o-- Puerto
+PoliticaDeIntercambio <|.. PuertoEspecifico
+PoliticaDeIntercambio <|.. PuertoGenerico
+
+@enduml
