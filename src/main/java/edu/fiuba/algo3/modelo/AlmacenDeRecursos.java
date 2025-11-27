@@ -224,6 +224,17 @@ public class AlmacenDeRecursos {
 
         return cantidadDisponible >= recursoRequerido.obtenerCantidad();
     }
+
+
+    public int entregarTodo(TipoDeRecurso tipo) {
+        //Para Carta Monopolio
+        int cantidad = this.cantidadDe(tipo);
+
+        if (cantidad > 0) {
+            this.quitar(tipo, cantidad);
+        }
+        return cantidad;
+    }
 }
 
 

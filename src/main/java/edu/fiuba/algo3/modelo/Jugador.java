@@ -162,4 +162,12 @@ public class Jugador {
     public void setEstrategiaDePago(IEstrategiaDePago estrategiaDePago) {
         this.estrategiaDePago = estrategiaDePago;
     }
+    public int entregarTodo(TipoDeRecurso recursoEntregar) {
+        return this.almacenJugador.entregarTodo(recursoEntregar);
+    }
+    public void recibirBotin(TipoDeRecurso tipo, int cantidad) {
+        if (cantidad > 0) {
+            this.almacenJugador.agregarRecurso(tipo.nuevo(cantidad));
+        }
+    }
 }

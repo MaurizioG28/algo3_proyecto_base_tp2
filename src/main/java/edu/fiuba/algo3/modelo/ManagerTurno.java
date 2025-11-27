@@ -1,9 +1,6 @@
 package edu.fiuba.algo3.modelo;
 
-import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
-import edu.fiuba.algo3.modelo.Cartas.CartaConstruccionCarreteras;
-import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
-import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
+import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
@@ -83,6 +80,9 @@ public class ManagerTurno {
         if(cartaSeleccionada instanceof CartaConstruccionCarreteras) {
             EstrategiaPagoGratuito modoFree = new EstrategiaPagoGratuito();
             this.getJugadorActual().setEstrategiaDePago(modoFree);
+        }
+        if(cartaSeleccionada instanceof CartaMonopolio){
+            ((CartaMonopolio) cartaSeleccionada).ejecutarMonopolio(this.getJugadorActual(), this.jugadores);
         }
 
         // Utilidad de las cartas
