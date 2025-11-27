@@ -78,10 +78,8 @@ public class CasoDeUsoCartasDesarrolloTest {
         Jugador comprador = new Jugador("nombre1",new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
-        Map<Integer, Terreno> hexagonos = new HashMap<>();
-        Map<Coordenada, Vertice> vertices= new HashMap<>();
-        Map<Coordenada, Lado> ladosPorCoordenada= new HashMap<>();
-        Tablero unTablero = new Tablero(hexagonos, vertices, ladosPorCoordenada);
+
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
         ManagerTurno manager = new ManagerTurno(jugadores, unTablero, numeroRandom);
 
         comprador.agregarRecurso(new Lana(1));
@@ -101,11 +99,8 @@ public class CasoDeUsoCartasDesarrolloTest {
         Jugador comprador = new Jugador("nombre1",new Color("Azul"));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(comprador);
-        Map<Integer, Terreno> hexagonos = new HashMap<>();
-        Map<Coordenada, Vertice> vertices= new HashMap<>();
-        Map<Coordenada, Lado> ladosPorCoordenada= new HashMap<>();
 
-        Tablero unTablero = new Tablero(hexagonos, vertices, ladosPorCoordenada);
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
         ManagerTurno manager = new ManagerTurno(jugadores, unTablero, numeroRandom);
 
         comprador.agregarRecurso(new Lana(1));
@@ -149,14 +144,11 @@ public class CasoDeUsoCartasDesarrolloTest {
     public void Test05UnaCartaDeDescubrimientoTeDebeDarDosRecursosDeTuEleccion() {
         int cantidadDeRecursoEsperada = 1;
         Random numeroRandom = new FakeRandom(2);
-        Jugador jugador = new Jugador("nombre1",new Color("Azul"));
+        Jugador jugador = new FakeJugador(true, new Madera(1), new Lana(1));
         List<Jugador> jugadores = new ArrayList<>(4);
         jugadores.add(jugador);
-        Map<Integer, Terreno> hexagonos = new HashMap<>();
-        Map<Coordenada, Vertice> vertices= new HashMap<>();
-        Map<Coordenada, Lado> ladosPorCoordenada= new HashMap<>();
 
-        Tablero unTablero = new Tablero(hexagonos, vertices, ladosPorCoordenada);
+        Tablero unTablero = TableroFactory.crear(hexagonos, fichasNumeradas);
         ManagerTurno manager = new ManagerTurno(jugadores, unTablero, numeroRandom);
 
         jugador.agregarRecurso(new Lana(1));
@@ -173,7 +165,7 @@ public class CasoDeUsoCartasDesarrolloTest {
     }
 
     @Test
-    public void Test06UnaCartaDeCaballeroDebePermitirteRobarleAOtroJugador() {
+    public void Test06UnaCartaDeCaballeroDebePermitirteRobarleUnSoloRecursoAOtroJugador() {
         int cantidadDeRecursoEsperada = 1;
         Random numeroRandom = new FakeRandom(0);
         Jugador jugador = new Jugador("nombre1",new Color("Rojo"));
@@ -185,13 +177,83 @@ public class CasoDeUsoCartasDesarrolloTest {
         Tablero tablero = TableroFactory.crear(hexagonos, fichasNumeradas);
         ManagerTurno manager = new ManagerTurno(jugadores, tablero, numeroRandom);
 
+        //Recursos para comprar la carta
         jugador.agregarRecurso(new Lana(1));
         jugador.agregarRecurso(new Grano(1));
         jugador.agregarRecurso(new Mineral(1));
+
+        //Recursos para colocar un poblado y algunos extra que pueda tomar
+        jugador2.agregarRecurso(new Lana(1));
+        jugador2.agregarRecurso(new Grano(1));
+        jugador2.agregarRecurso(new Madera(2));
+        jugador2.agregarRecurso(new Ladrillo(3));
+
+        manager.comprarCarta();
+        manager.siguienteTurno();
+        manager.construirPoblado(new Coordenada(1,1));
+        manager.siguienteTurno();
+
+        manager.usarUnaCarta(0);
+
+        assertEquals(cantidadDeRecursoEsperada, jugador.totalRecursos());
+    }
+
+    @Test
+    public void Test07UnaCartaDeCaballeroNoOtorgaraRecursosSiNoHayPobladosCercanosParaSaquear() {
+        int cantidadDeRecursoEsperada = 0;
+        Random numeroRandom = new FakeRandom(0);
+        Jugador jugador = new Jugador("nombre1",new Color("Rojo"));
+        Jugador jugador2 = new Jugador("nombre2",new Color("Azul"));
+        List<Jugador> jugadores = new ArrayList<>(4);
+        jugadores.add(jugador);
+        jugadores.add(jugador2);
+
+        Tablero tablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+        ManagerTurno manager = new ManagerTurno(jugadores, tablero, numeroRandom);
+
+        //Recursos para comprar la carta
+        jugador.agregarRecurso(new Lana(1));
+        jugador.agregarRecurso(new Grano(1));
+        jugador.agregarRecurso(new Mineral(1));
+
+        //Recursos para colocar un poblado y otro para que sea robado
         jugador2.agregarRecurso(new Lana(1));
         jugador2.agregarRecurso(new Grano(1));
         jugador2.agregarRecurso(new Madera(1));
         jugador2.agregarRecurso(new Ladrillo(2));
+
+        manager.comprarCarta();
+        manager.siguienteTurno();
+        manager.siguienteTurno();
+
+        manager.usarUnaCarta(0);
+
+        assertEquals(cantidadDeRecursoEsperada, jugador.totalRecursos());
+    }
+
+    @Test
+    public void Test08UnaCartaDeCaballeroNoOtorgaraRecursosSiLasVictimasNoTienenNadaParaDar() {
+        int cantidadDeRecursoEsperada = 0;
+        Random numeroRandom = new FakeRandom(0);
+        Jugador jugador = new Jugador("nombre1",new Color("Rojo"));
+        Jugador jugador2 = new Jugador("nombre2",new Color("Azul"));
+        List<Jugador> jugadores = new ArrayList<>(4);
+        jugadores.add(jugador);
+        jugadores.add(jugador2);
+
+        Tablero tablero = TableroFactory.crear(hexagonos, fichasNumeradas);
+        ManagerTurno manager = new ManagerTurno(jugadores, tablero, numeroRandom);
+
+        //Recursos para comprar la carta
+        jugador.agregarRecurso(new Lana(1));
+        jugador.agregarRecurso(new Grano(1));
+        jugador.agregarRecurso(new Mineral(1));
+
+        //Recursos para colocar un poblado pero sin recursos extra
+        jugador2.agregarRecurso(new Lana(1));
+        jugador2.agregarRecurso(new Grano(1));
+        jugador2.agregarRecurso(new Madera(1));
+        jugador2.agregarRecurso(new Ladrillo(1));
 
         manager.comprarCarta();
         manager.siguienteTurno();

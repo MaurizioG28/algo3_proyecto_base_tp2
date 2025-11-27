@@ -30,10 +30,6 @@ public class FakeJugador extends Jugador {
         return respuesta;
     }
 
-    public void quitarRecurso(TipoDeRecurso recurso, int cantidad) {
-
-    }
-
     @Override
     public List<TipoDeRecurso> pedirRecursos() {
         return List.of(eleccionRecurso1, eleccionRecurso2);
