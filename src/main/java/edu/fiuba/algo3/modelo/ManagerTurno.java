@@ -87,10 +87,18 @@ public class ManagerTurno {
             caballerosJugados+=1;
             this.registroGranCaballeria.put(getJugadorActual(),caballerosJugados);
 
-            moverLadron(getJugadorActual().pedirCoordenada());
+            int posicion = getJugadorActual().pedirPosicion();
+
+            List<Color> coloresDeVictimas= tablero.moverLadron(getJugadorActual(), posicion);
+            List<Jugador> victimas =
+                    coloresDeVictimas.stream()
+                            .map(this::getJugadorPorColor)
+                            .collect(Collectors.toList());
+
+            ((CartaCaballero) cartaSeleccionada).usarCarta(getJugadorActual(), victimas);
         } else if (cartaSeleccionada instanceof CartaDescubrimiento) {
             List<TipoDeRecurso> recursos = getJugadorActual().pedirRecursos();
-            servicioComercio.entregarBonifCartaDescubrimiento(getJugadorActual(), recursos);
+            ((CartaDescubrimiento) cartaSeleccionada).usarCarta(getJugadorActual(), servicioComercio, recursos);
         }
 
         // Utilidad de las cartas

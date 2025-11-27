@@ -77,7 +77,7 @@ public class Jugador {
         return recursos;
     }
 
-    public int pedirCoordenada() {
+    public int pedirPosicion() {
         // Deberia elegir una posicion desde la interfaz para mover al ladron desde la interfaz
         return 1;
     }
