@@ -184,20 +184,20 @@ public class CasoDeUsoColocacionInicialTest {
         // JUGADOR 1 coloca carretera
         manager.colocacionInicial(new Coordenada(1, 0));
 
-        assertEquals(j2, manager.getJugadorActual()); // turno del jugador 2
+        assertEquals(j2, manager.getJugadorActualInicial()); // turno del jugador 2
 
         // --- JUGADOR 2 turno ---
 
         // JUGADOR 2 coloca poblado
         manager.colocacionInicial(new Coordenada(2, 0));
 
-        assertEquals(j2, manager.getJugadorActual());
+        assertEquals(j2, manager.getJugadorActualInicial());
         assertEquals(0,j2.totalRecursos());
 
         // JUGADOR 2 coloca carretera
         manager.colocacionInicial(new Coordenada(2, 0));
 
-        assertEquals(j2, manager.getJugadorActual()); // ¡Comienza la segunda ronda con jugador 2!
+        assertEquals(j2, manager.getJugadorActualInicial()); // ¡Comienza la segunda ronda con jugador 2!
 
         // --- RONDA 2 ---
 
@@ -209,7 +209,7 @@ public class CasoDeUsoColocacionInicialTest {
         // JUGADOR 2 coloca carretera
         manager.colocacionInicial(new Coordenada(3, 0));
 
-        assertEquals(j1, manager.getJugadorActual()); // vuelve a j1
+        assertEquals(j1, manager.getJugadorActualInicial()); // vuelve a j1
 
         // --- JUGADOR 1 turno final ---
 
@@ -220,8 +220,8 @@ public class CasoDeUsoColocacionInicialTest {
 
         // JUGADOR 1 carretera final
         manager.colocacionInicial(new Coordenada(4, 0));
-        Jugador jugadorEsperado = manager.getJugadorActual();
-        assertEquals(j2, manager.getJugadorActual()); // comienza el juego normal
+        Jugador jugadorEsperado = manager.getJugadorActualInicial();
+        assertEquals(j1, manager.getJugadorActualInicial()); // comienza el juego normal
 
         // --- Verificaciones finales ---
 

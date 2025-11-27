@@ -10,7 +10,6 @@ import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Lado;
 import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoGratuito;
@@ -121,6 +120,11 @@ public class ManagerTurno {
 
 
     public Jugador getJugadorActual() {
+
+        return jugadores.get(indiceJugadorActual);
+    }
+
+    public Jugador getJugadorActualInicial(){
         if (!ordenInicial.haTerminado()) {
             return jugadores.get(ordenInicial.indiceJugadorActual());
         }
@@ -129,14 +133,19 @@ public class ManagerTurno {
 
     public void siguienteTurno() {
         contarPuntos();
+        indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
+        numeroTurnoActual += 1;
+    }
+    public void siguienteTurnoInicial(){
+        contarPuntos();
         if (!ordenInicial.haTerminado()) {
             ordenInicial.avanzar();
 
-
-            return;
         }
-        indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
-        numeroTurnoActual += 1;
+        else {
+            indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
+            numeroTurnoActual += 1;}
+
     }
     public void contarPuntos(){
         Jugador jugador = getJugadorActual();
@@ -232,7 +241,7 @@ public class ManagerTurno {
     }
 
     public void colocacionInicial( Coordenada coordenada) throws ReglaDistanciaException, ConstruccionExistenteException, ReglaConstruccionException {
-        Jugador jugador = getJugadorActual();
+        Jugador jugador = getJugadorActualInicial();
 
         if (esperandoPoblado) {
 
@@ -269,7 +278,7 @@ public class ManagerTurno {
             ultimaCoordenadaPoblado = null;
 
             // Avanzar turno en orden 12344321
-            siguienteTurno();
+            siguienteTurnoInicial();
         }
 
     }

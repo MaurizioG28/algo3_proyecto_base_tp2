@@ -22,10 +22,7 @@ public class OrdenTurnosIniciales {
     }
 
     public boolean haTerminado() {
-         if(indice >= orden.size()-1){
-                finalizado = true;
-         }
-         return  finalizado;
+        return indice >= orden.size();
     }
 
     public int indiceJugadorActual() {
