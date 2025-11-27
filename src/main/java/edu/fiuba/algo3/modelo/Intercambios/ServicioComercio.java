@@ -142,6 +142,10 @@ public class ServicioComercio {
         }
     }
 
+    public void entregarBonifCartaDescubrimiento(Jugador jugador, List<TipoDeRecurso> recursosElegidos) {
+        reembolsar(jugador, recursosElegidos);
+    }
+
     public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, TipoDeRecurso recursoArecibir, int cantidadArecibir, List<Jugador> jugadores) {
         for (Jugador jugador : jugadores) {
             try {

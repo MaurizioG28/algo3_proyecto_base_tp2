@@ -1,5 +1,7 @@
 package edu.fiuba.algo3.modelo.Cartas;
 
+import edu.fiuba.algo3.modelo.Jugador;
+
 abstract public class CartaDesarrollo {
     private int TurnoCreacion;
 
@@ -10,8 +12,5 @@ abstract public class CartaDesarrollo {
     public boolean SePuedeUsar(int turno) {
         return !(TurnoCreacion == turno);
     }
-
-    abstract public void usarCarta();
-
 
 }

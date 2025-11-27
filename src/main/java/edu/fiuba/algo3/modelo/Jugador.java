@@ -70,6 +70,18 @@ public class Jugador {
         }
     }
 
+    public List<TipoDeRecurso> pedirRecursos() {
+        //Aca uno deberá elegir los recursos desde la interfaz
+
+        List<TipoDeRecurso> recursos = List.of(new Madera(1), new Lana(1));
+        return recursos;
+    }
+
+    public int pedirCoordenada() {
+        // Deberia elegir una posicion desde la interfaz para mover al ladron desde la interfaz
+        return 1;
+    }
+
     public int mejorTasaPara(TipoDeRecurso recursoEntregado) {
         return politicas.stream()
                 .filter(p -> p.aplicaA(this, recursoEntregado))

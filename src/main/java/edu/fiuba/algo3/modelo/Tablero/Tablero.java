@@ -138,7 +138,6 @@ public class Tablero {
         if (anterior!=null && !anterior.esDesierto())
             anterior.moverLadronQuitar();
 
-
         nuevo.moverLadronPoner();
         posicionDelLadron = posicionId;
 

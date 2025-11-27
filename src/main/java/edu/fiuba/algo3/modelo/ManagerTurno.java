@@ -2,13 +2,14 @@ package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.CartaDescubrimiento;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Intercambios.Banco;
 import edu.fiuba.algo3.modelo.Intercambios.ServicioComercio;
-import edu.fiuba.algo3.modelo.Recursos.TipoDeRecurso;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
@@ -16,10 +17,7 @@ import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,13 +27,25 @@ public class ManagerTurno {
     private int numeroTurnoActual = 0;
     private final Tablero tablero;
     private final Random azar;
-    private ServicioComercio servicioComercio = new ServicioComercio(new Banco());
+    private ServicioComercio servicioComercio;
     private final Map<Jugador,Integer> registroGranCaballeria= new HashMap<>();
 
     public ManagerTurno(List<Jugador> jugadores, Tablero tablero, Random Random) {
         this.jugadores = jugadores;
+        for (int i = 0; i < jugadores.size(); i++) {
+            this.registroGranCaballeria.put(jugadores.get(i), 0);
+        }
         this.tablero = tablero;
-        this.azar=  Random;
+        this.azar = Random;
+        Banco banco = new Banco();
+
+        banco.recibir(new Madera(10));
+        banco.recibir(new Ladrillo(10));
+        banco.recibir(new Grano(10));
+        banco.recibir(new Lana(10));
+        banco.recibir(new Mineral(10));
+
+        this.servicioComercio = new ServicioComercio(banco, azar);
     }
 
     public void comprarCarta() {
@@ -76,7 +86,11 @@ public class ManagerTurno {
             int caballerosJugados=this.registroGranCaballeria.get(getJugadorActual());
             caballerosJugados+=1;
             this.registroGranCaballeria.put(getJugadorActual(),caballerosJugados);
-            //moverLadron(cartaSeleccionada.getPosicionLadron());
+
+            moverLadron(getJugadorActual().pedirCoordenada());
+        } else if (cartaSeleccionada instanceof CartaDescubrimiento) {
+            List<TipoDeRecurso> recursos = getJugadorActual().pedirRecursos();
+            servicioComercio.entregarBonifCartaDescubrimiento(getJugadorActual(), recursos);
         }
 
         // Utilidad de las cartas
@@ -139,7 +153,6 @@ public class ManagerTurno {
                         .collect(Collectors.toList());
 
         if(!victimas.isEmpty()){
-
             Jugador victima = victimas.get(azar.nextInt(victimas.size()));
             //Selecciona una victima al azar por ahora, depues vemos como hacer para que el jugador elija desde la interfaz
             jugadorActual.robarRecurso(victima);
