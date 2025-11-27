@@ -1,25 +1,19 @@
 package edu.fiuba.algo3.entrega_2;
 
+import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.CasosDeUso.ColocacionInicial;
-import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
-import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
 import edu.fiuba.algo3.modelo.Recursos.Ladrillo;
 import edu.fiuba.algo3.modelo.Recursos.Lana;
 import edu.fiuba.algo3.modelo.Recursos.Madera;
 import edu.fiuba.algo3.modelo.Tablero.*;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Produccion;
-import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
-import edu.fiuba.algo3.modelo.Tablero.Factory.TableroFactory;
+import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -150,4 +144,95 @@ public class CasoDeUsoColocacionInicialTest {
         assertThrows(ReglaConstruccionException.class,() ->caso.colocarEn( new Carretera( new Color("Azul")), new Coordenada(1,0)));
 
     }
+
+    @Test
+    public void test05OrdenTurnosIniciales() {
+        OrdenTurnosIniciales orden = new OrdenTurnosIniciales(4);
+
+        List<Integer> esperado = List.of(0,1,2,3, 3,2,1,0);
+        List<Integer> obtenido = new ArrayList<>();
+
+        while (!orden.haTerminado()) {
+            obtenido.add(orden.indiceJugadorActual());
+            orden.avanzar();
+        }
+
+        assertEquals(esperado, obtenido);
+    }
+
+    @Test
+    public void testColocacionInicialCompletaDosJugadores()
+            throws ConstruccionExistenteException, ReglaDistanciaException, ReglaConstruccionException {
+
+        // --- Setup del juego ---
+        Catan catan = new Catan();
+        Tablero tablero = catan.crearTablero();
+
+        Jugador j1 = new Jugador("j1", new Color("azul"));
+        Jugador j2 = new Jugador("j2", new Color("rojo"));
+
+        ManagerTurno manager = new ManagerTurno( Arrays.asList(j1, j2), tablero,new Random(123));
+
+        // --- RONDA 1 ---
+
+        // JUGADOR 1 coloca poblado
+        manager.colocacionInicial(new Coordenada(1, 0));
+
+        assertEquals(j1, manager.getJugadorActual()); // sigue siendo j1
+        assertEquals(0,j1.totalRecursos());              // primer poblado → sin recursos
+
+        // JUGADOR 1 coloca carretera
+        manager.colocacionInicial(new Coordenada(1, 0));
+
+        assertEquals(j2, manager.getJugadorActual()); // turno del jugador 2
+
+        // --- JUGADOR 2 turno ---
+
+        // JUGADOR 2 coloca poblado
+        manager.colocacionInicial(new Coordenada(2, 0));
+
+        assertEquals(j2, manager.getJugadorActual());
+        assertEquals(0,j2.totalRecursos());
+
+        // JUGADOR 2 coloca carretera
+        manager.colocacionInicial(new Coordenada(2, 0));
+
+        assertEquals(j2, manager.getJugadorActual()); // ¡Comienza la segunda ronda con jugador 2!
+
+        // --- RONDA 2 ---
+
+        // JUGADOR 2 coloca segundo poblado → obtiene recursos iniciales
+        manager.colocacionInicial(new Coordenada(3, 0));
+
+        assertTrue(0!=j2.totalRecursos());  // debería haber recibido varios recursos
+
+        // JUGADOR 2 coloca carretera
+        manager.colocacionInicial(new Coordenada(3, 0));
+
+        assertEquals(j1, manager.getJugadorActual()); // vuelve a j1
+
+        // --- JUGADOR 1 turno final ---
+
+        // JUGADOR 1 segundo poblado → obtiene recursos
+        manager.colocacionInicial(new Coordenada(4, 0));
+
+        assertTrue(0!=j1.totalRecursos());
+
+        // JUGADOR 1 carretera final
+        manager.colocacionInicial(new Coordenada(4, 0));
+        Jugador jugadorEsperado = manager.getJugadorActual();
+        assertEquals(j2, manager.getJugadorActual()); // comienza el juego normal
+
+        // --- Verificaciones finales ---
+
+        // Cada jugador tiene 2 poblados y 2 carreteras
+        int pobladosj1=tablero.obtenerPobladosPorColor(j1.getColor());
+        assertEquals(2, tablero.obtenerPobladosPorColor(j1.getColor()));
+        assertEquals(2, tablero.obtenerPobladosPorColor(j2.getColor()));
+
+        List<Lado> ladosj1=tablero.obtenerLadosDeJugador(j1.getColor());
+        assertEquals(2, tablero.obtenerLadosDeJugador(j1.getColor()).size());
+        assertEquals(2, tablero.obtenerLadosDeJugador(j2.getColor()).size());
+    }
+
 }
