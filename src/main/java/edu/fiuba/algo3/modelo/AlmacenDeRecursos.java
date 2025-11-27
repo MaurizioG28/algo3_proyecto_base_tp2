@@ -216,6 +216,14 @@ public class AlmacenDeRecursos {
     }
 
 
+    public boolean tieneSuficiente(TipoDeRecurso recursoRequerido) {
+        if (recursoRequerido == null) {
+            throw new IllegalArgumentException("El recurso requerido no puede ser null");
+        }
+        int cantidadDisponible = this.cantidadDe(recursoRequerido);
+
+        return cantidadDisponible >= recursoRequerido.obtenerCantidad();
+    }
 }
 
 

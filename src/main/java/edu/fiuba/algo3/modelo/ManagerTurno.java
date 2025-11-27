@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.modelo;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
+import edu.fiuba.algo3.modelo.Cartas.CartaConstruccionCarreteras;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
@@ -77,6 +78,9 @@ public class ManagerTurno {
             caballerosJugados+=1;
             this.registroGranCaballeria.put(getJugadorActual(),caballerosJugados);
             //moverLadron(cartaSeleccionada.getPosicionLadron());
+        }
+        if(cartaSeleccionada instanceof CartaConstruccionCarreteras) {
+
         }
 
         // Utilidad de las cartas
