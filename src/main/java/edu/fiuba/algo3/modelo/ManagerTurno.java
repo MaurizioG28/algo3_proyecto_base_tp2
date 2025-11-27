@@ -27,7 +27,7 @@ public class ManagerTurno {
     private int numeroTurnoActual = 0;
     private final Tablero tablero;
     private final Random azar;
-    private ServicioComercio servicioComercio = new ServicioComercio(new Banco());
+    private ServicioComercio servicioComercio;
     private GranCaballeria granCaballeria = new GranCaballeria();
     private GranRutaComercial granRutaComercial = new GranRutaComercial();
 
