@@ -1,9 +1,6 @@
 package edu.fiuba.algo3.modelo;
 
-import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
-import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
-import edu.fiuba.algo3.modelo.Cartas.CartaDescubrimiento;
-import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
+import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
@@ -88,7 +85,7 @@ public class ManagerTurno {
         }
         if(cartaSeleccionada instanceof CartaCaballero ){
             granCaballeria.registrarCaballeroJugado(getJugadorActual());
-            //moverLadron(cartaSeleccionada.getPosicionLadron());
+            //moverLadron(pedir terreno al jugador);
 
 
             int posicion = getJugadorActual().pedirPosicion();
