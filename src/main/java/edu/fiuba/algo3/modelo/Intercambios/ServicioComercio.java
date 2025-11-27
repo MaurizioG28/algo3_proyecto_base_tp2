@@ -107,9 +107,6 @@ public class ServicioComercio {
         for (TipoDeRecurso recurso : costo) {
             int cantidad = recurso.obtenerCantidad();
 
-            // Jugador paga
-            jugador.quitarRecurso(recurso.nuevo(0), cantidad);
-
             // Banco recibe
             banco.recibir(recurso.nuevo(cantidad));
         }
