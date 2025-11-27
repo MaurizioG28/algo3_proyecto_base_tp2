@@ -16,6 +16,7 @@ import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
+import edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoGratuito;
 
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +81,8 @@ public class ManagerTurno {
             //moverLadron(cartaSeleccionada.getPosicionLadron());
         }
         if(cartaSeleccionada instanceof CartaConstruccionCarreteras) {
-
+            EstrategiaPagoGratuito modoFree = new EstrategiaPagoGratuito();
+            this.getJugadorActual().setEstrategiaDePago(modoFree);
         }
 
         // Utilidad de las cartas
