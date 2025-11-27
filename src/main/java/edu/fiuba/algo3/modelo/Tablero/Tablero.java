@@ -236,9 +236,13 @@ public class Tablero {
     }
   
     public List<Lado> obtenerLadosDeJugador(Color color) {
-        return lados.values().stream()
-                .filter(lado -> lado.colorDeConstruccionEquals(color))
-                .collect(Collectors.toList());
+        Set<Lado> unicos = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Lado lado : lados.values()) {
+            if (lado.colorDeConstruccionEquals(color)) {
+                unicos.add(lado); // sólo lo agrega una vez por referencia real
+            }
+        }
+        return new ArrayList<>(unicos);
     }
 
 
@@ -249,6 +253,22 @@ public class Tablero {
         }
         return null;
 
+    }
+
+    public boolean ladoConectaConVertice(Coordenada coordenada, Coordenada ultimaCoordenadaPoblado) {
+        Lado lado = lados.get(coordenada);
+        Vertice vertice = vertices.get(ultimaCoordenadaPoblado);
+        return lado.tienePunta(vertice);
+    }
+
+    public Collection<Object> obtenerVerticesDeJugador(Color color) {
+        return vertices.values().stream()
+                .filter(vertice -> vertice.colorDeConstruccionEquals(color))
+                .collect(Collectors.toList());
+    }
+
+    public int obtenerPobladosPorColor(Color color) {
+        return pobladosColocadosPorColor.getOrDefault(color, 0);
     }
 }
 

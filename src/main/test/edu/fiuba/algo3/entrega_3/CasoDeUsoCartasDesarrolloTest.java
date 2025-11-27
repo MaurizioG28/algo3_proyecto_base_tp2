@@ -190,6 +190,7 @@ public class CasoDeUsoCartasDesarrolloTest {
 
         manager.comprarCarta();
         manager.siguienteTurno();
+        Jugador test=manager.getJugadorActual();
         manager.construirPoblado(new Coordenada(1,1));
         manager.siguienteTurno();
 
