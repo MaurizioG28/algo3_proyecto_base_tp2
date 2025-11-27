@@ -207,4 +207,8 @@ public class Jugador {
             this.almacenJugador.agregarRecurso(tipo.nuevo(cantidad));
         }
     }
+
+    public void terminarTurno() {
+        this.cartas.actualizarEstadoDeCartas();
+    }
 }

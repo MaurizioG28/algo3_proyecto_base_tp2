@@ -1,14 +1,18 @@
 package edu.fiuba.algo3.modelo.Cartas;
 
 abstract public class CartaDesarrollo {
-    private int TurnoCreacion;
-
-    public CartaDesarrollo(int turno) {
-        this.TurnoCreacion = turno;
+    private IEstadoCarta estado;
+    public  CartaDesarrollo() {
+        this.estado = new EstadoCartaRecienComprada();
+    }
+    protected CartaDesarrollo(IEstadoCarta estado) {
+        this.estado = estado;
+    }
+    public void nuevoTurno() {
+        this.estado = this.estado.actualizarEstado();
     }
 
-    public boolean SePuedeUsar(int turno) {
-        return !(TurnoCreacion == turno);
+    public void usar() {
+        this.estado.comprobarUso();
     }
-
 }

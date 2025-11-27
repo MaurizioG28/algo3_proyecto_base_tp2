@@ -8,8 +8,7 @@ import java.util.List;
 
 public class CartaDescubrimiento extends CartaDesarrollo {
 
-    public CartaDescubrimiento(int turno) {
-        super(turno);
+    public CartaDescubrimiento() {
     }
 
     public void usarCarta(Jugador jugador, ServicioComercio servicioComercio, List<TipoDeRecurso> recursosElegidos) {

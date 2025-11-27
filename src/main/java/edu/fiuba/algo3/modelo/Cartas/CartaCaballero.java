@@ -7,8 +7,7 @@ import java.util.Random;
 
 public class CartaCaballero extends CartaDesarrollo {
 
-    public CartaCaballero(int turno) {
-        super(turno);
+    public CartaCaballero( ) {
     }
 
     public void usarCarta(Jugador jugador, List<Jugador> victimas) {

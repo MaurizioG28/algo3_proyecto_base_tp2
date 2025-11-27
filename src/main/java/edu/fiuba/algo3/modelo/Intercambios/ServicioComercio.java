@@ -161,11 +161,11 @@ public class ServicioComercio {
 
     private CartaDesarrollo sacarCarta(int turno){
         List<CartaDesarrollo> cartasDisponibles = new ArrayList<>();
-        cartasDisponibles.add(new CartaCaballero(turno));
-        cartasDisponibles.add(new CartaConstruccionCarreteras(turno));
-        cartasDisponibles.add(new CartaDescubrimiento(turno));
-        cartasDisponibles.add(new CartaMonopolio(turno));
-        cartasDisponibles.add(new PuntoDeVictoria(turno));
+        cartasDisponibles.add(new CartaCaballero());
+        cartasDisponibles.add(new CartaConstruccionCarreteras());
+        cartasDisponibles.add(new CartaDescubrimiento());
+        cartasDisponibles.add(new CartaMonopolio());
+        cartasDisponibles.add(new PuntoDeVictoria());
 
         int NumeroAleatorio = azar.nextInt(cartasDisponibles.size());
 

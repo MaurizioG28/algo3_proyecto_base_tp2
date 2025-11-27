@@ -2,6 +2,7 @@ package edu.fiuba.algo3.entrega_3;
 
 import edu.fiuba.algo3.modelo.Cartas.CartaConstruccionCarreteras;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.EstadoCartaDisponible;
 import edu.fiuba.algo3.modelo.Color;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.ManagerTurno;
@@ -80,7 +81,7 @@ public class CartaConstruccionDeCarreterasPermiteDosConstruccionesGratuitas {
         assertEquals(0, jugador.cantidadRecurso(new Madera(0)));
         assertEquals(0, jugador.cantidadRecurso(new Ladrillo(0)));
 
-        CartaDesarrollo cartaCarreteras = new CartaConstruccionCarreteras(1);
+        CartaDesarrollo cartaCarreteras = new CartaConstruccionCarreteras(new EstadoCartaDisponible());
         jugador.agregarCarta(cartaCarreteras);
 
         manager.usarUnaCarta(0);
