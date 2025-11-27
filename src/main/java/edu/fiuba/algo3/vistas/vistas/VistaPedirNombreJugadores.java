@@ -1,8 +1,10 @@
 package edu.fiuba.algo3.vistas.vistas;
 
 import edu.fiuba.algo3.Estilos;
+import edu.fiuba.algo3.controllers.ControladorCrearPartida;
 import edu.fiuba.algo3.vistas.Grillas.GrillaBase;
 import edu.fiuba.algo3.vistas.PantallaPrincipal;
+import edu.fiuba.algo3.vistas.botones.BotonGenerico;
 import edu.fiuba.algo3.vistas.mensajes.CatanMensaje;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,12 +39,12 @@ public class VistaPedirNombreJugadores extends StackPane {
 
         VBox nombreJuego = crearNombreJuego();
         VBox formularioCentral = crearFormularioJugadores(cantidadJugadores);
-        //VBox botonConfirmado = crearBotonConfirmado(stage, pantallaPrincipal);
+        VBox botonConfirmado = crearBotonConfirmado(stage, pantallaPrincipal);
 
         // Ubicación en la grilla (Fila 0: Título, Fila 1: Formulario, Fila 2: Botón)
         grilla.add(nombreJuego, 0, 0);
         grilla.add(formularioCentral, 0, 1);
-        //grilla.add(botonConfirmado, 0, 2);
+        grilla.add(botonConfirmado, 0, 2);
 
         super.getChildren().add(grilla);
     }
@@ -151,8 +153,8 @@ public class VistaPedirNombreJugadores extends StackPane {
         VBox botonConfirmado = new VBox();
         botonConfirmado.setAlignment(Pos.CENTER);
 
-        // BotonSiguiente btn = new BotonSiguiente(new ControladorCrearJugadores(..., nombresIngresados, coloresElegidos));
-        // botonConfirmado.getChildren().add(btn);
+        BotonGenerico btn = new BotonGenerico(new ControladorCrearPartida(stage, pantallaPrincipal, nombresIngresados, coloresElegidos), "COMENZAR");
+        botonConfirmado.getChildren().add(btn);
 
 
         return botonConfirmado;

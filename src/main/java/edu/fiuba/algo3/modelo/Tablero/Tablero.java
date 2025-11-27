@@ -228,5 +228,9 @@ public class Tablero {
         }
         verticeBuscado.mejorarACiudad();
     }
+
+    public Map<Integer, Terreno> getTerrenos() {
+        return terrenos;
+    }
 }
 
