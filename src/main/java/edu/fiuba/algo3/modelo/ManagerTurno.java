@@ -79,10 +79,7 @@ public class ManagerTurno {
 
     public void usarUnaCarta(int indice) {
         CartaDesarrollo cartaSeleccionada = getJugadorActual().agarrarCarta(indice);
-
-        if (!cartaSeleccionada.SePuedeUsar(numeroTurnoActual)) {
-            throw new ReglaDeCompraYUsoException("La carta no puede ser usada el mismo turno en el que se compra.");
-        }
+        cartaSeleccionada.usar();
         if(cartaSeleccionada instanceof CartaCaballero ){
             granCaballeria.registrarCaballeroJugado(getJugadorActual());
             //moverLadron(pedir terreno al jugador);
@@ -120,6 +117,7 @@ public class ManagerTurno {
     }
 
     public void siguienteTurno() {
+        getJugadorActual().terminarTurno();
         contarPuntos();
         indiceJugadorActual = (indiceJugadorActual + 1) % jugadores.size();
         numeroTurnoActual += 1;

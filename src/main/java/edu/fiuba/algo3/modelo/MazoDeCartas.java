@@ -29,4 +29,10 @@ public class MazoDeCartas {
 
         return cantidad;
     }
+
+    public void actualizarEstadoDeCartas() {
+        for (CartaDesarrollo carta : this.cartas) {
+            carta.nuevoTurno();
+        }
+    }
 }

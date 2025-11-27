@@ -70,7 +70,7 @@ public class CasoDeUsoCartaMonopolioRobaTodosLosRecursosDelTipoElegido {
 
         victimaAstuta.setEstrategiaDePago(new EstrategiaPagoGratuito());
 
-        CartaMonopolio cartaMonopolio = new CartaMonopolio(1);
+        CartaMonopolio cartaMonopolio = new CartaMonopolio();
         cartaMonopolio.setRecursoElegido(new Madera(0));
         ladron.agregarCarta(cartaMonopolio);
 

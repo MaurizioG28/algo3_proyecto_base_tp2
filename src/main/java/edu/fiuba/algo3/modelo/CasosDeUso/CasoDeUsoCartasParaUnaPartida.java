@@ -21,11 +21,11 @@ public class CasoDeUsoCartasParaUnaPartida {
 
         List<CartaDesarrollo> cartas = new ArrayList<>();
 
-        agregarCartas(cartas, () -> new CartaCaballero(0), CANTIDAD_CABALLEROS);
-        agregarCartas(cartas, () -> new PuntoDeVictoria(0), CANTIDAD_PUNTOS_VICTORIA);
-        agregarCartas(cartas, () -> new CartaMonopolio(0), CANTIDAD_MONOPOLIO);
-        agregarCartas(cartas, () -> new CartaDescubrimiento(0), CANTIDAD_DESCUBRIMIENTO);
-        agregarCartas(cartas, () -> new CartaConstruccionCarreteras(0), CANTIDAD_CONSTRUCCION_CARRETERAS);
+        agregarCartas(cartas, () -> new CartaCaballero(), CANTIDAD_CABALLEROS);
+        agregarCartas(cartas, () -> new PuntoDeVictoria(), CANTIDAD_PUNTOS_VICTORIA);
+        agregarCartas(cartas, () -> new CartaMonopolio(), CANTIDAD_MONOPOLIO);
+        agregarCartas(cartas, () -> new CartaDescubrimiento(), CANTIDAD_DESCUBRIMIENTO);
+        agregarCartas(cartas, () -> new CartaConstruccionCarreteras(), CANTIDAD_CONSTRUCCION_CARRETERAS);
 
         Collections.shuffle(cartas, azar);
 

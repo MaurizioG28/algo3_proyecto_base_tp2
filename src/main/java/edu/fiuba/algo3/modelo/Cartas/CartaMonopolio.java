@@ -8,8 +8,7 @@ import java.util.List;
 public class CartaMonopolio extends CartaDesarrollo {
     private TipoDeRecurso recursoElegido;
 
-    public CartaMonopolio(int turno) {
-        super(turno);
+    public CartaMonopolio( ) {
     }
 
     public void setRecursoElegido(TipoDeRecurso r) {
