@@ -7,6 +7,7 @@ import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Dividendo;
 import edu.fiuba.algo3.modelo.Recursos.Grano;
 import edu.fiuba.algo3.modelo.Recursos.Ladrillo;
+import edu.fiuba.algo3.modelo.Recursos.Lana;
 import edu.fiuba.algo3.modelo.Recursos.Madera;
 import edu.fiuba.algo3.modelo.Tablero.*;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
@@ -80,7 +81,7 @@ public class CasoDeUsoColocacionInicialTest {
        Dividendo dividendosEsperadoes = new Dividendo(
                 new Color("Azul" ),
                 new Madera(1),
-                new Grano(1)
+                new Lana(1)
         );
 
         assertEquals( dividendosEsperadoes, dividendo);

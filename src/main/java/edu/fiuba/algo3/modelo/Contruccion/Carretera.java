@@ -4,6 +4,8 @@ import edu.fiuba.algo3.modelo.Color;
 
 public class Carretera implements  Construccion{
     private Color  color;
+
+
     public Carretera(Color color) {
         this.color = color;
     }

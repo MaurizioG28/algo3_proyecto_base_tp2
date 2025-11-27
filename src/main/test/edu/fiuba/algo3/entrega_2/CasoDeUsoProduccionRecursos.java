@@ -87,8 +87,7 @@ public class CasoDeUsoProduccionRecursos {
         ManagerTurno manager = new ManagerTurno(
                 List.of(jugadorPoblado, jugadorCiudad),
                 tablero,
-                new Random(),
-                mock(MazoOculto.class)
+                new Random()
         );
 
         // 2. ACT (Salió el 6 en los dados)
@@ -130,7 +129,7 @@ public class CasoDeUsoProduccionRecursos {
         terrenos.put(1, montania);
         Tablero tablero = new Tablero(terrenos, new HashMap<>(), new HashMap<>());
 
-        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random(), mock(MazoOculto.class));
+        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random());
 
         // 2. ACT (Sale el 5, pero la montaña necesita un 8)
         manager.repartirDividendos(5);
@@ -180,7 +179,7 @@ public class CasoDeUsoProduccionRecursos {
         terrenos.put(2, bosque);
 
         Tablero tablero = new Tablero(terrenos, new HashMap<>(), new HashMap<>());
-        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random(), mock(MazoOculto.class));
+        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random());
 
         // 2. ACT (Sale el 4)
         manager.repartirDividendos(4);
@@ -202,8 +201,7 @@ public class CasoDeUsoProduccionRecursos {
         ManagerTurno manager = new ManagerTurno(
                 List.of(jugadorAzul, jugadorRojo),
                 tablero,
-                new Random(),
-                mock(MazoOculto.class)
+                new Random()
         );
 
         // --- CONSTRUCCIÓN ---

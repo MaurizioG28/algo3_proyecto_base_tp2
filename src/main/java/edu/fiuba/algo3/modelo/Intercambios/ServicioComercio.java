@@ -1,19 +1,29 @@
 package edu.fiuba.algo3.modelo.Intercambios;
 
+import edu.fiuba.algo3.modelo.Cartas.*;
+import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.RecursosInsuficientesException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ServicioComercio {
 
     private final Banco banco;
+    private final Random azar;
 
     public ServicioComercio(Banco banco) {
         this.banco = banco;
+        this.azar = new Random();
+    }
+    public ServicioComercio(Banco banco, Random azar) {
+        this.banco = banco;
+        this.azar = azar;
     }
 
     public void intercambiarConBanco(Jugador jugador,
@@ -67,26 +77,48 @@ public class ServicioComercio {
         return new Ciudad(jugador.getColor());
     }
 
+    public Carretera venderCarretera(Jugador comprador){
+
+        List<TipoDeRecurso> costo = List.of(
+                new Madera(1), new Ladrillo(1)
+        );
+        procesarPago(comprador, costo);
+
+        return new Carretera(comprador.getColor());
+
+    }
+
+    public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno){
+
+        List<TipoDeRecurso> costo = List.of(
+                new Grano(1), new Mineral(1),new Lana(1)
+        );
+        procesarPago(comprador, costo);
+
+        return sacarCarta(turno);
+
+    }
+
     // Método auxiliar para no repetir lógica de cobro
     private void procesarPago(Jugador jugador, List<TipoDeRecurso> costo) throws RecursosInsuficientesException {
-        for (TipoDeRecurso r : costo) {
-            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
-                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
-            }
-        }
+        jugador.pagar(costo);
+
+        //Posible violacion de Tell Dont Ask
+        //Jugador tienes esto ? -> "NO/Si" -> entonces hago esto
+//        for (TipoDeRecurso r : costo) {
+//            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
+//                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
+//            }
+//        }
 
         for (TipoDeRecurso recurso : costo) {
             int cantidad = recurso.obtenerCantidad();
-
-            // Jugador paga
-            jugador.quitarRecurso(recurso.nuevo(0), cantidad);
 
             // Banco recibe
             banco.recibir(recurso.nuevo(cantidad));
         }
     }
 
-    // Método para devolver recursos en caso de error de colocación (Rollback)
     public void reembolsarPoblado(Jugador jugador) {
         List<TipoDeRecurso> costo = List.of(
                 new Madera(1), new Ladrillo(1), new Lana(1), new Grano(1)
@@ -111,6 +143,10 @@ public class ServicioComercio {
         }
     }
 
+    public void entregarBonifCartaDescubrimiento(Jugador jugador, List<TipoDeRecurso> recursosElegidos) {
+        reembolsar(jugador, recursosElegidos);
+    }
+
     public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, TipoDeRecurso recursoArecibir, int cantidadArecibir, List<Jugador> jugadores) {
         for (Jugador jugador : jugadores) {
             try {
@@ -121,6 +157,22 @@ public class ServicioComercio {
 
         }
     }
+
+
+    private CartaDesarrollo sacarCarta(int turno){
+        List<CartaDesarrollo> cartasDisponibles = new ArrayList<>();
+        cartasDisponibles.add(new CartaCaballero(turno));
+        cartasDisponibles.add(new CartaConstruccionCarreteras(turno));
+        cartasDisponibles.add(new CartaDescubrimiento(turno));
+        cartasDisponibles.add(new CartaMonopolio(turno));
+        cartasDisponibles.add(new PuntoDeVictoria(turno));
+
+        int NumeroAleatorio = azar.nextInt(cartasDisponibles.size());
+
+        return cartasDisponibles.get(NumeroAleatorio);
+    }
+
+
 
 
 

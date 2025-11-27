@@ -2,7 +2,6 @@ package edu.fiuba.algo3.modelo.CasosDeUso;
 
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.ManagerTurno;
-import edu.fiuba.algo3.modelo.MazoOculto;
 import edu.fiuba.algo3.modelo.Recursos.RecursosIsuficientesException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
@@ -17,8 +16,7 @@ import static org.mockito.Mockito.mock;
 public class ConsumoRecursos {
     public void construirPoblado(Jugador jugador, Tablero tablero, Coordenada coord) throws RecursosIsuficientesException {
         Random random = new Random();
-        MazoOculto mazo =  new MazoOculto(random);
-        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero, random, mazo);
+        ManagerTurno managerTurno = new ManagerTurno(List.of(jugador), tablero, random);
         managerTurno.construirPoblado(coord);
     }
 }

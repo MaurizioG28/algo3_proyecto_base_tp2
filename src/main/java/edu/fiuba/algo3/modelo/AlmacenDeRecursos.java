@@ -10,6 +10,12 @@ import java.util.Random;
 
 import java.util.*;
 
+import java.util.*;
+
+import java.util.*;
+
+import java.util.*;
+
 public class AlmacenDeRecursos {
 
     // 1 entrada por tipo: Madera, Grano, etc.
@@ -210,4 +216,27 @@ public class AlmacenDeRecursos {
     }
 
 
+    public boolean tieneSuficiente(TipoDeRecurso recursoRequerido) {
+        if (recursoRequerido == null) {
+            throw new IllegalArgumentException("El recurso requerido no puede ser null");
+        }
+        int cantidadDisponible = this.cantidadDe(recursoRequerido);
+
+        return cantidadDisponible >= recursoRequerido.obtenerCantidad();
+    }
+
+
+    public int entregarTodo(TipoDeRecurso tipo) {
+        //Para Carta Monopolio
+        int cantidad = this.cantidadDe(tipo);
+
+        if (cantidad > 0) {
+            this.quitar(tipo, cantidad);
+        }
+        return cantidad;
+    }
 }
+
+
+
+

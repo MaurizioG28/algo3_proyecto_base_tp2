@@ -108,4 +108,15 @@ public class Lado {
     public Vertice getPunta(int i) {
         return puntas.get(i);
     }
+
+    public boolean colorDeConstruccionEquals(Color color) {
+        if (construccion != null) {
+            return this.propietario.equals(color);
+        }
+        return false;
+    }
+
+    public Lado[] getAdyacentes() {
+        return adyacentes.toArray(new Lado[0]);
+    }
 }

@@ -7,8 +7,10 @@ import edu.fiuba.algo3.modelo.Tablero.Terrenos.*;
 
 import java.util.*;
 
-public class Catan {
+public class Catan implements PuntajeListener {
     private final Random rng;
+    private final List<Jugador> jugadores= new ArrayList<>();
+    private Jugador ganador = null;
 
     private List<Terreno> terrernos = Arrays.asList(
             new Bosque(),
@@ -78,5 +80,40 @@ public class Catan {
     }
     public Tablero crearTablero() {
         return TableroFactory.crear(terrernos, fichasNumeradas);
+    }
+
+    public void agregarJugador(Jugador jugador) {
+        jugadores.add(jugador);
+        jugador.suscribirACatan(this);
+    }
+
+    @Override
+    public void puntajeActualizado( PuntajeDeVictoria puntaje) {
+        if (puntaje.total() >= 10) {
+            Jugador ganador = buscarJugadorConPuntaje(puntaje);
+            terminarPartida(ganador);
+        }
+    }
+
+    private Jugador buscarJugadorConPuntaje(PuntajeDeVictoria puntaje) {
+        for (Jugador jugador : jugadores) {
+            if (jugador.mismoPuntaje(puntaje)) {
+                return jugador;
+            }
+        }
+        throw new IllegalStateException("No se encontro un jugador con el puntaje dado");
+    }
+
+    private void terminarPartida(Jugador jugador) {
+        ganador= jugador;
+        System.out.println("El jugador " + jugador.getNombre() + " ha ganado la partida !");
+    }
+
+
+    public Jugador hayGanador() {
+        if(ganador==null){
+            throw new IllegalStateException("No hay ganador aun");
+        }
+        return ganador;
     }
 }

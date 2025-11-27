@@ -81,7 +81,7 @@ public class CasoDeUsoMejorarPoblado {
         jugador.agregarRecurso(new Grano(2));
         jugador.agregarRecurso(new Mineral(3));
 
-        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random(), null);
+        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random());
 
 
         // 2. ACT
@@ -104,7 +104,7 @@ public class CasoDeUsoMejorarPoblado {
     public void test02JugadorMejoraPobladoACiudadExitosamente() throws Exception {
         Tablero tablero = TableroFactory.crear(hexagonos, fichasNumeradas);
         ServicioComercio servicio = new ServicioComercio(banco);
-        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random(), null);
+        ManagerTurno manager = new ManagerTurno(List.of(jugador), tablero, new Random());
         manager.setServicioComercio(servicio);
         // Setup: El jugador YA tiene un poblado en el tablero
         Coordenada coord = new Coordenada(5, 0);

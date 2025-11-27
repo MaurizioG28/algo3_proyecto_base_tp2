@@ -1,13 +1,16 @@
 package edu.fiuba.algo3.modelo.Tablero;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import edu.fiuba.algo3.modelo.*;
 import edu.fiuba.algo3.modelo.Contruccion.Construccion;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 
+import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Tablero.Factory.*;
 import edu.fiuba.algo3.modelo.Tablero.Terrenos.Terreno;
+
 
 
 public class Tablero {
@@ -16,7 +19,7 @@ public class Tablero {
     private final Map<Integer, Terreno> terrenos;
     private Dados dados = new Dados();
     private final Map<Coordenada, Vertice> vertices;
-    Map<Coordenada, Lado> lados;
+    private final Map<Coordenada, Lado> lados;
     private final Map<Color, Integer> pobladosColocadosPorColor = new HashMap<>();
 
     private Integer posicionDelLadron;
@@ -138,7 +141,6 @@ public class Tablero {
         if (anterior!=null && !anterior.esDesierto())
             anterior.moverLadronQuitar();
 
-
         nuevo.moverLadronPoner();
         posicionDelLadron = posicionId;
 
@@ -227,6 +229,22 @@ public class Tablero {
             throw new IllegalStateException("No puedes mejorar un edificio que no es tuyo.");
         }
         verticeBuscado.mejorarACiudad();
+    }
+
+    public List<Lado> obtenerLadosDeJugador(Color color) {
+        return lados.values().stream()
+                .filter(lado -> lado.colorDeConstruccionEquals(color))
+                .collect(Collectors.toList());
+    }
+
+
+    public PoliticaDeIntercambio verificarPuerto(Coordenada coordenada) {
+        Vertice vertice = vertices.get(coordenada);
+        if(vertice.esPuerto()) {
+            return vertice.obtenerPoliticaDeIntercambio();
+        }
+        return null;
+
     }
 }
 

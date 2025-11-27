@@ -9,8 +9,6 @@ public class Ciudad implements Construccion,Productor {
         this.color = color;
     }
 
-
-
     @Override
     public String getColor() {
         return this.color.getColor();
