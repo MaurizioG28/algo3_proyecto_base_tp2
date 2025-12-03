@@ -863,7 +863,7 @@ private Group agregarTerrenos() {
                 double yCentro = hexRadius * 1.5 * pos.r;
 
                 int i = coord.indice();
-                double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+                double angle = (Math.PI / 2) + i * (Math.PI / 3) + Math.PI;
 
                 // Posición del Vértice (Donde iría la el poblado)
                 double xVertice = xCentro + hexRadius * Math.cos(angle);
@@ -1164,7 +1164,7 @@ private Group agregarTerrenos() {
 
                 if (v.tieneConstruccion()) {
                     // Calc posición visual
-                    double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+                    double angle = (Math.PI / 2) + i * (Math.PI / 3) + Math.PI;
                     double vx = x + hexRadius * Math.cos(angle);
                     double vy = y + hexRadius * Math.sin(angle);
 
@@ -1201,8 +1201,9 @@ private Group agregarTerrenos() {
                 ladosVisitados.add(lado);
 
                 if (lado.tieneConstruccion()) {
-                    double angle1 = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
-                    double angle2 = (2.0 * Math.PI * ((i + 1) % 6) / 6) + (Math.PI / 6);
+                    double angle1 = (Math.PI / 2) + i * (Math.PI / 3) + Math.PI;
+                    double angle2 = (Math.PI / 2) + ((i + 1) % 6) * (Math.PI / 3) + Math.PI;
+
 
                     double x1 = x + hexRadius * Math.cos(angle1);
                     double y1 = y + hexRadius * Math.sin(angle1);
@@ -1270,7 +1271,7 @@ private Group agregarTerrenos() {
 
         int i = coord.indice();
 
-        double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+        double angle = (Math.PI / 2) + i * (Math.PI / 3) + Math.PI;
 
         double x = xCentro + hexRadius * Math.cos(angle);
         double y = yCentro + hexRadius * Math.sin(angle);
