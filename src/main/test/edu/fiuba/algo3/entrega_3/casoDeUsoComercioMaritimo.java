@@ -30,9 +30,12 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
+        TipoDeRecurso madera = new Madera(4);
+        TipoDeRecurso grano = new Grano(1);
+
         // El jugador recibe 4 maderas
-        jugador.agregarRecurso(new Madera(4));
-        servicio.intercambiarConBanco(jugador, madera, 4, grano);
+        jugador.agregarRecurso(madera);
+        servicio.intercambiarConBanco(jugador, madera, grano);
         assertEquals(0, jugador.cantidadRecurso(madera));
         assertEquals(1, jugador.cantidadRecurso(grano));
     }
@@ -44,10 +47,13 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
-        jugador.agregarRecurso(new Madera(3));
+        TipoDeRecurso madera = new Madera(3);
+        TipoDeRecurso grano = new Grano(1);
+
+        jugador.agregarRecurso(madera);
         jugador.agregarPolitica(new PuertoGenerico(3)); // 3:1 cualquiera
 
-        servicio.intercambiarConBanco(jugador, madera, 3, grano);
+        servicio.intercambiarConBanco(jugador, madera, grano);
 
         assertEquals(0, jugador.cantidadRecurso(madera),
                 "Debe haber entregado las 3 maderas");
@@ -62,10 +68,13 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
-        jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // 2:1 madera
-        jugador.agregarRecurso(new Madera(2));
+        TipoDeRecurso madera = new Madera(2);
+        TipoDeRecurso grano = new Grano(1);
 
-        servicio.intercambiarConBanco(jugador, madera, 2, grano);
+        jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // 2:1 madera
+        jugador.agregarRecurso(madera);
+
+        servicio.intercambiarConBanco(jugador, madera, grano);
 
         assertEquals(0, jugador.cantidadRecurso(madera),
                 "Debe haber entregado las 2 maderas");
@@ -80,11 +89,14 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
+        TipoDeRecurso madera = new Madera(1);
+        TipoDeRecurso grano = new Grano(4);
+
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2)); // solo madera
-        jugador.agregarRecurso(new Grano(4));
+        jugador.agregarRecurso(grano);
 
         // Como el puerto es de MADERA, para GRANO debe aplicar la tasa base 4:1
-        servicio.intercambiarConBanco(jugador, grano, 4, madera);
+        servicio.intercambiarConBanco(jugador, grano, madera);
 
         assertEquals(0, jugador.cantidadRecurso(grano),
                 "Debe haber entregado los 4 granos");
@@ -99,11 +111,14 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
+        TipoDeRecurso madera = new Madera(2);
+        TipoDeRecurso grano = new Grano(1);
+
         jugador.agregarPolitica(new PuertoGenerico(3));             // 3:1 cualquiera
         jugador.agregarPolitica(new PuertoEspecifico(madera, 2));   // 2:1 madera
-        jugador.agregarRecurso(new Madera(2));
+        jugador.agregarRecurso(madera);
 
-        servicio.intercambiarConBanco(jugador, madera, 2, grano);
+        servicio.intercambiarConBanco(jugador, madera, grano);
 
         assertEquals(0, jugador.cantidadRecurso(madera),
                 "Debe haber entregado las 2 maderas");
@@ -122,7 +137,7 @@ public class casoDeUsoComercioMaritimo {
         jugador.agregarRecurso(new Madera(4));
 
         assertThrows(IntercambioInvalidoException.class,
-                () -> servicio.intercambiarConBanco(jugador, madera, 4, grano),
+                () -> servicio.intercambiarConBanco(jugador, madera, grano),
                 "No debe permitir intercambiar 4 cuando la tasa es 3:1");
     }
 
@@ -133,10 +148,13 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
-        jugador.agregarRecurso(new Madera(3)); // menos de 4
+        TipoDeRecurso madera = new Madera(3);
+        TipoDeRecurso grano = new Grano(1);
+
+        jugador.agregarRecurso(madera); // menos de 4
 
         assertThrows(IntercambioInvalidoException.class,
-                () -> servicio.intercambiarConBanco(jugador, madera, 4, grano),
+                () -> servicio.intercambiarConBanco(jugador, new Madera(4), grano),
                 "No debe permitir intercambiar más recursos de los que tiene");
     }
 
@@ -150,10 +168,13 @@ public class casoDeUsoComercioMaritimo {
         ServicioComercio servicio = new ServicioComercio(banco);
         Jugador jugador =  new Jugador("nombre1",new Color("Azul"));
 
-        jugador.agregarRecurso(new Madera(4));
+        TipoDeRecurso madera = new Madera(4);
+        TipoDeRecurso grano = new Grano(1);
+
+        jugador.agregarRecurso(madera);
 
         assertThrows(IntercambioInvalidoException.class,
-                () -> servicio.intercambiarConBanco(jugador, madera, 4, grano),
+                () -> servicio.intercambiarConBanco(jugador, madera, grano),
                 "No debe permitir intercambiar si el banco no tiene stock del recurso pedido");
     }
 }

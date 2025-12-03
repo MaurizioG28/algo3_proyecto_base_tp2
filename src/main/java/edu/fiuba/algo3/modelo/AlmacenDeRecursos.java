@@ -72,6 +72,21 @@ public class AlmacenDeRecursos {
         return true;
     }
 
+    public boolean quitar(TipoDeRecurso recursoEntregado) {
+        if (recursoEntregado == null) throw new IllegalArgumentException("Recurso no puede ser null");
+        if (recursoEntregado.obtenerCantidad() <= 0) return true;
+
+        TipoDeRecurso clave = claveDe(recursoEntregado);
+        TipoDeRecurso r = recursos.get(clave);
+        if (r == null || r.obtenerCantidad() < recursoEntregado.obtenerCantidad()) return false;
+
+        r.restar(recursoEntregado.obtenerCantidad());
+        if (r.obtenerCantidad() == 0) {
+            recursos.remove(clave);
+        }
+        return true;
+    }
+
     public boolean quitarUno(TipoDeRecurso tipo) {
         return quitar(tipo, 1);
     }

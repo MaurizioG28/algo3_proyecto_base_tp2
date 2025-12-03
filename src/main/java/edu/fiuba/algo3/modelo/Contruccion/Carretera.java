@@ -1,8 +1,12 @@
 package edu.fiuba.algo3.modelo.Contruccion;
 
 import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Recursos.*;
+import edu.fiuba.algo3.modelo.interfaces.FichaComprable;
 
-public class Carretera implements  Construccion{
+import java.util.List;
+
+public class Carretera implements  Construccion, FichaComprable {
     private Color  color;
 
 
@@ -20,5 +24,10 @@ public class Carretera implements  Construccion{
         return this.color;
     }
 
+    public List<TipoDeRecurso> costoRecursos() {
+        return List.of(
+                new Madera(1), new Ladrillo(1)
+        );
+    }
 
 }

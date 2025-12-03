@@ -25,7 +25,7 @@ abstract class Terreno
     + recursoOtorgado(cantidad: int): TipoDeRecurso
 }
 
-Catan o-d-"19   " Terreno
+Catan o-d------"19   " Terreno
 
 class Bosque
 {
@@ -250,7 +250,7 @@ abstract class TipoDeRecurso
     + nuevo(cantidad: int): TipoDeRecurso
 }
 
-AlmacenRecursos o-d-"* " TipoDeRecurso
+AlmacenRecursos o-d--"* " TipoDeRecurso
 
 class Grano
 {

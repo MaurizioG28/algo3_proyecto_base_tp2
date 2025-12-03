@@ -81,6 +81,12 @@ public class Jugador {
         }
     }
 
+    public void quitarRecurso(TipoDeRecurso recursoEntregado) {
+        if (!almacenJugador.quitar(recursoEntregado)) {
+            throw new IllegalStateException("El jugador no tiene suficientes " + recursoEntregado.nombre());
+        }
+    }
+
     public List<TipoDeRecurso> pedirRecursos() {
         //Aca uno deberá elegir los recursos desde la interfaz
 
@@ -215,6 +221,12 @@ public class Jugador {
         }
     }
 
+    public boolean suficienteCantidad(TipoDeRecurso recursoEntregado) {
+        if (cantidadRecurso(recursoEntregado) >= recursoEntregado.obtenerCantidad()) {
+            return true;
+        }
+        return false;
+      
     public void terminarTurno() {
         this.cartas.actualizarEstadoDeCartas();
     }
