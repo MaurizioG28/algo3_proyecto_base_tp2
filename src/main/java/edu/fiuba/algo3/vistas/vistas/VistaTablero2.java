@@ -492,7 +492,7 @@ private Group agregarTerrenos() {
 
         this.btnBanca = crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
         this.btnIntercambioJugadores = crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
-        this.btnJugarCarta = crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
+        //this.btnJugarCarta = crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
         this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
             this.esperandoSeleccionHexagono = true;
             mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
