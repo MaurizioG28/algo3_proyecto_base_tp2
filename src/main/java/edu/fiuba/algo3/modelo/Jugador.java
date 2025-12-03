@@ -247,6 +247,7 @@ public class Jugador {
         }
         return false;
     }
+
     public void terminarTurno() {
         this.cartas.actualizarEstadoDeCartas();
     }
@@ -283,5 +284,15 @@ public class Jugador {
 
     public void descartarCarta(int indice) {
         this.cartas.eliminarCarta(indice);
+    }
+
+    // Usado por el Controlador
+    public CartaDesarrollo buscarCartaParaJugar(String nombreCarta) {
+        return cartas.buscarCartaJugable(nombreCarta);
+    }
+
+    // Usado por la Vista
+    public boolean tieneCartaHabilitada(String nombreCarta) {
+        return cartas.existeCartaJugable(nombreCarta);
     }
 }

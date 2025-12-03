@@ -2,6 +2,9 @@ package edu.fiuba.algo3.vistas.vistas;
 
 import edu.fiuba.algo3.controllers.*;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
+import edu.fiuba.algo3.modelo.Cartas.CartaCaballero;
+import edu.fiuba.algo3.modelo.Cartas.CartaConstruccionCarreteras;
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Catan;
 
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
@@ -60,8 +63,6 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     private HBox contenedorRecursos;
     private HBox contenedorCartasDesarrollo;
     private Label lblNombreJugadorActual;
-    private Group grupoOverlay;
-    private boolean modoConstruccion = false;
 
     private Group grupoConstrucciones; // Edificios reales (fijos)
     private Group grupoSugestiones;    // Puntos/Líneas grises (temporales)
@@ -82,7 +83,6 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
 
     // estado y logica visual
     private Map<Coordenada, Point2D> mapaVisualVertices = new HashMap<>();
-    private String accionPendiente = null;
     private boolean enFaseInicial = true;
     private String cartaSeleccionada = null;
     private Circle ladronVisual;
@@ -94,6 +94,11 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
 
     private AccionAlSeleccionarCaminos callbackSeleccionCarta = null;
     private List<Coordenada> cacheSeleccionCarta = new ArrayList<>();
+    private boolean cartaDesarrolloJugadaEnTurno = false;
+    private int carreterasGratisPendientes = 0;
+
+    private CartaConstruccionCarreteras cartaCarreterasActiva = null;
+    private CartaDesarrollo cartaCaballeroActiva = null;
 
     public VistaTablero2(Stage stage, PantallaPrincipal pantallaPrincipal) {
 
@@ -119,70 +124,6 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         gestionarFlujoFaseInicial();
     }
 
-//    private Group agregarTerrenos() {
-//        Tablero tablero = Catan.getInstance().crearTablero();
-//        Map<Integer, Terreno> terrenos = tablero.getTerrenos();
-//
-//        Group root = new Group();
-//
-//        // Inicializamos las capas
-//        this.grupoPuertos = new Group();
-//        this.grupoConstrucciones = new Group();
-//        this.grupoSugestiones = new Group(); // Capa de interacción
-//
-//        double hexRadius = 50;
-//
-//        // Variables para guardar la posición inicial del ladrón
-//
-//        Terreno terrenoLadron = terrenos.get(tablero.getPosicionDelLadron());
-//        Axial pos = terrenoLadron.getPosicion();
-//        double q1 = pos.q;
-//        double r1 = pos.r;
-//
-//
-//        // axial → pixel
-//
-//        double xDesierto = hexRadius * Math.sqrt(3) * (q1 + r1 / 2.0);
-//        double yDesierto = hexRadius * 1.5 * r1;
-//
-//
-//        for (Terreno t : terrenos.values()) {
-//
-//            Axial pos1 = t.getPosicion();
-//            double q = pos1.q;
-//            double r = pos1.r;
-//
-//            // axial → pixel
-//
-//            double x = hexRadius * Math.sqrt(3) * (q + r / 2.0);
-//            double y = hexRadius * 1.5 * r;
-//
-//            Polygon hexagon = createHexagon(x, y, hexRadius,t);
-//            root.getChildren().add(hexagon);
-//
-//        }
-//
-//        dibujarPuertos(hexRadius);
-//        root.getChildren().add(this.grupoPuertos);
-//
-//        // 3. AGREGAR CAPAS SUPERIORES
-//        root.getChildren().add(this.grupoConstrucciones); // Casas reales
-//        root.getChildren().add(this.grupoSugestiones);    // Puntos de sugerencia (fantasmas)
-//        // --- CREAR LADRÓN ---
-//        // Lo colocamos en la coordenada que encontramos del desierto
-//        ladronVisual = new Circle(20, Color.web("#333333"));
-//        ladronVisual.setStroke(Color.BLACK);
-//        ladronVisual.setStrokeWidth(2);
-//        ladronVisual.setMouseTransparent(true); // IMPORTANTE: Para que los clicks pasen al hexágono de abajo
-//
-//        // Posición inicial detectada
-//        ladronVisual.setTranslateX(xDesierto);
-//        ladronVisual.setTranslateY(yDesierto);
-//
-//        root.getChildren().add(ladronVisual);
-//
-//        return root;
-//    }
 private Group agregarTerrenos() {
     Tablero tablero = Catan.getInstance().getTablero();
     if(tablero == null) tablero = Catan.getInstance().crearTablero();
@@ -318,23 +259,31 @@ private Group agregarTerrenos() {
 
         hexagon.setOnMouseClicked(e -> {
             if (this.esperandoSeleccionHexagono) {
-
-                // 1. Mover visualmente
                 moverLadronVisualmente(x, y);
 
-                // 2. Resetear estado de selección
+                if (cartaCaballeroActiva != null) {
+                    // --- CASO CABALLERO ---
+                    CartaCaballero caballero = (CartaCaballero) cartaCaballeroActiva;
+
+                    caballero.setOpciones(terreno.getId(), null); // null = víctima al azar según tu lógica
+
+                    caballero.ejecutarEfecto(Catan.getInstance().getManagerTurno().getJugadorActual(),
+                            Catan.getInstance().getTablero(),
+                            Catan.getInstance().getJugadores());
+
+                    cartaCaballeroActiva = null;
+                    marcarCartaJugada();
+                    mostrarAlerta("Caballero", "Ladrón movido y recurso robado con éxito.");
+
+                } else {
+                    Catan.getInstance().getManagerTurno().moverLadron(terreno.getId());
+                }
+
                 this.esperandoSeleccionHexagono = false;
                 this.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
-
-                // 3. SALIR DEL MODO ROBO (Esto restaura todos los botones)
                 setModoRobo(false);
-
-                // 4. Lógica de negocio
-                System.out.println("Ladrón movido al hexágono: " + terreno.getId());
-                // controlador.moverLadron(hexId);
-
-            } else {
-                System.out.println("Hexágono: " + terreno.getTipoTerreno());
+                actualizarInventario();
+                verificarGanador();
             }
         });
 
@@ -499,7 +448,6 @@ private Group agregarTerrenos() {
 
         this.btnBanca = crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
         this.btnIntercambioJugadores = crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
-        //this.btnJugarCarta = crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
         this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
             this.esperandoSeleccionHexagono = true;
             mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
@@ -661,8 +609,8 @@ private Group agregarTerrenos() {
         ManagerTurno manager = Catan.getInstance().getManagerTurno();
 
         String mensajeResultado = manager.manejarLanzamientoDados(suma);
-
-        actualizarInventario();
+        this.cartaDesarrolloJugadaEnTurno = false;
+        this.cartaSeleccionada = null;
 
         if (suma == 7) {
             mostrarAlerta("¡LADRÓN ACTIVO! (7)",
@@ -673,6 +621,12 @@ private Group agregarTerrenos() {
             actualizarEstadoBotones();
             habilitarBotonesJuegoNormal();
         }
+        actualizarInventario();
+    }
+    public void marcarCartaJugada() {
+        this.cartaDesarrolloJugadaEnTurno = true;
+        this.cartaSeleccionada = null; // Quitar selección
+        actualizarInventario(); // Esto repintará todo bloqueado
     }
 
     // Auxiliar para no repetir código de habilitar botones
@@ -681,6 +635,18 @@ private Group agregarTerrenos() {
         btnBanca.setDisable(false);
         btnJugarCarta.setDisable(false);
         if(btnTerminar != null) btnTerminar.setDisable(false);
+    }
+    public void deshabilitarBotonesJuegoNormal() {
+
+        btnIntercambioJugadores.setDisable(true);
+        btnBanca.setDisable(true);
+        btnJugarCarta.setDisable(true);
+        btnConstruirCamino.setDisable(true);
+        btnConstruirPoblado.setDisable(true);
+        btnConstruirCiudad.setDisable(true);
+        btnComprarCarta.setDisable(true);
+        //btnMoverLadron.setDisable(true);
+        //if(btnTerminar != null) btnTerminar.setDisable(false);
     }
 
     public void habilitarMoverLadron(boolean habilitar) {
@@ -736,12 +702,11 @@ private Group agregarTerrenos() {
 
         Jugador jugadorActual;
         try {
-            jugadorActual = Catan.getInstance().getManagerTurno().getJugadorActual();
-        } catch (Exception e) {
-            return;
-        }
+            jugadorActual = this.enFaseInicial ?
+                    Catan.getInstance().getManagerTurno().getJugadorActualInicial() :
+                    Catan.getInstance().getManagerTurno().getJugadorActual();
+        } catch(Exception e) { return; }
 
-        // Actualizar Label del Nombre y Color
         if (this.lblNombreJugadorActual != null) {
             this.lblNombreJugadorActual.setText(jugadorActual.getNombre());
             try {
@@ -751,44 +716,112 @@ private Group agregarTerrenos() {
             }
         }
 
-        // --- A. LLENAR RECURSOS ---
         this.contenedorRecursos.getChildren().addAll(
-                crearFichaConImagen("Madera", jugadorActual.cantidadMadera(), "madera.jpg", "#228B22"),
+                crearFichaConImagen("Madera",   jugadorActual.cantidadMadera(),   "madera.jpg",   "#228B22"),
                 crearFichaConImagen("Ladrillo", jugadorActual.cantidadLadrillo(), "ladrilo.jpg", "#B22222"),
-                crearFichaConImagen("Lana", jugadorActual.cantidadLana(), "lana.jpg", "#7CB342"),
-                crearFichaConImagen("Grano", jugadorActual.cantidadGrano(), "grano.jpg", "#FFD700"),
-                crearFichaConImagen("Mineral", jugadorActual.cantidadMineral(), "piedra.jpg", "#708090")
+                crearFichaConImagen("Lana",     jugadorActual.cantidadLana(),     "lana.jpg",     "#7CB342"),
+                crearFichaConImagen("Grano",    jugadorActual.cantidadGrano(),    "grano.jpg",    "#FFD700"),
+                crearFichaConImagen("Mineral",  jugadorActual.cantidadMineral(),  "piedra.jpg",   "#708090")
         );
 
-        // --- LLENAR CARTAS DE DESARROLLO ---
-
         List<CartaDesarrollo> mano = jugadorActual.obtenerMano();
+
+        boolean puedeJugar = !this.cartaDesarrolloJugadaEnTurno;
 
         for (int i = 0; i < mano.size(); i++) {
             CartaDesarrollo carta = mano.get(i);
 
-            String nombreCarta = carta.getClass().getSimpleName().replace("Carta", "");
-            String imagenCarta = nombreCarta.toLowerCase() + ".jpg"; // caballero.jpg, monopolio.jpg...
+            String nombre = "";
+            String img = "";
+            String color = "#A9A9A9";
+
+            if (carta instanceof edu.fiuba.algo3.modelo.Cartas.CartaCaballero) {
+                nombre = "Caballero"; img = "caballero.jpg"; color = "#708090";
+            } else if (carta instanceof edu.fiuba.algo3.modelo.Cartas.CartaMonopolio) {
+                nombre = "Monopolio"; img = "monopolio.jpg"; color = "#90EE90";
+            } else if (carta instanceof edu.fiuba.algo3.modelo.Cartas.CartaDescubrimiento) {
+                nombre = "Descubr."; img = "descubrimiento.jpg"; color = "#FFD700";
+            } else if (carta instanceof edu.fiuba.algo3.modelo.Cartas.CartaConstruccionCarreteras) {
+                nombre = "Carreteras"; img = "carreteras.jpg"; color = "#FFD700";
+            } else if (carta instanceof edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria) {
+                nombre = "Punto Vic."; img = "PV.jpg"; color = "#FFD700";
+            }
+
+            boolean habilitada = puedeJugar;
+
+            if (carta instanceof edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria) {
+                habilitada = false;
+            }
 
             ControladorJugarCarta controlador = new ControladorJugarCarta(Catan.getInstance(), this, i);
 
-            VBox botonCarta = crearBotonCartaReal(nombreCarta, imagenCarta, controlador);
+            VBox botonCarta = crearCartaInteractiva(nombre, 1, img, color, habilitada, controlador);
 
             this.contenedorCartasDesarrollo.getChildren().add(botonCarta);
         }
     }
+
     private VBox crearBotonCartaReal(String nombre, String imagen, EventHandler<ActionEvent> controlador) {
         VBox ficha = crearFichaConImagen(nombre, 1, imagen, "#A9A9A9");
+        return ficha;
+    }
+    private VBox crearCartaSmart(String nombre, int cantidad, String img, String color, boolean habilitada) {
+        VBox carta = crearFichaConImagen(nombre, cantidad, img, color);
 
-        ficha.setCursor(javafx.scene.Cursor.HAND);
+        if (cantidad <= 0) {
+            carta.setDisable(true);
+            carta.setOpacity(0.3); // Muy transparente
+            return carta;
+        }
 
-        ficha.setOnMouseClicked(e -> {
-            ficha.setEffect(new DropShadow(10, Color.GOLD));
+        if (!habilitada) {
+            carta.setDisable(true);
+            carta.setOpacity(0.6);
+            carta.setStyle(carta.getStyle() + "-fx-border-color: gray;"); // Borde gris
+            return carta;
+        }
+
+        carta.setCursor(Cursor.HAND);
+        carta.setOnMouseClicked(e -> {
+            if (nombre.equals(this.cartaSeleccionada)) {
+                this.cartaSeleccionada = null;
+                carta.setStyle(carta.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"));
+            } else {
+                this.cartaSeleccionada = nombre;
+                ((javafx.scene.layout.HBox) carta.getParent()).getChildren().forEach(n ->
+                        n.setStyle(n.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"))
+                );
+                carta.setStyle(carta.getStyle().replace("-fx-border-color: white;", "-fx-border-color: yellow;"));
+            }
+        });
+
+        return carta;
+    }
+    private VBox crearCartaInteractiva(String nombre, int cantidad, String nombreImagen, String colorFondoHex, boolean turnoHabilitado, EventHandler<ActionEvent> controlador) {
+
+        VBox carta = crearFichaConImagen(nombre, cantidad, nombreImagen, colorFondoHex);
+
+        if (cantidad <= 0) {
+            carta.setDisable(true);
+            carta.setOpacity(0.4);
+            return carta;
+        }
+
+        if (!turnoHabilitado) {
+            carta.setDisable(true);
+            carta.setOpacity(0.7);
+            return carta;
+        }
+
+        carta.setCursor(Cursor.HAND);
+
+        carta.setOnMouseClicked(e -> {
+            carta.setEffect(new DropShadow(10, Color.GOLD));
 
             controlador.handle(null);
         });
 
-        return ficha;
+        return carta;
     }
 
 
@@ -796,8 +829,12 @@ private Group agregarTerrenos() {
 
 
 
+    public String getCartaSeleccionada() {
+        return this.cartaSeleccionada;
+    }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
+
+    public void mostrarAlerta(String titulo, String mensaje) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
@@ -1106,33 +1143,51 @@ private Group agregarTerrenos() {
 
         ManagerTurno manager = Catan.getInstance().getManagerTurno();
         try {
-            if (!manager.haTerminadoFaseInicial()) {
-                //EL MANAGER COLOCA Y AVANZA EL TURNO INTERNAMENTE
-                manager.colocacionInicial(coord);
+            if (carreterasGratisPendientes > 0) {
+                Jugador actual = manager.getJugadorActual();
 
-                // Limpiamos sugerencias visuales y redibujamos el tablero
+                actual.setEstrategiaDePago(new edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoGratuito());
+                actual.construirCarretera(Catan.getInstance().getTablero(), coord);
+                actual.setEstrategiaDePago(new edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoEstandar());
+
+                carreterasGratisPendientes--;
+
                 grupoSugestiones.getChildren().clear();
                 dibujarElementos();
 
-                //Llamamos al gestor de flujo.
-                // Como el manager ya avanzó el turno en el paso 1,
-                // este método leerá el NUEVO jugador y actualizará el cartel.
-                gestionarFlujoFaseInicial();
+                if (carreterasGratisPendientes > 0) {
+                    mostrarAlerta("Carreteras", "¡Te queda 1 carretera gratis!");
+                    mostrarLugaresCamino();
+                } else {
+                    mostrarAlerta("Carreteras", "Carta finalizada.");
+                    marcarCartaJugada();
+                    actualizarInventario();
+                    verificarGanador();
+                }
+                return;
+            }
 
+            if (!manager.haTerminadoFaseInicial()) {
+                manager.colocacionInicial(coord);
+                grupoSugestiones.getChildren().clear();
+                dibujarElementos();
+                gestionarFlujoFaseInicial();
             } else {
-                // Lógica Juego Normal
                 manager.construirCarretera(coord);
                 grupoSugestiones.getChildren().clear();
                 dibujarElementos();
                 actualizarInventario();
                 actualizarEstadoBotones();
-                this.getScene().setCursor(Cursor.DEFAULT);
+                verificarGanador();
             }
 
-        } catch (Exception | ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
+        } catch (Exception | ConstruccionExistenteException | ReglaConstruccionException e) {
             mostrarAlerta("Error", e.getMessage());
+        } catch (ReglaDistanciaException e) {
+            throw new RuntimeException(e);
         }
     }
+
     private void ejecutarMejoraCiudad(Coordenada coord) {
         ManagerTurno manager = Catan.getInstance().getManagerTurno();
         try {
@@ -1227,8 +1282,15 @@ private Group agregarTerrenos() {
                     Line camino = new Line(x1, y1, x2, y2);
                     camino.setStrokeWidth(6);
 
+
+                    Color colorJugador = Color.BLACK;
+                    try {
+                        String hex = lado.getPropietario().getColor();
+                        colorJugador = Color.web(hex);
+                    } catch (Exception e) { }
+
                     // Color c = Color.web(lado.getConstruccion().getColorActual().getColor());
-                    camino.setStroke(Color.BLACK); // Color por defecto si no tienes getter directo
+                    camino.setStroke(colorJugador);
                     grupoConstrucciones.getChildren().add(camino);
                 }
             }
@@ -1275,8 +1337,6 @@ private Group agregarTerrenos() {
         Tablero tablero = Catan.getInstance().getTablero();
         Terreno t = tablero.getTerrenos().get(coord.numHex());
 
-        // Si es un borde exterior (null), intentamos buscar un vecino válido
-        // (Opcional: implementar búsqueda de vecinos si t es null, pero por ahora devolvemos null)
         if (t == null) return null;
 
         Axial pos = t.getPosicion();
@@ -1298,6 +1358,42 @@ private Group agregarTerrenos() {
         StackPane d1 = crearDadoVisual(valor1);
         StackPane d2 = crearDadoVisual(valor2);
         this.contenedorDadosVisuales.getChildren().addAll(d1, d2);
+    }
+
+    public void activarModoCarreterasGratis(CartaConstruccionCarreteras carta) {
+        this.carreterasGratisPendientes = 2;
+        this.cartaCarreterasActiva = carta;
+
+        mostrarLugaresCamino();
+    }
+
+    public void setModoCaballero(CartaDesarrollo carta) {
+        this.cartaCaballeroActiva = carta;
+    }
+
+    public void verificarGanador() {
+        try {
+            Jugador actual = Catan.getInstance().getManagerTurno().getJugadorActual();
+
+            int puntos = actual.totalPuntos();
+
+            this.setRight(crearPanelDerecho());
+
+            if (puntos >= 10) {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                alert.setTitle("¡JUEGO TERMINADO!");
+                alert.setHeaderText("¡VICTORIA PARA " + actual.getNombre().toUpperCase() + "!");
+                alert.setContentText("Ha alcanzado " + puntos + " Puntos de Victoria.\n¡Felicitaciones!");
+
+                alert.setOnHidden(evt -> {
+                    if (this.stage != null) this.stage.close();
+                    System.exit(0);
+                });
+                alert.show();
+            }
+        } catch (Exception e) {
+            System.out.println("Error verificando ganador: " + e.getMessage());
+        }
     }
 
 

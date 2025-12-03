@@ -21,6 +21,9 @@ abstract public class CartaDesarrollo {
         );
     }
 
+    public boolean estaDisponible() {
+        return this.estado.sePuedeUsar();
+    }
     protected CartaDesarrollo(IEstadoCarta estado) {
         this.estado = estado;
     }

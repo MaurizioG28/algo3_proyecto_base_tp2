@@ -34,6 +34,7 @@ public class ControladorTerminarTurno implements EventHandler<ActionEvent> {
         // Esto hace que cambie el nombre, el color y las cartas del panel inferior
         vista.actualizarInventario();
         vista.actualizarEstadoBotones();
+        vista.deshabilitarBotonesJuegoNormal();
 
         // 3. Gestionar botones
         this.botonLanzar.setDisable(false); // Habilitar dados para el nuevo jugador

@@ -1,0 +1,75 @@
+[33ma1ef4e7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev-mauriziovista2[m[33m)[m HEAD@{0}: commit (merge): Merge remote-tracking branch 'origin/dev-mauriziovista2' into dev-mauriziovista2
+[33md65c6f0[m HEAD@{1}: commit: subo funcioanmiento de cartas
+[33m5b9d762[m HEAD@{2}: merge origin/dev-mauriziovista2: Fast-forward
+[33m41320d4[m HEAD@{3}: commit: subo vista
+[33mba806cc[m HEAD@{4}: commit: subo vista
+[33m3da17f1[m HEAD@{5}: checkout: moving from Nicolas-Singleton1 to dev-mauriziovista2
+[33m268bfef[m[33m ([m[1;31morigin/Nicolas-Singleton1[m[33m, [m[1;32mNicolas-Singleton1[m[33m)[m HEAD@{6}: checkout: moving from dev-mauriziovista2 to Nicolas-Singleton1
+[33m3da17f1[m HEAD@{7}: checkout: moving from dev-mauriziovista2 to dev-mauriziovista2
+[33m3da17f1[m HEAD@{8}: branch: Reset to origin/dev-mauriziovista2
+[33m3da17f1[m HEAD@{9}: reset: moving to HEAD
+[33m3da17f1[m HEAD@{10}: reset: moving to HEAD
+[33m3da17f1[m HEAD@{11}: commit: arreglo comercio con banca en la vista
+[33mb977c43[m HEAD@{12}: commit: subo funcionando intercambio de jugadores, falta arreglar itnercambio con la banca.
+[33mb40178d[m HEAD@{13}: commit (merge): Merge remote-tracking branch 'refs/remotes/origin/dev-tomas' into dev-mauriziovista2
+[33m41f6a70[m HEAD@{14}: commit: agrego la opcion de comprar cartas, y reparto recursos solo para testear
+[33mcedb9f4[m HEAD@{15}: commit: subo funcionalidad de mover ladron cuadno sale 7
+[33m5f92660[m HEAD@{16}: commit: subo tabler
+[33m83af6c7[m HEAD@{17}: commit (merge): Merge remote-tracking branch 'refs/remotes/origin/Nicolas-Singleton1' into dev-mauriziovista2
+[33m7b3733f[m HEAD@{18}: commit (merge): Merge remote-tracking branch 'refs/remotes/origin/Nicolas-Singleton' into dev-mauriziovista2
+[33m4ec3bc9[m HEAD@{19}: commit: subo inventario del jugador parte visual.Falta agregar controladores para usar la carta, acomodar detalles visuales de dimensiones de la ventana y los contenedores.
+[33m31fd8db[m[33m ([m[1;32mdev[m[33m)[m HEAD@{20}: merge refs/remotes/origin/dev: Fast-forward
+[33me667808[m HEAD@{21}: checkout: moving from dev-maurizioVista to dev-mauriziovista2
+[33m4e46cc1[m[33m ([m[1;32mdev-maurizioVista[m[33m)[m HEAD@{22}: checkout: moving from dev to dev-maurizioVista
+[33m31fd8db[m[33m ([m[1;32mdev[m[33m)[m HEAD@{23}: merge origin/dev: Merge made by the 'ort' strategy.
+[33me667808[m HEAD@{24}: checkout: moving from dev-mauriziovista2 to dev
+[33me667808[m HEAD@{25}: checkout: moving from dev to dev-mauriziovista2
+[33me667808[m HEAD@{26}: commit: corrijo y borro comentarios
+[33m81a0ef0[m HEAD@{27}: commit: Subo Vista intercambio, jugadores y banca ademas coloco la logica del dado y turno,
+[33m3d827b6[m HEAD@{28}: checkout: moving from dev to dev
+[33m3d827b6[m HEAD@{29}: branch: Reset to origin/dev
+[33m3d827b6[m HEAD@{30}: merge origin/dev: Fast-forward
+[33m22e8c3e[m HEAD@{31}: checkout: moving from dev-maurizioVista to dev
+[33m4e46cc1[m[33m ([m[1;32mdev-maurizioVista[m[33m)[m HEAD@{32}: checkout: moving from dev to dev-maurizioVista
+[33m4e46cc1[m[33m ([m[1;32mdev-maurizioVista[m[33m)[m HEAD@{33}: checkout: moving from Rama-Nicolas-Maurizio-merge-Tomas to dev
+[33m98d3c1e[m[33m ([m[1;31morigin/Rama-Nicolas-Maurizio-merge-Tomas[m[33m, [m[1;32mdev-maurizio[m[33m, [m[1;32mRama-Nicolas-Maurizio-merge-Tomas[m[33m)[m HEAD@{34}: checkout: moving from Rama-Nicolas-Maurizio-merge-Tomas to Rama-Nicolas-Maurizio-merge-Tomas
+[33m98d3c1e[m[33m ([m[1;31morigin/Rama-Nicolas-Maurizio-merge-Tomas[m[33m, [m[1;32mdev-maurizio[m[33m, [m[1;32mRama-Nicolas-Maurizio-merge-Tomas[m[33m)[m HEAD@{35}: branch: Reset to origin/Rama-Nicolas-Maurizio-merge-Tomas
+[33m98d3c1e[m[33m ([m[1;31morigin/Rama-Nicolas-Maurizio-merge-Tomas[m[33m, [m[1;32mdev-maurizio[m[33m, [m[1;32mRama-Nicolas-Maurizio-merge-Tomas[m[33m)[m HEAD@{36}: checkout: moving from Rama-Nicolas-Maurizio-merge-Tomas to Rama-Nicolas-Maurizio-merge-Tomas
+[33m98d3c1e[m[33m ([m[1;31morigin/Rama-Nicolas-Maurizio-merge-Tomas[m[33m, [m[1;32mdev-maurizio[m[33m, [m[1;32mRama-Nicolas-Maurizio-merge-Tomas[m[33m)[m HEAD@{37}: branch: Reset to origin/Rama-Nicolas-Maurizio-merge-Tomas
+[33m98d3c1e[m[33m ([m[1;31morigin/Rama-Nicolas-Maurizio-merge-Tomas[m[33m, [m[1;32mdev-maurizio[m[33m, [m[1;32mRama-Nicolas-Maurizio-merge-Tomas[m[33m)[m HEAD@{38}: checkout: moving from dev-maurizio to Rama-Nicolas-Maurizio-merge-Tomas
+[33m98d3c1e[m[33m ([m[1;31morigin/Rama-Nicolas-Maurizio-merge-Tomas[m[33m, [m[1;32mdev-maurizio[m[33m, [m[1;32mRama-Nicolas-Maurizio-merge-Tomas[m[33m)[m HEAD@{39}: merge refs/remotes/origin/Rama-Nicolas-Maurizio-merge-Tomas: Fast-forward
+[33m1f3aef3[m[33m ([m[1;31morigin/dev-maurizio[m[33m)[m HEAD@{40}: commit: ControladorReiniciarJuego para cuando finalice el juego se de la opcion de volver a empezar de 0
+[33m473b404[m HEAD@{41}: commit: subo actualizacion vista, agrego efectos sonido y musica
+[33m1249770[m HEAD@{42}: merge origin/dev-maurizio: Fast-forward
+[33macd0221[m HEAD@{43}: merge origin/dev-maurizio: Merge made by the 'ort' strategy.
+[33mb213f1e[m HEAD@{44}: commit: subo progreso de interfaz inicial, de esto falta arreglar el reproductos de efectos y de musica, de mensaje de ayuda agregar la info de ayuda de las reglas de juego
+[33mde1e309[m HEAD@{45}: commit: ServicioComercio vende carreteras
+[33ma0e40aa[m HEAD@{46}: commit: ServicioComercio vende carreteras
+[33m864bf24[m HEAD@{47}: commit: ARREGLAMOS CONSTRUIR.
+[33m6e1a2b1[m HEAD@{48}: commit: SACO MAZO OCULTO DEL MODELO. FALTA ARREGLAR EL TEST 4
+[33mf2a1c5a[m HEAD@{49}: merge refs/remotes/origin/dev: Merge made by the 'ort' strategy.
+[33m93b1806[m HEAD@{50}: commit (merge): Merge remote-tracking branch 'refs/remotes/origin/dev' into dev-maurizio
+[33md0789bd[m HEAD@{51}: reset: moving to HEAD
+[33md0789bd[m HEAD@{52}: commit: arregglo cosas
+[33m1e9865e[m HEAD@{53}: commit (merge): Merge branch 'refs/heads/Maurizio-vista' into dev-maurizio
+[33m0753919[m HEAD@{54}: commit: MODIFICO TEST Y SIMPLIFICO CODIGO.
+[33mb66087e[m HEAD@{55}: commit: agrego test de servicio de comercio donde jugador compra una carta y se verifica el consumo de recuros
+[33m48e8993[m HEAD@{56}: commit: agrego test de servicio de comercio donde jugador compra una carta y se verifica el consumo de recuros
+[33mcf3220f[m HEAD@{57}: commit: PASO A SERVICIO DE COMERCIO LA FUNCIONALIDAD DE MAZO OCULTO.
+[33mf67dd49[m HEAD@{58}: commit: commit
+[33m75864e2[m HEAD@{59}: merge refs/remotes/origin/Tablero_factory-union-Tomas: Fast-forward
+[33m6050eaf[m HEAD@{60}: commit: commit
+[33m367bcfc[m HEAD@{61}: commit: subo caso de uso mejorarpoblado y serviciocomercio contransaccion
+[33mbd78254[m HEAD@{62}: commit: subo caso erificar la producción correcta: 1 recurso por Poblado, 2 recursos por Ciudad, adyacentes al número lanzado. refactorizado aplicando un test de integracion
+[33m5a40909[m HEAD@{63}: merge refs/remotes/origin/Tablero_factory: Merge made by the 'ort' strategy.
+[33m458d0e3[m HEAD@{64}: merge refs/remotes/origin/Tablero_factory: updating HEAD
+[33m458d0e3[m HEAD@{65}: checkout: moving from dev to dev-maurizio
+[33m458d0e3[m HEAD@{66}: merge origin/dev: Fast-forward
+[33mc908125[m[33m ([m[1;32mmaurizio-refact-dev[m[33m)[m HEAD@{67}: checkout: moving from Maurizio-bancaIntercambio to dev
+[33md0c3dbb[m[33m ([m[1;32mMaurizio-bancaIntercambio[m[33m)[m HEAD@{68}: commit: commit con errores
+[33m76f70bc[m HEAD@{69}: checkout: moving from dev to Maurizio-bancaIntercambio
+[33mc908125[m[33m ([m[1;32mmaurizio-refact-dev[m[33m)[m HEAD@{70}: checkout: moving from maurizio-refact-dev to dev
+[33mc908125[m[33m ([m[1;32mmaurizio-refact-dev[m[33m)[m HEAD@{71}: checkout: moving from Maurizio to maurizio-refact-dev
+[33mcd1b7da[m[33m ([m[1;32mMaurizio[m[33m)[m HEAD@{72}: checkout: moving from dev to Maurizio
+[33mc908125[m[33m ([m[1;32mmaurizio-refact-dev[m[33m)[m HEAD@{73}: checkout: moving from maurizio-recursos to dev
+[33md8cf044[m[33m ([m[1;32mmaurizio-recursos[m[33m)[m H
