@@ -15,6 +15,7 @@ import edu.fiuba.algo3.vistas.PantallaPrincipal;
 import edu.fiuba.algo3.vistas.botones.BotonGenericoAccionUsuario;
 import edu.fiuba.algo3.vistas.botones.BotonLanzarDados;
 import edu.fiuba.algo3.vistas.botones.BotonTerminarTurno;
+import edu.fiuba.algo3.vistas.botones.BotonVertice;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -22,6 +23,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -107,14 +109,17 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
             hexagon.getPoints().addAll(xPos, yPos);
         }
 
+        Tooltip tooltip = new Tooltip("hex("+terreno.getPosicion().q + "," + terreno.getPosicion().r +")");
         String nombreImg = terreno.getTipoTerreno().toLowerCase();
         try {
+
             Image img = new Image("file:" + System.getProperty("user.dir") + "/src/main/resources/imagenes/" + nombreImg + ".jpg");
             hexagon.setFill(new ImagePattern(img));
         } catch (Exception e) {
             hexagon.setFill(Color.BROWN); // Color fallback si falla la imagen
         }
         hexagon.setStroke(Color.BLACK);
+        Tooltip.install(hexagon, tooltip);
         return hexagon;
     }
 
@@ -122,7 +127,7 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
 
         Group root = new Group();
         //Set<Cubic> visitados = new HashSet<>();
-        Map<Cubic, Circle> verticesUI = new HashMap<>();
+        //Map<Cubic, Circle> verticesUI = new HashMap<>();
         //Map<Coordenada, Vertice> verticesModelo = this.catan.getTablero().getVertices();
 
         for (Terreno terreno : terrenos.values()) {
@@ -144,53 +149,26 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
 //
 
                 // --- COORDENADAS DE LA PUNTA DEL HEXÁGONO ---
-                double angle = (Math.PI / 6) + i * (Math.PI / 3);
+                double angle = (Math.PI / 2) + i * (Math.PI / 3) + Math.PI;
 
                 double px = cx + hexRadius * Math.cos(angle);
                 double py = cy + hexRadius * Math.sin(angle);
 
-                Circle punto = crearVerticeInteractivo(px, py, vCubic, terreno.getId(), i);
+                Tooltip tooltip = new Tooltip("vertice ("+terreno.getId()+","+i+")");
 
-                verticesUI.put(vCubic, punto);
-                root.getChildren().add(punto);
+                BotonVertice btn = new BotonVertice(px, py, vCubic, terreno.getId(), i);
+                Tooltip.install(btn, tooltip);
+                new ControladorVertice(btn, catan.getManagerTurno());
+
+                root.getChildren().add(btn);
             }
         }
-        this.verticesUI=verticesUI;
+        //this.verticesUI=verticesUI;
         return root;
     }
 
 
-    private Circle crearVerticeInteractivo(double x, double y, Cubic coordenadaCubic, int terrenoId, int verticeIndex) {
-        Circle circulo = new Circle(x, y, 8);
 
-        // Estilo inicial
-        circulo.setFill(Color.TRANSPARENT);
-        circulo.setStroke(Color.BLACK);
-        circulo.setStrokeWidth(1);
-
-        // Guardar datos en propiedades
-        circulo.getProperties().put("coordenadaCubic", coordenadaCubic);
-        circulo.getProperties().put("terrenoId", terrenoId);
-        circulo.getProperties().put("verticeIndex", verticeIndex);
-
-        // Efectos hover
-        circulo.setOnMouseEntered(e -> {
-            //if (!estaConstruido(circulo)) {
-                circulo.setFill(Color.rgb(255, 255, 255, 0.3));
-            //}
-        });
-
-        circulo.setOnMouseExited(e -> {
-            //if (!estaConstruido(circulo)) {
-                circulo.setFill(Color.TRANSPARENT);
-            //}
-        });
-
-        // Evento de clic
-        //circulo.setOnMouseClicked(this::manejarClicVertice);
-
-        return circulo;
-    }
 
 
     private VBox crearPanelDerecho() {
