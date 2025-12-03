@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.vistas.vistas;
 
 import edu.fiuba.algo3.controllers.*;
+import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Catan;
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
@@ -361,14 +362,12 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         this.btnConstruirCiudad = crearBotonAccion("Construir\nCiudad",new ControladorConstruirCiudad(Catan.getInstance()));
         this.btnBanca = crearBotonAccion("Banca",new ControladorBanca(Catan.getInstance(),this));
         this.btnIntercambioJugadores = crearBotonAccion("Intercambio",new ControladorIntercambioEntreJugadores(Catan.getInstance(),this));
-        this.btnJugarCarta = crearBotonAccion("JUGAR\nCARTA",new ControladorJugarCarta(Catan.getInstance(),this));
 
         acciones.add(this.btnConstruirPoblado,0,0);
         acciones.add(this.btnConstruirCamino,1,0);
         acciones.add(this.btnConstruirCiudad,2,0);
         acciones.add(this.btnBanca,0,1);
         acciones.add(this.btnIntercambioJugadores,1,1);
-        acciones.add(this.btnJugarCarta,2,1);
 
 
         panel.setSpacing(30); // Acercamos los botones al inventario
@@ -571,7 +570,9 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         Jugador jugadorActual;
         try {
             jugadorActual = Catan.getInstance().getManagerTurno().getJugadorActual();
-        } catch (Exception e) { return; }
+        } catch (Exception e) {
+            return;
+        }
 
         if (this.lblNombreJugadorActual != null) {
             this.lblNombreJugadorActual.setText(jugadorActual.getNombre());
@@ -580,54 +581,43 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
 
         // --- A. LLENAR RECURSOS ---
         this.contenedorRecursos.getChildren().addAll(
-                crearFichaConImagen("Madera",   jugadorActual.cantidadMadera(),   "madera.jpg",   "#228B22"),
+                crearFichaConImagen("Madera", jugadorActual.cantidadMadera(), "madera.jpg", "#228B22"),
                 crearFichaConImagen("Ladrillo", jugadorActual.cantidadLadrillo(), "ladrilo.jpg", "#B22222"),
-                crearFichaConImagen("Lana",     jugadorActual.cantidadLana(),     "lana.jpg",     "#7CB342"),
-                crearFichaConImagen("Grano",    jugadorActual.cantidadGrano(),    "grano.jpg",    "#FFD700"),
-                crearFichaConImagen("Mineral",   jugadorActual.cantidadMineral(),  "piedra.jpg",   "#708090")
+                crearFichaConImagen("Lana", jugadorActual.cantidadLana(), "lana.jpg", "#7CB342"),
+                crearFichaConImagen("Grano", jugadorActual.cantidadGrano(), "grano.jpg", "#FFD700"),
+                crearFichaConImagen("Mineral", jugadorActual.cantidadMineral(), "piedra.jpg", "#708090")
         );
 
         // --- LLENAR CARTAS DE DESARROLLO ---
-        // Aquí deberías obtener la cantidad real que tiene el jugador.
-        // Por ahora pongo "1" o "0" como ejemplo visual.
 
-        // Ejemplo: int cantCaballeros = jugadorActual.getCantidadCartas("Caballero");
-        int cantCaballeros = 0;
-        int cantMonopolio = 0;
-        int cantPuntos = 0;
-        int cantDesc = 0;
-        int cantCarreteras = 0;
+        List<CartaDesarrollo> mano = jugadorActual.obtenerMano();
 
-        this.contenedorCartasDesarrollo.getChildren().addAll(
-                crearCartaInteractiva("Caballero", cantCaballeros, "caballero.jpg", "#A9A9A9"), // Gris Claro
-                crearCartaInteractiva("Monopolio", cantMonopolio,  "monopolio.jpg", "#90EE90"), // Verde Claro
-                crearCartaInteractiva("Punto Vic.", cantPuntos,    "PV.jpg",     "#FFD700"),
-                crearCartaInteractiva("Descubrimiento",cantDesc,"descubrimiento.jpg","#FFD700"),
-                crearCartaInteractiva("Carreteras",cantCarreteras,"carreteras.jpg","#FFD700")
-        );
+        for (int i = 0; i < mano.size(); i++) {
+            CartaDesarrollo carta = mano.get(i);
+
+            String nombreCarta = carta.getClass().getSimpleName().replace("Carta", "");
+            String imagenCarta = nombreCarta.toLowerCase() + ".jpg"; // caballero.jpg, monopolio.jpg...
+
+            ControladorJugarCarta controlador = new ControladorJugarCarta(Catan.getInstance(), this, i);
+
+            VBox botonCarta = crearBotonCartaReal(nombreCarta, imagenCarta, controlador);
+
+            this.contenedorCartasDesarrollo.getChildren().add(botonCarta);
+        }
     }
-    private VBox crearCartaInteractiva(String nombre, int cantidad, String nombreImagen, String colorFondoHex) {
-        VBox carta = crearFichaConImagen(nombre, cantidad, nombreImagen, colorFondoHex);
+    private VBox crearBotonCartaReal(String nombre, String imagen, EventHandler<ActionEvent> controlador) {
+        VBox ficha = crearFichaConImagen(nombre, 1, imagen, "#A9A9A9");
 
-        // 2. Le agregamos la interactividad (Click)
-        carta.setOnMouseClicked(e -> {
-            this.cartaSeleccionada = nombre;
-            System.out.println("Seleccionaste: " + nombre);
+        ficha.setCursor(javafx.scene.Cursor.HAND);
 
-            //  Limpiar borde de todas las cartas hermanas
-            HBox padre = (HBox) carta.getParent();
-            padre.getChildren().forEach(n -> {
+        ficha.setOnMouseClicked(e -> {
+            ficha.setEffect(new DropShadow(10, Color.GOLD));
 
-                n.setStyle(n.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"));
-            });
-
-            carta.setStyle(carta.getStyle().replace("-fx-border-color: white;", "-fx-border-color: yellow;"));
+            controlador.handle(null);
         });
 
-        return carta;
+        return ficha;
     }
-
-
 
 
 

@@ -17,4 +17,8 @@ public class PuntoDeVictoria extends CartaDesarrollo implements CartaProductora{
     public int obtenerCantidadPV() {
         return 1;
     }
+    @Override
+    public boolean esConsumible() {
+        return false; // Esta se queda en la mano para siempre
+    }
 }

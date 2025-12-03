@@ -49,5 +49,7 @@ public class CartaCaballero extends CartaDesarrollo {
         this.idDestino = idDestino;
         this.victima = jugadorVictima;
     }
-
+    public boolean esConsumible() {
+        return true;
+    }
 }

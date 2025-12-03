@@ -226,7 +226,7 @@ public class Jugador {
             return true;
         }
         return false;
-      
+    }
     public void terminarTurno() {
         this.cartas.actualizarEstadoDeCartas();
     }
@@ -250,5 +250,17 @@ public class Jugador {
 
     public int getPuntajeVictoria() {
         return this.puntos.obtenerPuntos();
+    }
+
+    public CartaDesarrollo verCarta(int indiceCarta) {
+        return this.cartas.verCarta(indiceCarta);
+    }
+
+    public List<CartaDesarrollo> obtenerMano() {
+        return this.cartas.getCartas();
+    }
+
+    public void descartarCarta(int indice) {
+        this.cartas.eliminarCarta(indice);
     }
 }

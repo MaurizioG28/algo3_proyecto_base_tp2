@@ -34,4 +34,5 @@ public class CartaDescubrimiento extends CartaDesarrollo {
         }
         this.recursosDeseados = recursos;
     }
+
 }

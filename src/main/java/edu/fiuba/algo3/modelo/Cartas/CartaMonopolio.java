@@ -26,6 +26,7 @@ public class CartaMonopolio extends CartaDesarrollo {
 
         // 2. Ejecutar Lógica (Iteración sobre colección)
         for (Jugador victima : oponentes) {
+
             // Evitar robarse a sí mismo si la lista incluye al jugador activo
             if (!victima.equals(jugadorActivo)) {
 
@@ -40,20 +41,4 @@ public class CartaMonopolio extends CartaDesarrollo {
         }
     }
 
-
-    public void ejecutarMonopolio(Jugador ladron, List<Jugador> todasLasVictimas) {
-        if (this.recursoElegido == null) {
-            throw new IllegalStateException("Debes elegir un recurso antes de jugar Monopolio");
-        }
-
-        for (Jugador victima : todasLasVictimas) {
-
-            if (!victima.equals(ladron)) {
-                int botin = victima.entregarTodo(this.recursoElegido);
-
-
-                ladron.recibirBotin(this.recursoElegido, botin);
-            }
-        }
-    }
 }

@@ -31,4 +31,7 @@ abstract public class CartaDesarrollo {
         this.estado.comprobarUso();
     }
     public abstract void ejecutarEfecto(Jugador jugador, Tablero tablero, List<Jugador> oponentes);
+    public boolean esConsumible() {
+        return true;
+    }
 }

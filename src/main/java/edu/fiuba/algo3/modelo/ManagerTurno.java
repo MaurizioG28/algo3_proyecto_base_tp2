@@ -104,6 +104,9 @@ public class ManagerTurno {
             if(cartaSeleccionada instanceof CartaCaballero){
                 this.granCaballeria.registrarCaballeroJugado(jugadorActual);
             }
+            if(cartaSeleccionada.esConsumible()){
+                jugadorActual.descartarCarta(indice);
+            }
         }catch (RuntimeException e){
             throw e;
         }
@@ -289,4 +292,7 @@ public class ManagerTurno {
         return tablero;
     }
 
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
 }

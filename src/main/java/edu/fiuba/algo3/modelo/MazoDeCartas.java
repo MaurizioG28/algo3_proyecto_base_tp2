@@ -4,6 +4,7 @@ import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Cartas.PuntoDeVictoria;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MazoDeCartas {
     ArrayList<CartaDesarrollo> cartas = new ArrayList<>();
@@ -34,5 +35,24 @@ public class MazoDeCartas {
         for (CartaDesarrollo carta : this.cartas) {
             carta.nuevoTurno();
         }
+    }
+
+    public CartaDesarrollo verCarta(int indiceCarta) {
+        if (indiceCarta < 0 || indiceCarta >= cartas.size()) {
+            throw new IllegalArgumentException("Indice de carta inválido: " + indiceCarta);
+        }
+        return cartas.get(indiceCarta);
+    }
+
+    public List<CartaDesarrollo> getCartas() {
+        return this.cartas;
+    }
+
+    public void eliminarCarta(int indice) {
+        if (indice < 0 || indice >= cartas.size()) {
+            throw new IllegalArgumentException("No se puede eliminar la carta: índice " + indice + " fuera de rango.");
+        }
+
+        cartas.remove(indice);
     }
 }
