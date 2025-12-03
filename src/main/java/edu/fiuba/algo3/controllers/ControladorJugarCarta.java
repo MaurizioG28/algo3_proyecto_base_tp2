@@ -4,7 +4,11 @@ import edu.fiuba.algo3.modelo.Catan;
 import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Jugador;
 import edu.fiuba.algo3.modelo.Recursos.*;
+import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
+import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
+import edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoEstandar;
+import edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoGratuito;
 import edu.fiuba.algo3.vistas.vistas.VistaTablero2;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,6 +25,8 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
     private final VistaTablero2 vista;
     private final int indiceCarta;
 
+    private int caminosColocadosExitosamente = 0;
+
     public ControladorJugarCarta(Catan catan, VistaTablero2 vista, int indiceCarta) {
         this.catan = catan;
         this.vista = vista;
@@ -32,14 +38,12 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
         try {
             Jugador jugadorActual = catan.getManagerTurno().getJugadorActual();
 
-
             CartaDesarrollo carta = jugadorActual.verCarta(indiceCarta);
 
             boolean configuracionExitosa = configurarCartaSegunTipo(carta, jugadorActual);
 
             if (configuracionExitosa) {
                 catan.getManagerTurno().usarUnaCarta(indiceCarta);
-
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Carta Jugada", "El efecto se aplicó correctamente.");
                 vista.actualizarInventario();
             }
@@ -50,7 +54,6 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
             e.printStackTrace();
         }
     }
-
 
     private boolean configurarCartaSegunTipo(CartaDesarrollo carta, Jugador jugadorActual) {
 
@@ -72,27 +75,74 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
             return true;
 
         } else if (carta instanceof CartaDescubrimiento) {
-            TipoDeRecurso r1 = pedirRecurso("Año de Abundancia", "Elija el 1er recurso:");
-            if (r1 == null) return false;
+            TipoDeRecurso r1Seleccion = pedirRecurso("Año de Abundancia", "Elija el 1er recurso:");
+            if (r1Seleccion == null) return false;
 
-            TipoDeRecurso r2 = pedirRecurso("Año de Abundancia", "Elija el 2do recurso:");
-            if (r2 == null) return false;
+            TipoDeRecurso r2Seleccion = pedirRecurso("Año de Abundancia", "Elija el 2do recurso:");
+            if (r2Seleccion == null) return false;
 
-            ((CartaDescubrimiento) carta).setRecursosDeseados(List.of(r1, r2));
+            TipoDeRecurso r1Real = r1Seleccion.nuevo(1);
+            TipoDeRecurso r2Real = r2Seleccion.nuevo(1);
+
+            ((CartaDescubrimiento) carta).setRecursosDeseados(List.of(r1Real, r2Real));
             return true;
 
         } else if (carta instanceof CartaConstruccionCarreteras) {
-            Coordenada c1 = pedirCoordenada("Carretera 1");
-            if (c1 == null) return false;
 
-            Coordenada c2 = pedirCoordenada("Carretera 2");
-            if (c2 == null) return false;
 
-            ((CartaConstruccionCarreteras) carta).setCoordenadas(c1, c2);
-            return true;
+            jugadorActual.setEstrategiaDePago(new EstrategiaPagoGratuito());
+            this.caminosColocadosExitosamente = 0;
+
+            vista.activarModoSeleccionCaminos((coordenadaClickeada) -> {
+                procesarIntentoDeConstruccion(coordenadaClickeada, jugadorActual);
+            });
+
+            return false;
         }
 
         return true;
+    }
+
+
+    private void procesarIntentoDeConstruccion(Coordenada coord, Jugador jugador) {
+        try {
+
+            jugador.construirCarretera(catan.getTablero(), coord);
+
+            caminosColocadosExitosamente++;
+
+            vista.dibujarElementos();
+            vista.actualizarInventario();
+
+            if (caminosColocadosExitosamente < 2) {
+                mostrarAlerta(Alert.AlertType.INFORMATION, "¡Bien!", "Camino colocado. Selecciona 1 más.");
+            } else {
+                finalizarUsoDeCarta(jugador);
+            }
+
+        } catch (Exception e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Posición Inválida", e.getMessage());
+        } catch (ConstruccionExistenteException e) {
+            throw new RuntimeException(e);
+        } catch (ReglaConstruccionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void finalizarUsoDeCarta(Jugador jugador) {
+        jugador.setEstrategiaDePago(new EstrategiaPagoEstandar());
+
+        vista.desactivarModoSeleccion();
+
+        try {
+            jugador.descartarCarta(indiceCarta);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        vista.actualizarInventario();
+        mostrarAlerta(Alert.AlertType.INFORMATION, "Completo", "Has construido tus 2 carreteras gratuitas.");
     }
 
 
@@ -101,27 +151,6 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
                 new Madera(0), new Ladrillo(0), new Lana(0), new Grano(0), new Mineral(0)
         );
         return pedirOpcion(titulo, mensaje, opciones);
-    }
-
-    private Coordenada pedirCoordenada(String titulo) {
-        TextInputDialog dialog = new TextInputDialog("x,y");
-        dialog.setTitle(titulo);
-        dialog.setHeaderText("Ingrese coordenadas");
-        dialog.setContentText("Formato x,y (ej: 3,4):");
-
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                String[] partes = result.get().split(",");
-                return new Coordenada(
-                        Integer.parseInt(partes[0].trim()),
-                        Integer.parseInt(partes[1].trim())
-                );
-            } catch (Exception e) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error", "Formato incorrecto.");
-            }
-        }
-        return null;
     }
 
     private Integer pedirEntero(String titulo, String mensaje) {
@@ -141,12 +170,10 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
 
     private <T> T pedirOpcion(String titulo, String mensaje, List<T> opciones) {
         if (opciones.isEmpty()) return null;
-
         ChoiceDialog<T> dialog = new ChoiceDialog<>(opciones.get(0), opciones);
         dialog.setTitle(titulo);
         dialog.setHeaderText(null);
         dialog.setContentText(mensaje);
-
         Optional<T> result = dialog.showAndWait();
         return result.orElse(null);
     }
@@ -158,5 +185,4 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
 }

@@ -340,12 +340,9 @@ public class ManagerTurno {
         boolean alguienDescarto = false;
 
         for (Jugador j : jugadores) {
-            // Usamos el método existente en tu clase Jugador
             if (j.totalRecursos() > 7) {
-                // Este método ya hace la lógica de borrar del almacén y retorna qué borró
                 Map<TipoDeRecurso, Integer> descartado = j.descartarMitadDeRecursos();
 
-                // Calculamos cuánto perdió para el mensaje
                 int cantidadPerdida = descartado.values().stream().mapToInt(Integer::intValue).sum();
 
                 reporte.append("- ").append(j.getNombre())
@@ -359,5 +356,6 @@ public class ManagerTurno {
         }
         return reporte.toString();
     }
+
 
 }

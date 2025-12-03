@@ -87,6 +87,13 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     private String cartaSeleccionada = null;
     private Circle ladronVisual;
     private boolean esperandoSeleccionHexagono = false;
+    private List<Line> caminosProvisorios = new ArrayList<>();
+    public interface AccionAlSeleccionarCaminos {
+        void ejecutar(Coordenada c1, Coordenada c2);
+    }
+
+    private AccionAlSeleccionarCaminos callbackSeleccionCarta = null;
+    private List<Coordenada> cacheSeleccionCarta = new ArrayList<>();
 
     public VistaTablero2(Stage stage, PantallaPrincipal pantallaPrincipal) {
 
@@ -1090,6 +1097,13 @@ private Group agregarTerrenos() {
     }
 
     private void ejecutarConstruccionCamino(Coordenada coord) {
+        // --- INTERCEPCIÓN PARA CARTA ---
+        if (this.callbackSeleccionCamino != null) {
+            this.callbackSeleccionCamino.alSeleccionar(coord);
+            return;
+        }
+
+
         ManagerTurno manager = Catan.getInstance().getManagerTurno();
         try {
             if (!manager.haTerminadoFaseInicial()) {
@@ -1286,5 +1300,55 @@ private Group agregarTerrenos() {
         this.contenedorDadosVisuales.getChildren().addAll(d1, d2);
     }
 
+
+    private Line dibujarCaminoProvisorio(Coordenada coordLado) {
+        double hexRadius = 50;
+
+        Tablero tablero = Catan.getInstance().getTablero();
+        Terreno t = tablero.getTerrenos().get(coordLado.numHex());
+
+        if (t == null) return null;
+
+        Axial pos = t.getPosicion();
+        double xCentro = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
+        double yCentro = hexRadius * 1.5 * pos.r;
+
+        int indexActual = coordLado.indice();
+        int indexSiguiente = (indexActual + 1) % 6;
+
+        double angle1 = (Math.PI / 2) + indexActual * (Math.PI / 3) + Math.PI;
+        double angle2 = (Math.PI / 2) + indexSiguiente * (Math.PI / 3) + Math.PI;
+
+        double x1 = xCentro + hexRadius * Math.cos(angle1);
+        double y1 = yCentro + hexRadius * Math.sin(angle1);
+        double x2 = xCentro + hexRadius * Math.cos(angle2);
+        double y2 = yCentro + hexRadius * Math.sin(angle2);
+
+        Line caminoVisual = new Line(x1, y1, x2, y2);
+        caminoVisual.setStrokeWidth(8);
+        caminoVisual.setStroke(Color.DODGERBLUE);
+        caminoVisual.setOpacity(0.7);
+        caminoVisual.setMouseTransparent(true);
+
+        return caminoVisual;
+    }
+    private AccionAlSeleccionarCamino callbackSeleccionCamino = null;
+    public interface AccionAlSeleccionarCamino {
+        void alSeleccionar(Coordenada coord);
+    }
+    public void activarModoSeleccionCaminos(AccionAlSeleccionarCamino accion) {
+        this.callbackSeleccionCamino = accion;
+        this.contenedorCartasDesarrollo.setDisable(true);
+        if (this.btnTerminar != null) this.btnTerminar.setDisable(true);
+        mostrarAlerta("Carta de Carreteras", "Selecciona un camino válido en el mapa.");
+        mostrarLugaresCamino();
+    }
+    public void desactivarModoSeleccion() {
+        this.callbackSeleccionCamino = null;
+        grupoSugestiones.getChildren().clear();
+        this.contenedorCartasDesarrollo.setDisable(false);
+        actualizarEstadoBotones();
+        if (this.btnTerminar != null) this.btnTerminar.setDisable(false);
+    }
 
 }

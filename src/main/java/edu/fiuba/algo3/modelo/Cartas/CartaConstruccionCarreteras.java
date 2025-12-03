@@ -28,17 +28,26 @@ public class CartaConstruccionCarreteras extends CartaDesarrollo {
             throw new IllegalStateException("Faltan coordenadas para construir carreteras.");
         }
 
+        if (tablero.tieneCarreteraEn(coordenada1) || tablero.tieneCarreteraEn(coordenada2)) {
+            throw new RuntimeException("Uno de los lugares seleccionados ya está ocupado. Seleccione lugares vacíos.");
+        }
+
         jugadorActivo.setEstrategiaDePago(new EstrategiaPagoGratuito());
 
         try {
             jugadorActivo.construirCarretera(tablero, coordenada1);
-            jugadorActivo.construirCarretera(tablero, coordenada2);
+
+            try {
+                jugadorActivo.construirCarretera(tablero, coordenada2);
+            } catch (Exception e) {
 
 
-        } catch (ConstruccionExistenteException e) {
-            throw new RuntimeException(e);
-        } catch (ReglaConstruccionException e) {
-            throw new RuntimeException(e);
+                System.out.println("Advertencia: La segunda carretera no pudo construirse (" + e.getMessage() + "), pero la primera sí. Carta consumida.");
+            }
+
+        } catch (Exception | ConstruccionExistenteException | ReglaConstruccionException e) {
+
+            throw new RuntimeException(e.getMessage());
         } finally {
             jugadorActivo.setEstrategiaDePago(new EstrategiaPagoEstandar());
         }
