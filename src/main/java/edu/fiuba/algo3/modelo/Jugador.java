@@ -1,7 +1,6 @@
 package edu.fiuba.algo3.modelo;
 
-import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
-import edu.fiuba.algo3.modelo.Cartas.CartaProductora;
+import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
@@ -11,6 +10,7 @@ import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
 import edu.fiuba.algo3.modelo.Tablero.Tablero;
 import edu.fiuba.algo3.modelo.constructoresDeCarreteras.EstrategiaPagoEstandar;
 import edu.fiuba.algo3.modelo.constructoresDeCarreteras.IEstrategiaDePago;
+import edu.fiuba.algo3.modelo.interfaces.FichaComprable;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -137,21 +137,21 @@ public class Jugador {
         return puntos.obtenerPuntos();
     }
 
-    public void intercambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, Jugador jugador2, TipoDeRecurso recursoRecibir, int cantidadRecibir) throws RecursosIsuficientesException {
-        if(!jugador2.cambiar(recursoRecibir, cantidadRecibir, recursoEntregar, cantidadEntregar)){
+    public void intercambiar(TipoDeRecurso recursoEntregar, Jugador jugador2, TipoDeRecurso recursoRecibir) throws RecursosIsuficientesException {
+        if(!jugador2.cambiar(recursoRecibir, recursoEntregar)){
             throw new RecursosIsuficientesException("El segundo jugador no tiene suficientes recursos.");
         }
-        if(!this.cambiar(recursoEntregar, cantidadEntregar, recursoRecibir, cantidadRecibir)){
-            jugador2.cambiar(recursoEntregar, cantidadEntregar, recursoRecibir, cantidadRecibir);
+        if(!this.cambiar(recursoEntregar, recursoRecibir)){
+            jugador2.cambiar(recursoEntregar, recursoRecibir);
             throw new RecursosIsuficientesException("El primer jugador no tiene suficientes recursos.");
         };
     }
 
-    public boolean cambiar(TipoDeRecurso recursoEntregar, int cantidadEntregar, TipoDeRecurso recursoRecibir, int cantidadRecibir) {
-        if(!this.almacenJugador.quitar(recursoEntregar,cantidadEntregar)) {
+    public boolean cambiar(TipoDeRecurso recursoEntregar, TipoDeRecurso recursoRecibir) {
+        if(!this.almacenJugador.quitar(recursoEntregar)) {
             return false;
         }
-        this.almacenJugador.agregarRecurso(recursoRecibir.nuevo(cantidadRecibir));
+        this.almacenJugador.agregarRecurso(recursoRecibir);
         return true;
     }
     public int cantidadMadera() {
@@ -172,6 +172,26 @@ public class Jugador {
 
     public int cantidadMineral() {
         return this.cantidadRecurso(new Mineral(0));
+    }
+
+    public int cantidadCartasCaballero() {
+        return cartas.contarPor(c -> c instanceof CartaCaballero);
+    }
+
+    public int cantidadCartasMonopolio() {
+        return cartas.contarPor(c -> c instanceof CartaMonopolio);
+    }
+
+    public int cantidadCartasDescubrimiento() {
+        return cartas.contarPor(c -> c instanceof CartaDescubrimiento);
+    }
+
+    public int cantidadCartasCarreteras() {
+        return cartas.contarPor(c -> c instanceof CartaConstruccionCarreteras);
+    }
+
+    public int cantidadCartasPuntoVictoria() {
+        return cartas.contarPor(c -> c instanceof PuntoDeVictoria);
     }
 
 
@@ -240,6 +260,7 @@ public class Jugador {
     public int contarRecursos() {
         return this.almacenJugador.totalRecursos();
     }
+
     public void construirCarretera(Tablero tablero, Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {
         List<TipoDeRecurso> costo = List.of(new Madera(1), new Ladrillo(1));
 
@@ -248,8 +269,8 @@ public class Jugador {
         tablero.colocarEnLado(new Carretera(this.color), coordenada);
     }
 
-    public int getPuntajeVictoria() {
-        return this.puntos.obtenerPuntos();
+    public boolean necesitoPagar(FichaComprable comprable) {
+        return estrategiaDePago.seDebePagar(comprable);
     }
 
     public CartaDesarrollo verCarta(int indiceCarta) {

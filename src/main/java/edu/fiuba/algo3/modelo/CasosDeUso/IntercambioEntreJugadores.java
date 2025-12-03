@@ -26,12 +26,10 @@ public class IntercambioEntreJugadores {
         this.manager = new ManagerTurno(jugadores, tablero, random);
     }
 
-    public void intercambiar(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, Jugador jugador2, TipoDeRecurso recursoArecibir, int cantidadArecibir) throws RecursosIsuficientesException {
+    public void intercambiar(Jugador jugador1, TipoDeRecurso recursoAentregar, Jugador jugador2, TipoDeRecurso recursoArecibir) throws RecursosIsuficientesException {
         manager.intercambiarConJugadores(jugador1,
                 recursoAentregar,
-                cantidadAentregar,
                 recursoArecibir,
-                cantidadArecibir,
                 List.of(jugador2));
 
     }

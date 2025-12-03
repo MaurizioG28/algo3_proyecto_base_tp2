@@ -1,14 +1,17 @@
 package edu.fiuba.algo3.controllers;
 
 import edu.fiuba.algo3.modelo.Catan;
+import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class ControladorProponerTrato implements EventHandler<ActionEvent> {
-    private final Catan catan;
     private final Stage ventana;
 
     // Referencias a los inputs de la vista
@@ -18,11 +21,10 @@ public class ControladorProponerTrato implements EventHandler<ActionEvent> {
     private final ComboBox<String> cmbRecursoPido;
     private final TextField txtCantPido;
 
-    public ControladorProponerTrato(Catan catan, Stage ventana,
+    public ControladorProponerTrato(Stage ventana,
                                     ComboBox<String> cmbJugador,
                                     ComboBox<String> cmbDoy, TextField txtDoy,
                                     ComboBox<String> cmbPido, TextField txtPido) {
-        this.catan = catan;
         this.ventana = ventana;
         this.cmbJugadorDestino = cmbJugador;
         this.cmbRecursoDoy = cmbDoy;
@@ -53,8 +55,19 @@ public class ControladorProponerTrato implements EventHandler<ActionEvent> {
                 return;
             }
 
-            // Convertir Strings a Objetos del Modelo
-            // Jugador jugadorDestino = catan.buscarJugador(nombreDestino);
+
+            Jugador jugadorActual = Catan.getInstance().getManagerTurno().getJugadorActual();
+            Jugador jugadorDestino = Catan.getInstance().getManagerTurno().buscarJugador(nombreDestino); // Implementar búsqueda
+
+            TipoDeRecurso recursoDoy = crearRecurso(recursoDoyStr, cantDoy); // Con cantidad real
+            TipoDeRecurso recursoPido = crearRecurso(recursoPidoStr, cantPido);
+
+
+            jugadorActual.intercambiar( recursoDoy,jugadorDestino, recursoPido);
+
+
+//            mostrarAlerta("Éxito", "Intercambio realizado.");
+            ventana.close();
 
             System.out.println("PROPUESTA: Doy " + cantDoy + " " + recursoDoyStr +
                     " a " + nombreDestino +
@@ -69,6 +82,20 @@ public class ControladorProponerTrato implements EventHandler<ActionEvent> {
             System.out.println("Error: Ingresa números válidos en las cantidades.");
         } catch (Exception e) {
             System.out.println("Error en el intercambio: " + e.getMessage());
+        } catch (RecursosIsuficientesException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private TipoDeRecurso crearRecurso(String nombre,int cantidad) {
+        switch (nombre.toLowerCase()) {
+            case "madera": return new Madera(cantidad);
+            case "ladrillo": return new Ladrillo(cantidad);
+            case "lana": return new Lana(cantidad);
+            case "grano": return new Grano(cantidad);
+            case "mineral": return new Mineral(cantidad);
+            default: throw new IllegalArgumentException("Recurso desconocido");
         }
     }
 }

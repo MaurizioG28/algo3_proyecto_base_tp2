@@ -16,4 +16,8 @@ public class Produccion {
     public boolean tieneMismoNumero(int numero) {
         return this.numero == numero;
     }
+    public int valor() {
+        return this.numero;
+    }
+
 }

@@ -112,6 +112,18 @@ public class ManagerTurno {
         }
     }
 
+    public void intercambiarConBanca(TipoDeRecurso recursoDoy, TipoDeRecurso recursoRecibo) {
+        Jugador jugadorActual = getJugadorActual();
+
+
+        int tasa = jugadorActual.mejorTasaPara(recursoDoy);
+
+        TipoDeRecurso aEntregar = recursoDoy.nuevo(tasa);
+
+        TipoDeRecurso aRecibir = recursoRecibo.nuevo(1);
+
+        servicioComercio.intercambiarConBanco(jugadorActual, aEntregar, aRecibir);
+    }
 
 
     public Jugador getJugadorActual() {
@@ -227,12 +239,10 @@ public class ManagerTurno {
         this.servicioComercio = servicioComercio;
     }
 
-    public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, TipoDeRecurso recursoArecibir, int cantidadArecibir, List<Jugador> jugadores){
+    public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, TipoDeRecurso recursoArecibir, List<Jugador> jugadores){
         servicioComercio.intercambiarConJugadores(jugador1,
                 recursoAentregar,
-                cantidadAentregar,
                 recursoArecibir,
-                cantidadArecibir,
                 jugadores);
     }
 
@@ -295,4 +305,59 @@ public class ManagerTurno {
     public List<Jugador> getJugadores() {
         return jugadores;
     }
+    public Jugador buscarJugador(String nombre) {
+        return this.jugadores.stream()
+                .filter(jugador -> jugador.getNombre().equalsIgnoreCase(nombre)) // Compara ignorando mayúsculas
+                .findFirst()
+                .orElse(null); // Retorna null si no existe
+    }
+
+    public boolean estaEsperandoPobladoInicial() {
+        return this.esperandoPoblado;
+    }
+
+    public boolean haTerminadoFaseInicial() {
+        return ordenInicial.haTerminado();
+    }
+
+    // En ManagerTurno.java
+    public Coordenada getUltimaCoordenadaPoblado() {
+        return this.ultimaCoordenadaPoblado;
+    }
+
+    public String manejarLanzamientoDados(int suma) {
+        if (suma == 7) {
+            // Devuelve el reporte de quién perdió cartas
+            return aplicarReglaDescartePorSiete();
+        } else {
+            repartirDividendos(suma);
+            return "Se produjeron recursos.";
+        }
+    }
+
+    private String aplicarReglaDescartePorSiete() {
+        StringBuilder reporte = new StringBuilder();
+        boolean alguienDescarto = false;
+
+        for (Jugador j : jugadores) {
+            // Usamos el método existente en tu clase Jugador
+            if (j.totalRecursos() > 7) {
+                // Este método ya hace la lógica de borrar del almacén y retorna qué borró
+                Map<TipoDeRecurso, Integer> descartado = j.descartarMitadDeRecursos();
+
+                // Calculamos cuánto perdió para el mensaje
+                int cantidadPerdida = descartado.values().stream().mapToInt(Integer::intValue).sum();
+
+                reporte.append("- ").append(j.getNombre())
+                        .append(" descartó ").append(cantidadPerdida).append(" cartas.\n");
+                alguienDescarto = true;
+            }
+        }
+
+        if (!alguienDescarto) {
+            return "Nadie tenía más de 7 cartas.";
+        }
+        return reporte.toString();
+    }
+
 }

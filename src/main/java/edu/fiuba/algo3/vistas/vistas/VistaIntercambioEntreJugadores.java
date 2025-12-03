@@ -97,8 +97,7 @@ public class VistaIntercambioEntreJugadores extends Stage {
         btnConfirmar.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
 
         // CONECTAMOS EL CONTROLADOR ESPECÍFICO
-        ControladorProponerTrato controlador = new ControladorProponerTrato(
-                catan, this,
+        ControladorProponerTrato controlador = new ControladorProponerTrato(this,
                 cmbJugadores,
                 cmbRecursoDoy, txtCantDoy,
                 cmbRecursoPido, txtCantPido

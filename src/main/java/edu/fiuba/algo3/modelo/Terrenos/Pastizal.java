@@ -6,7 +6,7 @@ import edu.fiuba.algo3.modelo.Recursos.Mineral;
 public class Pastizal extends TipoTerreno {
 
     public Pastizal(){
-        super(new Lana(0));
+        super(new Lana(1));
     }
     @Override public String nombre() { return "Pastizal"; }
 }

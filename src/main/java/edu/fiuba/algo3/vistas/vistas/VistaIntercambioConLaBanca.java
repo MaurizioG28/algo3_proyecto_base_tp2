@@ -1,6 +1,7 @@
 package edu.fiuba.algo3.vistas.vistas;
 
 import edu.fiuba.algo3.modelo.Catan;
+import edu.fiuba.algo3.modelo.Recursos.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -67,8 +68,10 @@ public class VistaIntercambioConLaBanca extends Stage {
 
             if (recursoDoy != null && recursoPido != null) {
                 try {
-                    // LLAMADA AL MODELO
-                    // catan.intercambiarConBanca(recursoDoy, recursoPido);
+                    TipoDeRecurso recursoQueDoy = crearRecursoPorNombre(recursoDoy);
+                    TipoDeRecurso recursoQuePido = crearRecursoPorNombre(recursoPido);
+
+                    Catan.getInstance().getManagerTurno().intercambiarConBanca(recursoQueDoy, recursoQuePido);
                     System.out.println("Intercambio Banca: Doy " + recursoDoy + " -> Recibo " + recursoPido);
                     this.close();
                 } catch (Exception ex) {
@@ -120,6 +123,16 @@ public class VistaIntercambioConLaBanca extends Stage {
                             "-fx-border-color: #dabf11;" +
                             "-fx-border-width: 6;"
             );
+        }
+    }
+    private TipoDeRecurso crearRecursoPorNombre(String nombre) {
+        switch (nombre.toLowerCase()) {
+            case "madera": return new Madera(0);
+            case "ladrillo": return new Ladrillo(0);
+            case "lana": return new Lana(0);
+            case "grano": return new Grano(0);
+            case "mineral": return new Mineral(0);
+            default: throw new IllegalArgumentException("Recurso desconocido");
         }
     }
 

@@ -28,6 +28,7 @@ public class CasoDeUsoCartasDesarrolloTest {
     private ServicioComercio servicioComercio;
     private List<Terreno> hexagonos;
     private List<Produccion> fichasNumeradas;
+
     private void forzarCartaEnMazo(ManagerTurno manager, Banco banco, CartaDesarrollo cartaTrucada) {
         List<CartaDesarrollo> mazoTrucado = new ArrayList<>();
         mazoTrucado.add(cartaTrucada);

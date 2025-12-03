@@ -2,6 +2,7 @@ package edu.fiuba.algo3.modelo.Intercambios;
 
 import edu.fiuba.algo3.modelo.Cartas.*;
 import edu.fiuba.algo3.modelo.Color;
+import edu.fiuba.algo3.modelo.Contruccion.Carretera;
 import edu.fiuba.algo3.modelo.Contruccion.Ciudad;
 import edu.fiuba.algo3.modelo.Contruccion.Poblado;
 import edu.fiuba.algo3.modelo.Jugador;
@@ -98,7 +99,9 @@ public class ServicioComercio {
     public FichaComprable comprarObjeto(Jugador jugador, FichaComprable comprable) throws RecursosInsuficientesException {
         List<TipoDeRecurso> costo = comprable.costoRecursos();
 
-        procesarPago(jugador, costo);
+        if (jugador.necesitoPagar(comprable)) {
+            procesarPago(jugador, costo);
+        }
 
         return comprable;
     }
@@ -133,7 +136,7 @@ public class ServicioComercio {
 //
 //    }
 
-    public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno){
+    public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno) {
 
         List<TipoDeRecurso> costo = CartaDesarrollo.costoRecursos();
         procesarPago(comprador, costo);
@@ -144,15 +147,18 @@ public class ServicioComercio {
 
     // Método auxiliar para no repetir lógica de cobro
     private void procesarPago(Jugador jugador, List<TipoDeRecurso> costo) throws RecursosInsuficientesException {
-        jugador.pagar(costo);
 
         //Posible violacion de Tell Dont Ask
         //Jugador tienes esto ? -> "NO/Si" -> entonces hago esto
-//        for (TipoDeRecurso r : costo) {
-//            if (jugador.cantidadRecurso(r.nuevo(0)) < r.obtenerCantidad()) {
-//                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
-//            }
-//        }
+
+        //Ahora deberia estar resuelta en teoria
+        for (TipoDeRecurso r : costo) {
+            if (!jugador.suficienteCantidad(r)) {
+                throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());
+            }
+        }
+
+        jugador.pagar(costo);
 
         for (TipoDeRecurso recurso : costo) {
             int cantidad = recurso.obtenerCantidad();
@@ -193,10 +199,11 @@ public class ServicioComercio {
         reembolsar(jugador, recursosElegidos);
     }
 
-    public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, int cantidadAentregar, TipoDeRecurso recursoArecibir, int cantidadArecibir, List<Jugador> jugadores) {
+    //Esto fue cambiado para que la cantidad este directamente en el recurso pasado como parametro en vez de ser un int separado.
+    public void intercambiarConJugadores(Jugador jugador1, TipoDeRecurso recursoAentregar, TipoDeRecurso recursoArecibir, List<Jugador> jugadores) {
         for (Jugador jugador : jugadores) {
             try {
-                jugador1.intercambiar(recursoAentregar, cantidadAentregar, jugador, recursoArecibir, cantidadArecibir);
+                jugador1.intercambiar(recursoAentregar, jugador, recursoArecibir);
                 break;
             } catch (RecursosIsuficientesException ignored) {
             }

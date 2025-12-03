@@ -126,4 +126,17 @@ public class Vertice{
 
         return this.puerto.getPolitica();
     }
+    public boolean esCiudad() {
+        // Si no hay construcción, no es ciudad
+        if (this.tipo == null) {
+            return false;
+        }
+        // Verificamos si la instancia es de tipo Ciudad
+        return (this.tipo instanceof Ciudad);
+    }
+
+    public Construccion obtenerConstruccion() {
+        return this.tipo;
+    }
+
 }

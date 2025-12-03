@@ -25,7 +25,7 @@ public class CasoDeUsoIntercambiarRecursos {
 
         IntercambioEntreJugadores caso = new IntercambioEntreJugadores();
         try {
-            caso.intercambiar(jugador1, new Madera(0), 6, jugador2, new Grano(0), 1);
+            caso.intercambiar(jugador1, new Madera(6), jugador2, new Grano(1));
         } catch (RecursosIsuficientesException ignored) {
         }
 
@@ -51,7 +51,7 @@ public class CasoDeUsoIntercambiarRecursos {
 
         IntercambioEntreJugadores caso = new IntercambioEntreJugadores();
         try {
-            caso.intercambiar(jugador1, new Madera(0), 6, jugador2, new Grano(0), 1);
+            caso.intercambiar(jugador1, new Madera(6), jugador2, new Grano(1));
         } catch (RecursosIsuficientesException ignored) {
         }
 
@@ -77,7 +77,7 @@ public class CasoDeUsoIntercambiarRecursos {
 
         IntercambioEntreJugadores caso = new IntercambioEntreJugadores();
         try {
-            caso.intercambiar(jugador1, new Madera(0), 6, jugador2, new Grano(0), 1);
+            caso.intercambiar(jugador1, new Madera(6), jugador2, new Grano(1));
         } catch (RecursosIsuficientesException ignored) {
         }
 

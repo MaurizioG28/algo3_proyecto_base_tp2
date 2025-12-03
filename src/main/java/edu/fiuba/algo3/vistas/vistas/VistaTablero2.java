@@ -3,13 +3,17 @@ package edu.fiuba.algo3.vistas.vistas;
 import edu.fiuba.algo3.controllers.*;
 import edu.fiuba.algo3.modelo.Cartas.CartaDesarrollo;
 import edu.fiuba.algo3.modelo.Catan;
+
 import edu.fiuba.algo3.modelo.Intercambios.PoliticaDeIntercambio;
 import edu.fiuba.algo3.modelo.Recursos.*;
 import edu.fiuba.algo3.modelo.Jugador;
+import edu.fiuba.algo3.modelo.Intercambios.Puerto;
+import edu.fiuba.algo3.modelo.ManagerTurno;
 import edu.fiuba.algo3.modelo.Tablero.ConstruccionExistenteException;
 import edu.fiuba.algo3.modelo.Tablero.Dados;
+import edu.fiuba.algo3.modelo.Tablero.Factory.Axial;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Coordenada;
-import edu.fiuba.algo3.modelo.Tablero.Factory.Lado;
+
 import edu.fiuba.algo3.modelo.Tablero.Factory.ReglaConstruccionException;
 import edu.fiuba.algo3.modelo.Tablero.Factory.Vertice;
 import edu.fiuba.algo3.modelo.Tablero.ReglaDistanciaException;
@@ -23,9 +27,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -41,35 +47,46 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.geometry.Point2D;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos BorderPane
     private static final double ANCHO_VENTANA = 1280;
     private static final double ALTO_VENTANA = 720;
 
-    // Variable para controlar la selección de cartas
-    private String cartaSeleccionada = null;
+
     private HBox contenedorDadosVisuales;
     private Stage stage;
     private PantallaPrincipal pantallaPrincipal;
     private HBox contenedorRecursos;
     private HBox contenedorCartasDesarrollo;
     private Label lblNombreJugadorActual;
+    private Group grupoOverlay;
+    private boolean modoConstruccion = false;
 
+    private Group grupoConstrucciones; // Edificios reales (fijos)
+    private Group grupoSugestiones;    // Puntos/Líneas grises (temporales)
+    private Group grupoPuertos;
+
+
+    // botones
     private BotonGenericoAccionUsuario btnConstruirPoblado;
     private BotonGenericoAccionUsuario btnConstruirCamino;
     private BotonGenericoAccionUsuario btnConstruirCiudad;
     private BotonGenericoAccionUsuario btnBanca;
     private BotonGenericoAccionUsuario btnIntercambioJugadores;
     private BotonGenericoAccionUsuario btnJugarCarta;
-
+    private BotonGenericoAccionUsuario btnMoverLadron;
+    private BotonGenericoAccionUsuario btnComprarCarta;
     private BotonLanzarDados btnLanzar;
     private BotonTerminarTurno btnTerminar;
 
+    // estado y logica visual
     private Map<Coordenada, Point2D> mapaVisualVertices = new HashMap<>();
+    private String accionPendiente = null;
+    private boolean enFaseInicial = true;
+    private String cartaSeleccionada = null;
+    private Circle ladronVisual;
+    private boolean esperandoSeleccionHexagono = false;
 
     public VistaTablero2(Stage stage, PantallaPrincipal pantallaPrincipal) {
 
@@ -80,88 +97,191 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         contenedorMapa.setAlignment(Pos.CENTER);
         this.setCenter(contenedorMapa);
 
-        // DERECHA: Jugadores + Dados + Fin Turno
-        this.setRight(crearPanelDerecho());
-
         // ABAJO: Inventario + Acciones
         this.setBottom(crearPanelInferior());
 
+        // DERECHA: Jugadores + Dados + Fin Turno
+        this.setRight(crearPanelDerecho());
+
+
+        // 5. Initial Inventory Load
         actualizarInventario();
+
+        btnLanzar.setDisable(true);
+        btnTerminar.setDisable(true);
+        gestionarFlujoFaseInicial();
     }
 
-    private Group agregarTerrenos() {
+//    private Group agregarTerrenos() {
+//        Tablero tablero = Catan.getInstance().crearTablero();
+//        Map<Integer, Terreno> terrenos = tablero.getTerrenos();
+//
+//        Group root = new Group();
+//
+//        // Inicializamos las capas
+//        this.grupoPuertos = new Group();
+//        this.grupoConstrucciones = new Group();
+//        this.grupoSugestiones = new Group(); // Capa de interacción
+//
+//        double hexRadius = 50;
+//
+//        // Variables para guardar la posición inicial del ladrón
+//
+//        Terreno terrenoLadron = terrenos.get(tablero.getPosicionDelLadron());
+//        Axial pos = terrenoLadron.getPosicion();
+//        double q1 = pos.q;
+//        double r1 = pos.r;
+//
+//
+//        // axial → pixel
+//
+//        double xDesierto = hexRadius * Math.sqrt(3) * (q1 + r1 / 2.0);
+//        double yDesierto = hexRadius * 1.5 * r1;
+//
+//
+//        for (Terreno t : terrenos.values()) {
+//
+//            Axial pos1 = t.getPosicion();
+//            double q = pos1.q;
+//            double r = pos1.r;
+//
+//            // axial → pixel
+//
+//            double x = hexRadius * Math.sqrt(3) * (q + r / 2.0);
+//            double y = hexRadius * 1.5 * r;
+//
+//            Polygon hexagon = createHexagon(x, y, hexRadius,t);
+//            root.getChildren().add(hexagon);
+//
+//        }
+//
+//        dibujarPuertos(hexRadius);
+//        root.getChildren().add(this.grupoPuertos);
+//
+//        // 3. AGREGAR CAPAS SUPERIORES
+//        root.getChildren().add(this.grupoConstrucciones); // Casas reales
+//        root.getChildren().add(this.grupoSugestiones);    // Puntos de sugerencia (fantasmas)
+//        // --- CREAR LADRÓN ---
+//        // Lo colocamos en la coordenada que encontramos del desierto
+//        ladronVisual = new Circle(20, Color.web("#333333"));
+//        ladronVisual.setStroke(Color.BLACK);
+//        ladronVisual.setStrokeWidth(2);
+//        ladronVisual.setMouseTransparent(true); // IMPORTANTE: Para que los clicks pasen al hexágono de abajo
+//
+//        // Posición inicial detectada
+//        ladronVisual.setTranslateX(xDesierto);
+//        ladronVisual.setTranslateY(yDesierto);
+//
+//        root.getChildren().add(ladronVisual);
+//
+//        return root;
+//    }
+private Group agregarTerrenos() {
+    Tablero tablero = Catan.getInstance().getTablero();
+    if(tablero == null) tablero = Catan.getInstance().crearTablero();
 
-        Tablero tablero = Catan.getInstance().crearTablero();
-        Map<Integer, Terreno> terrenos = tablero.getTerrenos();
+    Map<Integer, Terreno> terrenos = tablero.getTerrenos();
+    Group root = new Group();
 
-        double centerY = 0;
-        double centerX = 0;
+    // Inicializar capas
+    this.grupoPuertos = new Group();
+    this.grupoConstrucciones = new Group();
+    this.grupoSugestiones = new Group();
 
-        Group root = new Group();
-        double hexRadius = 50;
+    double hexRadius = 50;
+    double xDesierto = 0;
+    double yDesierto = 0;
 
-        Polygon center = createHexagon(centerX, centerY, hexRadius, terrenos.get(1));
-        root.getChildren().add(center);
+    for (Terreno t : terrenos.values()) {
+        Axial pos = t.getPosicion();
+        double x = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
+        double y = hexRadius * 1.5 * pos.r;
 
-        for (int i = 0; i < 6; i++) {
-            double angle = 2.0 * Math.PI * i / 6;
-            double x = centerX + hexRadius * 1.8 * Math.cos(angle);
-            double y = centerY + hexRadius * 1.8 * Math.sin(angle);
-            Polygon hexagon = createHexagon(x, y, hexRadius, terrenos.get(i + 1));
-            root.getChildren().add(hexagon);
+        // 1. DIBUJAR HEXÁGONO
+        Polygon hexagon = createHexagon(x, y, hexRadius, t);
+        root.getChildren().add(hexagon);
+
+        // 2. DIBUJAR FICHA DE NÚMERO (Si produce algo)
+        if (!t.esDesierto() && t.getProduccion() != null) {
+
+            // Círculo beige de fondo
+            Circle ficha = new Circle(x, y, 15);
+            ficha.setFill(Color.BEIGE);
+            ficha.setStroke(Color.BLACK);
+            ficha.setStrokeWidth(1);
+            ficha.setMouseTransparent(true);
+
+            // Obtener el número
+            String textoNum = "";
+            int numero = 0;
+
+            try {
+                // Aquí usamos tu lógica
+                numero = t.getProduccion().valor();
+                textoNum = String.valueOf(numero); // <--- FALTABA ESTO: Convertir int a String
+            } catch (Exception e) {
+                textoNum = "?";
+            }
+
+            // Crear la etiqueta
+            Label lblNum = new Label(textoNum);
+            lblNum.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
+            lblNum.setMouseTransparent(true);
+
+            // Centrar el texto visualmente (ajuste fino)
+            // Si el número tiene 2 dígitos (10, 11, 12), lo movemos un poco más a la izquierda
+            double ajusteX = (numero > 9) ? 9 : 5;
+            lblNum.setTranslateX(x - ajusteX);
+            lblNum.setTranslateY(y - 9);
+
+            // Regla visual: 6 y 8 van en ROJO
+            if (numero == 6 || numero == 8) {
+                lblNum.setTextFill(Color.RED);
+            } else {
+                lblNum.setTextFill(Color.BLACK);
+            }
+
+            root.getChildren().addAll(ficha, lblNum);
         }
-        for (int i = 0; i < 12; i++) {
-            double angle = 2.0 * Math.PI * i / 12;
-            double x = centerX + hexRadius * 3.6 * Math.cos(angle);
-            double y = centerY + hexRadius * 3.6 * Math.sin(angle);
-            Polygon hexagon = createHexagon(x, y, hexRadius, terrenos.get(i + 7));
-            root.getChildren().add(hexagon);
+
+        // Guardar posición del desierto para el ladrón
+        if (t.esDesierto()) {
+            xDesierto = x;
+            yDesierto = y;
         }
-
-        Translate moverAbajo = new Translate(); moverAbajo.setY(25);
-        Translate moverAbajoDerecha = new Translate(); moverAbajoDerecha.setY(13); moverAbajoDerecha.setX(20);
-        Translate moverAbajoIzquierda = new Translate(); moverAbajoIzquierda.setY(13); moverAbajoIzquierda.setX(-20);
-        Translate moverArriba = new Translate(); moverArriba.setY(-25);
-        Translate moverArribaDerecha = new Translate(); moverArribaDerecha.setY(-13); moverArribaDerecha.setX(20);
-        Translate moverArribaIzquierda = new Translate(); moverArribaIzquierda.setY(-13); moverArribaIzquierda.setX(-20);
-
-        root.getChildren().get(8).getTransforms().add(moverArribaIzquierda);
-        root.getChildren().get(10).getTransforms().add(moverArriba);
-        root.getChildren().get(12).getTransforms().add(moverArribaDerecha);
-        root.getChildren().get(14).getTransforms().add(moverAbajoDerecha);
-        root.getChildren().get(16).getTransforms().add(moverAbajo);
-        root.getChildren().get(18).getTransforms().add(moverAbajoIzquierda);
-
-        return root;
     }
 
+    // 3. Agregar resto de capas
+    dibujarPuertos(hexRadius);
+
+    root.getChildren().add(this.grupoPuertos);
+    root.getChildren().add(this.grupoConstrucciones);
+    root.getChildren().add(this.grupoSugestiones);
+
+    // 4. Ladrón
+    ladronVisual = new Circle(15, Color.web("#333333"));
+    ladronVisual.setStroke(Color.BLACK);
+    ladronVisual.setStrokeWidth(2);
+    ladronVisual.setMouseTransparent(true);
+    ladronVisual.setTranslateX(xDesierto);
+    ladronVisual.setTranslateY(yDesierto);
+
+    root.getChildren().add(ladronVisual);
+
+    return root;
+}
+
+    // Método auxiliar simple para verificar el desierto
+    private boolean esDesierto(Terreno t) {
+        if (t == null) return false;
+        // Compara ignorando mayúsculas/minúsculas por seguridad
+        return t.getTipoTerreno().toString().equalsIgnoreCase("DESIERTO");
+    }
+
+
+    // He unificado tus métodos createHexagon y añadido lógica de Ladrón
     private Polygon createHexagon(double x, double y, double radius, Terreno terreno) {
         Polygon hexagon = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
-            double xPos = x + radius * Math.cos(angle);
-            double yPos = y + radius * Math.sin(angle);
-            hexagon.getPoints().addAll(xPos, yPos);
-        }
-
-        String nombreImg = terreno.getTipoTerreno().toLowerCase();
-        try {
-            Image img = new Image("file:" + System.getProperty("user.dir") + "/src/main/resources/imagenes/" + nombreImg + ".jpg");
-            hexagon.setFill(new ImagePattern(img));
-        } catch (Exception e) {
-            hexagon.setFill(Color.BROWN); // Color fallback si falla la imagen
-        }
-        hexagon.setStroke(Color.BLACK);
-        return hexagon;
-    }
-
-
-
-    // Modificamos para recibir el ID y guardar las coordenadas de los vértices
-    private Polygon createHexagon(double x, double y, double radius, Terreno terreno, int hexId) {
-        Polygon hexagon = new Polygon();
-
-        // Offset angular para "Pointy topped" (punta arriba) es Math.PI / 6 (30 grados)
         double angleOffset = Math.PI / 6;
 
         for (int i = 0; i < 6; i++) {
@@ -169,33 +289,59 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
             double xPos = x + radius * Math.cos(angle);
             double yPos = y + radius * Math.sin(angle);
             hexagon.getPoints().addAll(xPos, yPos);
-
-            // --- MAGIA AQUÍ ---
-            // Guardamos dónde está este vértice en la pantalla
-            // i = índice del vértice (0-5)
-            mapaVisualVertices.put(new Coordenada(hexId, i), new Point2D(xPos, yPos));
         }
 
-        // Estilos e Imagen (Igual que antes)
-        if(terreno != null) {
+        if (terreno != null) {
             String nombreImg = terreno.getTipoTerreno().toLowerCase();
             try {
-                // ... tu logica de imagen
-                // Si usas getClass().getResource es más seguro que System.getProperty
-                Image img = new Image(getClass().getResource("/imagenes/" + nombreImg + ".jpg").toExternalForm());
-                hexagon.setFill(new ImagePattern(img));
-            } catch (Exception e) {
-                hexagon.setFill(Color.BROWN);
-            }
+                // Intento de carga seguro
+                java.net.URL url = getClass().getResource("/imagenes/" + nombreImg + ".jpg");
+                if (url != null) {
+                    hexagon.setFill(new ImagePattern(new Image(url.toExternalForm())));
+                } else {
+                    hexagon.setFill(Color.BROWN);
+                }
+            } catch (Exception e) { hexagon.setFill(Color.BROWN); }
+        } else {
+            hexagon.setFill(Color.LIGHTGRAY);
         }
+
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2);
 
-        // Evento click para debuggear coordenadas (Opcional)
-        hexagon.setOnMouseClicked(e -> System.out.println("Hex ID: " + hexId));
+        hexagon.setOnMouseClicked(e -> {
+            if (this.esperandoSeleccionHexagono) {
+
+                // 1. Mover visualmente
+                moverLadronVisualmente(x, y);
+
+                // 2. Resetear estado de selección
+                this.esperandoSeleccionHexagono = false;
+                this.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
+
+                // 3. SALIR DEL MODO ROBO (Esto restaura todos los botones)
+                setModoRobo(false);
+
+                // 4. Lógica de negocio
+                System.out.println("Ladrón movido al hexágono: " + terreno.getId());
+                // controlador.moverLadron(hexId);
+
+            } else {
+                System.out.println("Hexágono: " + terreno.getTipoTerreno());
+            }
+        });
 
         return hexagon;
     }
+
+    public void moverLadronVisualmente(double x, double y) {
+        if (ladronVisual != null) {
+            ladronVisual.setTranslateX(x);
+            ladronVisual.setTranslateY(y);
+            ladronVisual.toFront(); // Lo traemos al frente por si acaso quedó tapado
+        }
+    }
+
 
 
     private VBox crearPanelDerecho() {
@@ -204,7 +350,6 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         panel.setPrefWidth(300);
         panel.setAlignment(Pos.TOP_CENTER);
 
-        // LISTA DE JUGADORES
         List<Jugador> jugadores = Catan.getInstance().getJugadores();
         for (Jugador j : jugadores) {
             HBox infoJugador = agregarJugador(j);
@@ -212,76 +357,56 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
             panel.getChildren().addAll(infoJugador, separador);
         }
 
-        //ESPACIADOR
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
         panel.getChildren().add(spacer);
 
-
-        // Los Dados (Visuales)
-        // Guardamos la referencia en la variable de clase para actualizarla luego
         this.contenedorDadosVisuales = new HBox(15);
         this.contenedorDadosVisuales.setAlignment(Pos.CENTER);
-        actualizarDadosVisuales(1, 1);
-        Dados dados = new Dados();
 
+
+
+        Dados dados = new Dados(); // O obtener de Catan.getInstance()
         ControladorLanzarDados controladorLanzar = new ControladorLanzarDados(dados, this);
-         this.btnLanzar = new BotonLanzarDados(controladorLanzar);
+        this.btnLanzar = new BotonLanzarDados(controladorLanzar);
 
-
-        ControladorTerminarTurno controladorTerminarTurno = new ControladorTerminarTurno( btnLanzar, this);
+        ControladorTerminarTurno controladorTerminarTurno = new ControladorTerminarTurno(btnLanzar, this);
         this.btnTerminar = new BotonTerminarTurno(controladorTerminarTurno);
-
         btnTerminar.setDisable(true);
 
         controladorLanzar.setBoton(btnLanzar);
-        controladorLanzar.setBotonTerminar(btnTerminar); // <--- Para habilitarlo
+        controladorLanzar.setBotonTerminar(btnTerminar);
+        controladorTerminarTurno.setBotonTerminar(btnTerminar);
 
-        // El controlador de terminar necesita conocer a su propio botón
-        controladorTerminarTurno.setBotonTerminar(btnTerminar); //  Para deshabilitarlo
 
-        // Contenedor de Botones
         HBox contenedorBotones = new HBox(15);
         contenedorBotones.setAlignment(Pos.CENTER);
         contenedorBotones.getChildren().addAll(btnLanzar, btnTerminar);
 
-        //Armar Zona Final
         VBox zonaControl = new VBox(20);
         zonaControl.setAlignment(Pos.CENTER);
         zonaControl.getChildren().addAll(this.contenedorDadosVisuales, contenedorBotones);
 
         panel.getChildren().add(zonaControl);
-
+        soloDibujarDados(1, 1);
         return panel;
     }
 
     private HBox agregarJugador(Jugador jugador) {
         HBox jugadorBox = new HBox();
         jugadorBox.setPadding(new Insets(10));
-
-
         Color colorFondoJavaFX = Color.web(jugador.getColor().getColor());
-
-        //fondo con esquinas redondeadas
         jugadorBox.setBackground(new Background(new BackgroundFill(colorFondoJavaFX, new CornerRadii(8), null)));
-
         jugadorBox.setStyle("-fx-border-color: rgba(255,255,255,0.3); -fx-border-radius: 8; -fx-border-width: 1;");
-
-        // Calculamos qué color de texto (blanco o negro) se ve mejor sobre ese fondo
         Color colorTexto = obtenerColorTextoContraste(colorFondoJavaFX);
 
-
-        //Etiqueta del Nombre
         Label nombreJugador = new Label(jugador.getNombre());
         nombreJugador.setPrefWidth(110);
         nombreJugador.setWrapText(true);
         nombreJugador.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-        // Aplicamos el color de contraste calculado
         nombreJugador.setTextFill(colorTexto);
 
-
-        //Sección de Puntos de Victoria
-        VBox puntosVictoria = new VBox(2); // Pequeño espacio vertical
+        VBox puntosVictoria = new VBox(2);
         puntosVictoria.setAlignment(Pos.CENTER);
 
         Label pvLabel = new Label("Puntos de\nVictoria");
@@ -302,31 +427,24 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     }
 
     private HBox crearPanelInferior() {
-        HBox panel = new HBox(20); // 20px de espacio inicial
+        HBox panel = new HBox(20);
         panel.setPadding(new Insets(15, 20, 15, 20));
-        panel.setAlignment(Pos.BOTTOM_CENTER); // Alineado al centro abajo
+        panel.setAlignment(Pos.BOTTOM_CENTER);
         panel.setPrefHeight(200);
 
-        // ---  CÁPSULA NEGRA DEL INVENTARIO (VBox) ---
+        // INVENTARIO
         VBox inventario = new VBox(5);
         inventario.setPrefWidth(600);
         inventario.setPadding(new Insets(10, 15, 10, 15));
         inventario.setAlignment(Pos.TOP_CENTER);
+        inventario.setStyle("-fx-background-color: #222; -fx-background-radius: 20; -fx-border-color: black; -fx-border-width: 4; -fx-border-radius: 20;");
 
-        // Estilo cápsula
-        inventario.setStyle("-fx-background-color: #222;" +
-                " -fx-background-radius: 20;" +
-                " -fx-border-color: black; -fx-border-width: 4; -fx-border-radius: 20;");
-
-        // Nombre del Jugador
         this.lblNombreJugadorActual = new Label("Cargando...");
         this.lblNombreJugadorActual.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        // Título
         Label lblTitulo = new Label("INVENTARIO");
         lblTitulo.setStyle("-fx-text-fill: gray; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 2;");
 
-        // Fila de Cartas (Recursos + Desarrollo)
         HBox filaDeCartas = new HBox(15);
         filaDeCartas.setAlignment(Pos.CENTER);
         filaDeCartas.setPrefWidth(580);
@@ -334,34 +452,61 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         this.contenedorRecursos = new HBox(10);
         this.contenedorRecursos.setAlignment(Pos.CENTER);
 
-
         this.contenedorCartasDesarrollo = new HBox(10);
         this.contenedorCartasDesarrollo.setAlignment(Pos.CENTER);
-        // Borde separador a la izquierda para distinguirlo de los recursos
         this.contenedorCartasDesarrollo.setStyle("-fx-padding: 0 0 0 10; -fx-border-color: gray; -fx-border-width: 0 0 0 2;");
 
-        // Agregamos ambos a la fila
         filaDeCartas.getChildren().addAll(this.contenedorRecursos, this.contenedorCartasDesarrollo);
-
-        // Agregamos al VBox principal (Nombre, Titulo, Fila)
         inventario.getChildren().addAll(this.lblNombreJugadorActual, lblTitulo, filaDeCartas);
 
-        // Llamamos a actualizar para llenar ambos contenedores
         actualizarInventario();
 
-
-        // GRID DE BOTONES
+        // GRID DE ACCIONES
         GridPane acciones = new GridPane();
-        acciones.setHgap(10);
-        acciones.setVgap(10);
-        acciones.setAlignment(Pos.CENTER_LEFT); // Alineado a la izquierda (cerca del inventario)
+        acciones.setHgap(15);
+        acciones.setVgap(15);
+        acciones.setAlignment(Pos.CENTER_LEFT);
 
+        //this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado", new ControladorConstruirPoblado(Catan.getInstance()));
+        //this.btnConstruirCamino = crearBotonAccion("Construir\nCamino", new ControladorConstruirCamino(Catan.getInstance()));
+
+        this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado", e -> {
+            mostrarAlerta("Modo Construcción", "Selecciona un punto gris para construir.");
+            mostrarLugaresPoblado(); // <--- Llama a la visualización
+        });
 
         this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado",new ControladorConstruirPoblado(Catan.getInstance()));
         this.btnConstruirCamino = crearBotonAccion("Construir\nCamino",new ControladorConstruirCamino(Catan.getInstance()));
         this.btnConstruirCiudad = crearBotonAccion("Construir\nCiudad",new ControladorConstruirCiudad(Catan.getInstance()));
         this.btnBanca = crearBotonAccion("Banca",new ControladorBanca(Catan.getInstance(),this));
         this.btnIntercambioJugadores = crearBotonAccion("Intercambio",new ControladorIntercambioEntreJugadores(Catan.getInstance(),this));
+        this.btnConstruirCamino = crearBotonAccion("Construir\nCamino", e -> {
+            mostrarAlerta("Modo Construcción", "Selecciona una línea gris para el camino.");
+            mostrarLugaresCamino(); // <--- Llama a la visualización
+        });
+
+        this.btnConstruirCiudad = crearBotonAccion("Construir\nCiudad", e -> {
+            mostrarAlerta("Modo Ciudad", "Selecciona uno de tus poblados para mejorar.");
+            mostrarLugaresCiudad(); // <--- Llama a la visualización
+        });
+
+        this.btnBanca = crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
+        this.btnIntercambioJugadores = crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
+        this.btnJugarCarta = crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
+        this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
+            this.esperandoSeleccionHexagono = true;
+            mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
+            // Opcional: Cambiar cursor para feedback visual
+            this.getScene().setCursor(javafx.scene.Cursor.HAND);
+        });
+        this.btnMoverLadron.setDisable(true);
+
+        // --- BOTON COMPRAR CARTA (IMPLEMENTADO) ---
+        // Asumiendo que ControladorComprarCarta existe y recibe (Catan, VistaTablero) o similar
+        // Si no tienes el controlador aún, usa uno genérico para probar
+        this.btnComprarCarta = crearBotonAccion("Comprar\nCarta D.",new ControladorComprarCarta(this));
+
+        // this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", new ControladorMoverLadron()); // Opcional
 
         acciones.add(this.btnConstruirPoblado,0,0);
         acciones.add(this.btnConstruirCamino,1,0);
@@ -369,34 +514,36 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         acciones.add(this.btnBanca,0,1);
         acciones.add(this.btnIntercambioJugadores,1,1);
 
+        acciones.add(this.btnComprarCarta, 0, 2);
+        acciones.add(this.btnMoverLadron, 2, 2);
 
-        panel.setSpacing(30); // Acercamos los botones al inventario
+        panel.setSpacing(30);
         panel.setAlignment(Pos.BOTTOM_CENTER);
-
         panel.getChildren().addAll(inventario, acciones);
 
         return panel;
     }
 
     public void actualizarEstadoBotones() {
-        Jugador jugador = Catan.getInstance().getManagerTurno().getJugadorActual();
+        try {
+            Jugador jugador = Catan.getInstance().getManagerTurno().getJugadorActual();
+            boolean tieneCamino = jugador.cantidadMadera() >= 1 && jugador.cantidadLadrillo() >= 1;
+            this.btnConstruirCamino.setDisable(!tieneCamino);
 
-        // Validar Camino (Madera + Ladrillo)
-        boolean tieneCamino = jugador.cantidadMadera() >= 1 && jugador.cantidadLadrillo() >= 1;
-        this.btnConstruirCamino.setDisable(!tieneCamino);
+            boolean tienePoblado = jugador.cantidadMadera() >= 1 && jugador.cantidadLadrillo() >= 1 &&
+                    jugador.cantidadLana() >= 1 && jugador.cantidadGrano() >= 1;
+            this.btnConstruirPoblado.setDisable(!tienePoblado);
 
-        // Validar Poblado (Madera + Ladrillo + Lana + Grano)
-        boolean tienePoblado = jugador.cantidadMadera() >= 1 &&
-                jugador.cantidadLadrillo() >= 1 &&
-                jugador.cantidadLana() >= 1 &&
-                jugador.cantidadGrano() >= 1;
-        this.btnConstruirPoblado.setDisable(!tienePoblado);
+            boolean tieneCiudad = jugador.cantidadMineral() >= 3 && jugador.cantidadGrano() >= 2;
+            this.btnConstruirCiudad.setDisable(!tieneCiudad);
 
+            // Validar compra carta (Lana + Grano + Mineral)
+            boolean tieneRecursosCarta = jugador.cantidadLana() >= 1 && jugador.cantidadGrano() >= 1 && jugador.cantidadMineral() >= 1;
+            this.btnComprarCarta.setDisable(!tieneRecursosCarta);
 
-        // Además, requiere tener un poblado propio (esto es más difícil de validar desde aquí sin preguntar al tablero,
-        // pero al menos validamos recursos).
-        boolean tieneCiudad = jugador.cantidadMineral() >= 3 && jugador.cantidadGrano() >= 2;
-        this.btnConstruirCiudad.setDisable(!tieneCiudad);
+        } catch(Exception e) {
+            // Manejo silencioso si el juego no ha iniciado bien
+        }
     }
 
     private VBox crearCartaInteractiva(String nombre, Color color) {
@@ -498,56 +645,69 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         punto.setFill(Color.WHITE);
         return punto;
     }
+
     public void actualizarDadosVisuales(int valor1, int valor2) {
-        this.contenedorDadosVisuales.getChildren().clear();
 
-        StackPane d1 = crearDadoVisual(valor1);
-        StackPane d2 = crearDadoVisual(valor2);
+        soloDibujarDados(valor1, valor2);
 
-        this.contenedorDadosVisuales.getChildren().addAll(d1, d2);
+        int suma = valor1 + valor2;
+        ManagerTurno manager = Catan.getInstance().getManagerTurno();
+
+        String mensajeResultado = manager.manejarLanzamientoDados(suma);
+
+        actualizarInventario();
+
+        if (suma == 7) {
+            mostrarAlerta("¡LADRÓN ACTIVO! (7)",
+                    "El ladrón se ha activado.\n" + mensajeResultado);
+            setModoRobo(true);
+        } else {
+            mostrarAlerta("Producción", "Salió el " + suma);
+            actualizarEstadoBotones();
+            habilitarBotonesJuegoNormal();
+        }
     }
+
+    // Auxiliar para no repetir código de habilitar botones
+    private void habilitarBotonesJuegoNormal() {
+        btnIntercambioJugadores.setDisable(false);
+        btnBanca.setDisable(false);
+        btnJugarCarta.setDisable(false);
+        if(btnTerminar != null) btnTerminar.setDisable(false);
+    }
+
+    public void habilitarMoverLadron(boolean habilitar) {
+        if (this.btnMoverLadron != null) {
+            this.btnMoverLadron.setDisable(!habilitar);
+        }
+    }
+
 
     // Método auxiliar para cargar imágenes de recursos y cartas
     private VBox crearFichaConImagen(String nombre, int cantidad, String nombreImagen, String colorFondoHex) {
-        VBox ficha = new VBox(5); // Espacio vertical entre elementos
-        ficha.setPrefSize(80, 110); // Un poco más grande para que quepa la imagen
+        VBox ficha = new VBox(5);
+        ficha.setPrefSize(80, 110);
         ficha.setAlignment(Pos.CENTER);
+        ficha.setStyle("-fx-background-color: " + colorFondoHex + "; -fx-background-radius: 10; -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 0);");
 
-        // Estilo base de la "Carta"
-        ficha.setStyle(
-                "-fx-background-color: " + colorFondoHex + ";" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-border-color: white;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-border-radius: 10;" +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 0);"
-        );
-
-        // LA IMAGEN (Arriba)
-        // Usamos un StackPane para que si falla la imagen, quede el hueco o un color
         StackPane contenedorImagen = new StackPane();
         contenedorImagen.setPrefSize(60, 60);
 
         try {
-            // Intenta cargar la imagen. Asegúrate que la ruta empiece con "/"
             java.net.URL url = getClass().getResource("/imagenes/" + nombreImagen);
             if (url != null) {
                 Image img = new Image(url.toExternalForm());
                 javafx.scene.image.ImageView imgView = new javafx.scene.image.ImageView(img);
-                imgView.setFitWidth(50);  // Ajusta el tamaño ancho
-                imgView.setFitHeight(50); // Ajusta el tamaño alto
+                imgView.setFitWidth(50);
+                imgView.setFitHeight(50);
                 imgView.setPreserveRatio(true);
                 contenedorImagen.getChildren().add(imgView);
             } else {
-                // Si no encuentra la imagen, pone un texto temporal
-                Label lblNoImg = new Label("IMG?");
+                Label lblNoImg = new Label(nombre.substring(0,1));
                 lblNoImg.setTextFill(Color.WHITE);
                 contenedorImagen.getChildren().add(lblNoImg);
             }
-        } catch (Exception e) {
-            System.out.println("Error imagen: " + nombreImagen);
-        }
-
+        } catch (Exception e) { }
 
         Label lblNombre = new Label(nombre);
         lblNombre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 10px;");
@@ -574,9 +734,14 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
             return;
         }
 
+        // Actualizar Label del Nombre y Color
         if (this.lblNombreJugadorActual != null) {
             this.lblNombreJugadorActual.setText(jugadorActual.getNombre());
-            this.lblNombreJugadorActual.setTextFill(Color.web(jugadorActual.getColor().getColor()));
+            try {
+                this.lblNombreJugadorActual.setTextFill(Color.web(jugadorActual.getColor().getColor()));
+            } catch(Exception e) {
+                this.lblNombreJugadorActual.setTextFill(Color.WHITE);
+            }
         }
 
         // --- A. LLENAR RECURSOS ---
@@ -622,7 +787,9 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
 
 
 
-    // Opcional: Una alerta visual simple
+
+
+
     private void mostrarAlerta(String titulo, String mensaje) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
         alert.setTitle(titulo);
@@ -630,12 +797,493 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+    /**
+     * Activa o desactiva el "Modo Robo".
+     * Si activar es true: Bloquea todo excepto el botón del ladrón.
+     * Si activar es false: Restaura los botones según los recursos del jugador.
+     */
+    public void setModoRobo(boolean activar) {
+        if (activar) {
+            // Bloquear TODAS las acciones de construcción y fin de turno
+            btnConstruirCamino.setDisable(true);
+            btnConstruirPoblado.setDisable(true);
+            btnConstruirCiudad.setDisable(true);
+            btnComprarCarta.setDisable(true);
+            btnIntercambioJugadores.setDisable(true);
+            btnJugarCarta.setDisable(true);
+            btnBanca.setDisable(true);
+
+            if (btnTerminar != null) btnTerminar.setDisable(true);
+
+            //  Habilitar SOLO lo relacionado al ladrón
+            if (btnMoverLadron != null) btnMoverLadron.setDisable(false);
+
+            mostrarAlerta("¡LADRÓN ACTIVO!", "Se han bloqueado las acciones.\nDebes mover el ladrón para continuar.");
+
+        } else {
+            // Deshabilitar botón ladrón (ya se usó)
+            if (btnMoverLadron != null) btnMoverLadron.setDisable(true);
+
+            //  Habilitar botón terminar
+            if (btnTerminar != null) btnTerminar.setDisable(false);
+
+            // Restaurar botones de construcción según recursos
+            actualizarEstadoBotones();
+
+            // Reactivar otros botones genéricos si corresponde
+            btnIntercambioJugadores.setDisable(false);
+            btnJugarCarta.setDisable(false);
+            btnBanca.setDisable(false);
+        }
+    }
 
 
+    private void dibujarPuertos(double hexRadius) {
+        grupoPuertos.getChildren().clear();
+        Tablero tablero = Catan.getInstance().getTablero();
+
+        // Set para evitar duplicados
+        java.util.Set<Vertice> visitados = new java.util.HashSet<>();
+
+        // Distancia extra desde el vértice hacia afuera
+        double distanciaExtra = 25.0;
+
+        for (Map.Entry<Coordenada, Vertice> entry : tablero.getMapaVertices().entrySet()) {
+            Vertice v = entry.getValue();
+            Coordenada coord = entry.getKey();
+
+            if (v != null && v.esPuerto() && !visitados.contains(v)) {
+                visitados.add(v);
+
+                Terreno t = tablero.getTerrenos().get(coord.numHex());
+                if (t == null) continue;
+
+                Axial pos = t.getPosicion();
+                double xCentro = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
+                double yCentro = hexRadius * 1.5 * pos.r;
+
+                int i = coord.indice();
+                double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+
+                // Posición del Vértice (Donde iría la el poblado)
+                double xVertice = xCentro + hexRadius * Math.cos(angle);
+                double yVertice = yCentro + hexRadius * Math.sin(angle);
+
+                //Posición del Puerto (Más afuera)
+                double radioPuerto = hexRadius + distanciaExtra;
+                double xPuerto = xCentro + radioPuerto * Math.cos(angle);
+                double yPuerto = yCentro + radioPuerto * Math.sin(angle);
+
+                // --- DIBUJAR ---
+
+                // A. Línea conectora (Muelle)
+                Line lineaConectora = new Line(xVertice, yVertice, xPuerto, yPuerto);
+                lineaConectora.setStroke(Color.SADDLEBROWN);
+                lineaConectora.setStrokeWidth(4);
+                lineaConectora.setMouseTransparent(true);
+
+                // B. Círculo del puerto (La plataforma)
+                Circle plataforma = new Circle(xPuerto, yPuerto, 14);
+                plataforma.setFill(Color.SADDLEBROWN);
+                plataforma.setStroke(Color.WHITE);
+                plataforma.setStrokeWidth(2);
+
+                //  Lógica de Texto y Color según Tasa
+                String texto = "?";
+                Color colorTexto = Color.WHITE;
+
+                try {
+                    String desc = v.obtenerPoliticaDeIntercambio().toString().toLowerCase();
+
+                    if (v.obtenerPoliticaDeIntercambio().tasa() == 3) {
+                        texto = "3:1";
+                    } else {
+                        // Es 2:1, intentamos adivinar el recurso por el string o lo ponemos genérico
+                        if (desc.contains("madera")) { texto = "Mad"; colorTexto = Color.LIGHTGREEN; }
+                        else if (desc.contains("ladrillo")) { texto = "Lad"; colorTexto = Color.TOMATO; }
+                        else if (desc.contains("lana")) { texto = "Lan"; colorTexto = Color.LIGHTGREEN; }
+                        else if (desc.contains("grano")) { texto = "Gra"; colorTexto = Color.GOLD; }
+                        else if (desc.contains("mineral")) { texto = "Min"; colorTexto = Color.LIGHTGRAY; }
+                        else { texto = "2:1"; }
+                    }
+                } catch (Exception e) { texto = "P"; }
+
+                Label lbl = new Label(texto);
+                lbl.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+                lbl.setTextFill(colorTexto);
+                lbl.setTranslateX(xPuerto - 9);
+                lbl.setTranslateY(yPuerto - 7);
+                lbl.setMouseTransparent(true);
+
+                grupoPuertos.getChildren().addAll(lineaConectora, plataforma, lbl);
+            }
+        }
+    }
+
+    private void mostrarLugaresPoblado() {
+        grupoSugestiones.getChildren().clear();
+        Tablero tablero = Catan.getInstance().getTablero();
+        double hexRadius = 50;
+
+        Map<Coordenada, Vertice> mapaVertices = tablero.getMapaVertices();
+
+        for (Map.Entry<Coordenada, Vertice> entry : mapaVertices.entrySet()) {
+            Coordenada coord = entry.getKey();
+            Vertice v = entry.getValue();
+
+            // Si el vértice es válido y no tiene nada construido
+            if (v != null && !v.tieneConstruccion()) {
 
 
+                Point2D posVisual = calcularPosicionVisual(coord, hexRadius);
+                if (posVisual == null) continue; // Si no pudimos calcular (borde raro)
 
+                Circle fantasma = new Circle(posVisual.getX(), posVisual.getY(), 12);
+                fantasma.setFill(Color.rgb(128, 128, 128, 0.5)); // Gris transparente
+                fantasma.setStroke(Color.WHITE);
+                fantasma.getStrokeDashArray().addAll(5d, 5d);
+                fantasma.setCursor(Cursor.HAND);
 
+                fantasma.setOnMouseClicked(e -> ejecutarConstruccionPoblado(coord));
+
+                grupoSugestiones.getChildren().add(fantasma);
+            }
+        }
+    }
+
+    private void mostrarLugaresCamino() {
+        grupoSugestiones.getChildren().clear();
+        Tablero tablero = Catan.getInstance().getTablero();
+        ManagerTurno manager = Catan.getInstance().getManagerTurno();
+        double hexRadius = 50;
+
+        Map<Coordenada, edu.fiuba.algo3.modelo.Tablero.Factory.Lado> mapaLados = tablero.getMapaLados();
+
+        // Recuperar último poblado para la fase inicial
+        Coordenada ultimoPoblado = null;
+        if (this.enFaseInicial && !manager.estaEsperandoPobladoInicial()) {
+            try {
+                ultimoPoblado = manager.getUltimaCoordenadaPoblado();
+            } catch (Exception e) {}
+        }
+
+        for (Map.Entry<Coordenada, edu.fiuba.algo3.modelo.Tablero.Factory.Lado> entry : mapaLados.entrySet()) {
+            Coordenada coordLado = entry.getKey();
+            edu.fiuba.algo3.modelo.Tablero.Factory.Lado lado = entry.getValue();
+
+            // Solo mostramos si el lado está vacío
+            if (lado != null && !lado.tieneConstruccion()) {
+
+                // VALIDACIÓN FASE INICIAL: Solo mostrar si conecta con el poblado recién puesto
+                if (this.enFaseInicial && ultimoPoblado != null) {
+                    if (!tablero.ladoConectaConVertice(coordLado, ultimoPoblado)) {
+                        continue;
+                    }
+                }
+
+                // --- LÓGICA DE GEOMETRÍA CORREGIDA ---
+                // Un lado en el índice 'i' conecta el vértice 'i' con el siguiente '(i+1)'
+                int indexActual = coordLado.indice();
+                int indexSiguiente = (indexActual + 1) % 6;
+
+                //coordenadas de los DOS extremos del lado
+                Coordenada coordV1 = new Coordenada(coordLado.numHex(), indexActual);
+                Coordenada coordV2 = new Coordenada(coordLado.numHex(), indexSiguiente);
+
+                // Calculamos la posición visual de AMBOS extremos usando la misma lógica que los vértices
+                Point2D p1 = calcularPosicionVisual(coordV1, hexRadius);
+                Point2D p2 = calcularPosicionVisual(coordV2, hexRadius);
+
+                if (p1 != null && p2 != null) {
+                    Line fantasma = new Line(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+                    fantasma.setStrokeWidth(10);
+                    fantasma.setStroke(Color.rgb(100, 100, 100, 0.5)); // Gris semitransparente
+                    fantasma.setCursor(Cursor.HAND);
+
+                    fantasma.setOnMouseClicked(e -> ejecutarConstruccionCamino(coordLado));
+
+                    grupoSugestiones.getChildren().add(fantasma);
+                }
+            }
+        }
+    }
+
+    private void mostrarLugaresCiudad() {
+        grupoSugestiones.getChildren().clear();
+        Tablero tablero = Catan.getInstance().getTablero();
+
+        Jugador jugadorActual;
+        try {
+            jugadorActual = Catan.getInstance().getManagerTurno().getJugadorActual();
+        } catch (Exception e) { return; }
+
+        Map<Coordenada, Vertice> mapaVertices = tablero.getMapaVertices();
+
+        for (Map.Entry<Coordenada, Vertice> entry : mapaVertices.entrySet()) {
+            Coordenada coord = entry.getKey();
+            Vertice v = entry.getValue();
+
+            // VALIDACIÓN ESTRICTA:
+            // 1. Debe existir el vértice.
+            // 2. Debe tener construcción (Poblado).
+            // 3. NO debe ser ya una ciudad.
+            // 4. El dueño debe ser el jugador actual.
+            if (v != null && v.tieneConstruccion() && !v.esCiudad()) {
+
+                boolean esMio = false;
+                try {
+                    // Obtenemos el color de la construcción y lo comparamos con el del jugador
+                    String colorConstruccion = v.obtenerConstruccion().getColorActual().getColor();
+                    String colorJugador = jugadorActual.getColor().getColor();
+                    esMio = colorConstruccion.equals(colorJugador);
+                } catch (Exception e) { esMio = false; }
+
+                if (esMio) {
+                    // Usamos la calculadora centralizada para saber dónde dibujar
+                    Point2D posVisual = calcularPosicionVisual(coord, 50); // 50 es tu hexRadius
+                    if (posVisual == null) continue;
+
+                    Circle fantasma = new Circle(posVisual.getX(), posVisual.getY(), 20); // Más grande
+                    fantasma.setFill(Color.TRANSPARENT);
+                    fantasma.setStroke(Color.GOLD);
+                    fantasma.setStrokeWidth(4);
+                    fantasma.setCursor(Cursor.HAND);
+
+                    // Efecto visual al pasar el mouse
+                    fantasma.setOnMouseEntered(e -> fantasma.setFill(Color.rgb(255, 215, 0, 0.3)));
+                    fantasma.setOnMouseExited(e -> fantasma.setFill(Color.TRANSPARENT));
+
+                    fantasma.setOnMouseClicked(e -> ejecutarMejoraCiudad(coord));
+
+                    grupoSugestiones.getChildren().add(fantasma);
+                }
+            }
+        }
+    }
+    private void ejecutarConstruccionPoblado(Coordenada coord) {
+        ManagerTurno manager = Catan.getInstance().getManagerTurno();
+        try {
+            if (!manager.haTerminadoFaseInicial()) {
+                // Lógica Fase Inicial
+                manager.colocacionInicial(coord);
+
+                // Redibujar mapa real
+                dibujarElementos();
+                grupoSugestiones.getChildren().clear(); // Limpiar fantasmas viejos
+
+                // **IMPORTANTE**: Llamamos al gestor para que pida el CAMINO
+                gestionarFlujoFaseInicial();
+
+            } else {
+                // Lógica Juego Normal
+                manager.construirPoblado(coord);
+                grupoSugestiones.getChildren().clear();
+                dibujarElementos();
+                actualizarInventario();
+                actualizarEstadoBotones();
+                this.getScene().setCursor(Cursor.DEFAULT);
+            }
+
+        } catch (Exception | ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
+            mostrarAlerta("Error", e.getMessage());
+        }
+    }
+
+    private void ejecutarConstruccionCamino(Coordenada coord) {
+        ManagerTurno manager = Catan.getInstance().getManagerTurno();
+        try {
+            if (!manager.haTerminadoFaseInicial()) {
+                //EL MANAGER COLOCA Y AVANZA EL TURNO INTERNAMENTE
+                manager.colocacionInicial(coord);
+
+                // Limpiamos sugerencias visuales y redibujamos el tablero
+                grupoSugestiones.getChildren().clear();
+                dibujarElementos();
+
+                //Llamamos al gestor de flujo.
+                // Como el manager ya avanzó el turno en el paso 1,
+                // este método leerá el NUEVO jugador y actualizará el cartel.
+                gestionarFlujoFaseInicial();
+
+            } else {
+                // Lógica Juego Normal
+                manager.construirCarretera(coord);
+                grupoSugestiones.getChildren().clear();
+                dibujarElementos();
+                actualizarInventario();
+                actualizarEstadoBotones();
+                this.getScene().setCursor(Cursor.DEFAULT);
+            }
+
+        } catch (Exception | ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
+            mostrarAlerta("Error", e.getMessage());
+        }
+    }
+    private void ejecutarMejoraCiudad(Coordenada coord) {
+        ManagerTurno manager = Catan.getInstance().getManagerTurno();
+        try {
+            manager.mejorarACiudad(coord);
+
+            grupoSugestiones.getChildren().clear();
+            dibujarElementos();
+            actualizarInventario();
+            actualizarEstadoBotones();
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", e.getMessage());
+        }
+    }
+
+    // Llama a esto cada vez que se construya algo con éxito para actualizar el mapa
+    public void dibujarElementos() {
+        if (this.grupoConstrucciones == null) {
+            this.grupoConstrucciones = new Group();
+        }
+        this.grupoConstrucciones.getChildren().clear();
+
+        Tablero tablero = Catan.getInstance().getTablero();
+        double hexRadius = 50;
+
+        // Sets para evitar dibujar el mismo vértice/lado múltiples veces
+        java.util.Set<Vertice> verticesVisitados = new java.util.HashSet<>();
+        java.util.Set<edu.fiuba.algo3.modelo.Tablero.Factory.Lado> ladosVisitados = new java.util.HashSet<>();
+
+        for (Terreno t : tablero.getTerrenos().values()) {
+            Axial pos = t.getPosicion();
+            double x = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
+            double y = hexRadius * 1.5 * pos.r;
+
+            // --- A. DIBUJAR POBLADOS Y CIUDADES ---
+            for (int i = 0; i < 6; i++) {
+                Coordenada coord = new Coordenada(t.getId(), i);
+                Vertice v = tablero.obtenerVertice(coord);
+
+                // Si v es null o ya lo dibujamos, saltar
+                if (v == null || verticesVisitados.contains(v)) continue;
+                verticesVisitados.add(v); // Marcar como visitado
+
+                if (v.tieneConstruccion()) {
+                    // Calc posición visual
+                    double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+                    double vx = x + hexRadius * Math.cos(angle);
+                    double vy = y + hexRadius * Math.sin(angle);
+
+                    Color colorJugador = Color.WHITE;
+                    try {
+                        String hex = v.obtenerConstruccion().getColorActual().getColor();
+                        colorJugador = Color.web(hex);
+                    } catch (Exception e) { }
+
+                    if (v.esCiudad()) {
+                        javafx.scene.shape.Rectangle ciudad = new javafx.scene.shape.Rectangle(vx - 10, vy - 10, 20, 20);
+                        ciudad.setFill(colorJugador);
+                        ciudad.setStroke(Color.BLACK);
+                        ciudad.setStrokeWidth(2);
+                        grupoConstrucciones.getChildren().add(ciudad);
+                    } else {
+                        Circle poblado = new Circle(vx, vy, 10);
+                        poblado.setFill(colorJugador);
+                        poblado.setStroke(Color.BLACK);
+                        poblado.setStrokeWidth(2);
+                        grupoConstrucciones.getChildren().add(poblado);
+                    }
+                }
+            }
+
+            // --- B. DIBUJAR CAMINOS ---
+            Map<Coordenada, edu.fiuba.algo3.modelo.Tablero.Factory.Lado> mapaLados = tablero.getMapaLados();
+            for(int i = 0; i < 6; i++) {
+                Coordenada coordLado = new Coordenada(t.getId(), i);
+                edu.fiuba.algo3.modelo.Tablero.Factory.Lado lado = mapaLados.get(coordLado);
+
+                // Si no hay lado lógico, o ya lo dibujamos, o no tiene construcción visual, saltar
+                if (lado == null || ladosVisitados.contains(lado)) continue;
+                ladosVisitados.add(lado);
+
+                if (lado.tieneConstruccion()) {
+                    double angle1 = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+                    double angle2 = (2.0 * Math.PI * ((i + 1) % 6) / 6) + (Math.PI / 6);
+
+                    double x1 = x + hexRadius * Math.cos(angle1);
+                    double y1 = y + hexRadius * Math.sin(angle1);
+                    double x2 = x + hexRadius * Math.cos(angle2);
+                    double y2 = y + hexRadius * Math.sin(angle2);
+
+                    Line camino = new Line(x1, y1, x2, y2);
+                    camino.setStrokeWidth(6);
+
+                    // Color c = Color.web(lado.getConstruccion().getColorActual().getColor());
+                    camino.setStroke(Color.BLACK); // Color por defecto si no tienes getter directo
+                    grupoConstrucciones.getChildren().add(camino);
+                }
+            }
+        }
+    }
+
+    private void gestionarFlujoFaseInicial() {
+        ManagerTurno manager = Catan.getInstance().getManagerTurno();
+
+        //CHEQUEO DE FINALIZACIÓN
+        if (manager.haTerminadoFaseInicial()) {
+            if(this.enFaseInicial) {
+                this.enFaseInicial = false;
+                this.btnLanzar.setDisable(false);
+                this.btnTerminar.setDisable(true);
+
+                // Actualizar inventario para mostrar al jugador que empieza la partida normal
+                actualizarInventario();
+                actualizarEstadoBotones();
+                grupoSugestiones.getChildren().clear();
+                mostrarAlerta("¡Juego Iniciado!", "Fase inicial completa. ¡Lanza los dados!");
+            }
+            return;
+        }
+
+        //  FORZAR LA ACTUALIZACIÓN VISUAL DEL JUGADOR
+        // Esto lee manager.getJugadorActualInicial() y cambia el color/nombre en el panel
+        actualizarInventario();
+
+        //Configuración de botones y alertas
+        this.btnLanzar.setDisable(true);
+        Jugador jugadorActual = manager.getJugadorActualInicial();
+
+        if (manager.estaEsperandoPobladoInicial()) {
+            mostrarAlerta("Turno de " + jugadorActual.getNombre(), "Coloca tu POBLADO Inicial");
+            mostrarLugaresPoblado();
+        } else {
+            mostrarAlerta("Turno de " + jugadorActual.getNombre(), "Coloca tu CAMINO conectado");
+            mostrarLugaresCamino();
+        }
+    }
+
+    private Point2D calcularPosicionVisual(Coordenada coord, double hexRadius) {
+        Tablero tablero = Catan.getInstance().getTablero();
+        Terreno t = tablero.getTerrenos().get(coord.numHex());
+
+        // Si es un borde exterior (null), intentamos buscar un vecino válido
+        // (Opcional: implementar búsqueda de vecinos si t es null, pero por ahora devolvemos null)
+        if (t == null) return null;
+
+        Axial pos = t.getPosicion();
+        double xCentro = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
+        double yCentro = hexRadius * 1.5 * pos.r;
+
+        int i = coord.indice();
+
+        double angle = (2.0 * Math.PI * i / 6) + (Math.PI / 6);
+
+        double x = xCentro + hexRadius * Math.cos(angle);
+        double y = yCentro + hexRadius * Math.sin(angle);
+
+        return new Point2D(x, y);
+    }
+
+    private void soloDibujarDados(int valor1, int valor2) {
+        this.contenedorDadosVisuales.getChildren().clear();
+        StackPane d1 = crearDadoVisual(valor1);
+        StackPane d2 = crearDadoVisual(valor2);
+        this.contenedorDadosVisuales.getChildren().addAll(d1, d2);
+    }
 
 
 }

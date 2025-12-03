@@ -60,9 +60,16 @@ public class CasoDeUsoLanzarDadosTest {
         jugadorMarcos.agregarRecurso(new Lana(2));
         jugadorMarcos.agregarRecurso(new Grano(2));
 
+        System.out.print("\nRecursos de marcos: \n");
+        System.out.println(jugadorMarcos.cantidadRecurso(new Madera(0)));
+
         ManagerTurno managerTurno = new ManagerTurno(List.of(jugadorMarcos),tablero,new Random());
         managerTurno.construirPoblado(new Coordenada(10,3));
+        System.out.print("\nRecursos de marcos: \n");
+        System.out.println(jugadorMarcos.cantidadRecurso(new Madera(0)));
         managerTurno.construirPoblado(new Coordenada(2,3));
+        System.out.print("\nRecursos de marcos: \n");
+        System.out.println(jugadorMarcos.cantidadRecurso(new Madera(0)));
 
 
         Dados dadosCargados = Mockito.mock(Dados.class);
