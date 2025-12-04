@@ -69,9 +69,7 @@ public class ManagerTurno {
         CartaDesarrollo cartaComprada = servicioComercio.venderCartaDesarrollo(jugador, numeroTurnoActual);
         cartaComprada.setTurnoDeCompra(this.numeroTurnoActual);
         jugador.agregarCarta(cartaComprada);
-        if(cartaComprada instanceof PuntoDeVictoria){
-            jugador.sumarPuntoDeVictoriaOculto();
-        }
+
     }
 
     public void construirCarretera(Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {

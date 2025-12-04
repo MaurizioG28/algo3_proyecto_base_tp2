@@ -201,9 +201,7 @@ public class Jugador {
 
     }
 
-    public void sumarPuntoDeVictoriaOculto() {
-        this.puntos.agregarPuntosOcultos(1);
-    }
+
 
     public void suscribirACatan(Catan catan) {
          this.puntos.addListener(catan);
