@@ -31,7 +31,11 @@ public class ControladorPanelJugadores {
 
     public void actualizarRutaComercial() {
         Jugador lider= juego.getManagerTurno().getRutaComercialLider();
-        if(!lider.equals(liderCamino) && liderCamino!=null){
+        if(lider==null)return;
+        if (liderCamino==null) {
+            liderCamino=lider;
+        }
+        if( !lider.esDelColor(liderCamino.getColor())  ){
             HBox panelLiderAntiguo= panelesPorJugador.get(liderCamino);
             vista.actualizarRutaComercial( panelLiderAntiguo,0.3);
         }
@@ -43,7 +47,9 @@ public class ControladorPanelJugadores {
 
     public void actualizarGranCaballeria() {
         Jugador lider= juego.getManagerTurno().getGranCaballeriaLider();
-        if(!lider.equals(liderCaballeria) && liderCaballeria!=null){
+        if(lider==null)return;
+        if(liderCaballeria==null) {liderCaballeria=lider;}
+        if(!lider.esDelColor(liderCaballeria.getColor())   ){
             HBox panelLiderAntiguo= panelesPorJugador.get(liderCaballeria);
             vista.actualizarGranCaballeria( panelLiderAntiguo,0.3);
         }
