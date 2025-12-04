@@ -69,6 +69,7 @@ public class ControladorLanzarDados implements EventHandler<ActionEvent> {
 //        jugador.agregarRecurso(new Ladrillo(2));
 //        System.out.println("DEBUG: Se regalaron recursos al jugador para testear compra.");
         vista.actualizarInventario();
+        vista.verificarGanador();
     }
 }
 

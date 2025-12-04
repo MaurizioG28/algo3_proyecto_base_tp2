@@ -153,7 +153,13 @@ public class ManagerTurno {
     }
     public void contarPuntos(){
         Jugador jugador = getJugadorActual();
-        PuntajeDeVictoria pv= tablero.calcularPuntosDeVictoriaPorConstruccion(jugador.getColor());
+        PuntajeDeVictoria pv = tablero.calcularPuntosDeVictoriaPorConstruccion(jugador.getColor());
+        if (getGranCaballeriaLider() == jugador) {
+            pv.agregarPuntos(2);
+        }
+        if (getRutaComercialLider() == jugador) {
+            pv.agregarPuntos(2);
+        }
         jugador.actualizarPuntosDeVictoria(pv);
     }
 

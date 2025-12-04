@@ -24,6 +24,7 @@ public class ControladorComprarCarta  implements EventHandler<ActionEvent> {
             // 3. Actualizar la vista (recursos y cartas)
             vista.actualizarInventario();
             vista.actualizarEstadoBotones(); // Para deshabilitar el botón si te quedaste sin recursos
+            vista.verificarGanador();
 
         } catch (RuntimeException e) { // Capturamos Excepciones del modelo (ej: RecursosInsuficientes)
             mostrarAlerta("Error en la compra", "No tienes suficientes recursos o no quedan cartas.");

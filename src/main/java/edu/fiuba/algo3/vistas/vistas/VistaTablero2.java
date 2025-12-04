@@ -95,6 +95,7 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     private CartaDesarrollo cartaCaballeroActiva = null;
 
     private ControladorPanelJugadores controladorJugadores;
+    private VBox zonaControl;
 
     public VistaTablero2(Stage stage, PantallaPrincipal pantallaPrincipal) {
 
@@ -303,8 +304,6 @@ private Group agregarTerrenos() {
         }
     }
 
-
-
     private VBox crearPanelDerecho() {
         VBox panel = new VBox();
         panel.setPadding(new Insets(20));
@@ -320,6 +319,8 @@ private Group agregarTerrenos() {
             panel.getChildren().addAll(infoJugador, separador);
         }
         this.controladorJugadores=controladorPanelJugadores;
+        controladorPanelJugadores.actualizarGranCaballeria();
+        controladorPanelJugadores.actualizarRutaComercial();
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -353,6 +354,60 @@ private Group agregarTerrenos() {
 
         panel.getChildren().add(zonaControl);
         soloDibujarDados(1, 1);
+
+        this.zonaControl = zonaControl;
+
+        return panel;
+    }
+
+    private VBox actualizarPanelDerecho(VBox xd) {
+        VBox panel = new VBox();
+        panel.setPadding(new Insets(20));
+        panel.setPrefWidth(300);
+        panel.setAlignment(Pos.TOP_CENTER);
+
+        List<Jugador> jugadores = Catan.getInstance().getJugadores();
+        ControladorPanelJugadores controladorPanelJugadores = new ControladorPanelJugadores(this);
+        for (Jugador j : jugadores) {
+            HBox infoJugador = agregarJugador(j);
+            HBox separador = new HBox(); separador.setPrefHeight(15);
+            controladorPanelJugadores.agregarPanelyJugador(infoJugador,j);
+            panel.getChildren().addAll(infoJugador, separador);
+            System.out.println(panel.getChildren().get(0));
+        }
+        this.controladorJugadores=controladorPanelJugadores;
+        controladorPanelJugadores.actualizarGranCaballeria();
+        controladorPanelJugadores.actualizarRutaComercial();
+
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+        panel.getChildren().add(spacer);
+
+        Dados dados = new Dados(); // O obtener de Catan.getInstance()
+        ControladorLanzarDados controladorLanzar = new ControladorLanzarDados(dados, this);
+        this.btnLanzar = new BotonLanzarDados(controladorLanzar);
+        btnLanzar.setDisable(true);
+
+        ControladorTerminarTurno controladorTerminarTurno = new ControladorTerminarTurno(btnLanzar, this);
+        this.btnTerminar = new BotonTerminarTurno(controladorTerminarTurno);
+        btnTerminar.setDisable(false);
+
+        controladorLanzar.setBoton(btnLanzar);
+        controladorLanzar.setBotonTerminar(btnTerminar);
+        controladorTerminarTurno.setBotonTerminar(btnTerminar);
+
+
+        HBox contenedorBotones = new HBox(15);
+        contenedorBotones.setAlignment(Pos.CENTER);
+        contenedorBotones.getChildren().addAll(btnLanzar, btnTerminar);
+
+        VBox zonaControl = new VBox(20);
+        zonaControl.setAlignment(Pos.CENTER);
+        zonaControl.getChildren().addAll(this.contenedorDadosVisuales, contenedorBotones);
+
+        panel.getChildren().add(zonaControl);
+        soloDibujarDados(1, 1);
+
         return panel;
     }
 
@@ -1182,6 +1237,7 @@ private Group agregarTerrenos() {
                 actualizarInventario();
                 actualizarEstadoBotones();
                 this.getScene().setCursor(Cursor.DEFAULT);
+                verificarGanador();
             }
 
         } catch (Exception | ReglaDistanciaException | ConstruccionExistenteException | ReglaConstruccionException e) {
@@ -1215,7 +1271,6 @@ private Group agregarTerrenos() {
                     // Finalizar uso de carta
                     marcarCartaJugada();
                     actualizarInventario();
-                    verificarGanador();
                 }
 
                 controladorJugadores.actualizarRutaComercial();
@@ -1256,6 +1311,7 @@ private Group agregarTerrenos() {
             dibujarElementos();
             actualizarInventario();
             actualizarEstadoBotones();
+            verificarGanador();
 
         } catch (Exception e) {
             mostrarAlerta("Error", e.getMessage());
@@ -1441,7 +1497,7 @@ private Group agregarTerrenos() {
             int puntos = actual.totalPuntos();
 
             // Actualizamos el panel derecho para que se vea el puntaje nuevo
-            this.setRight(crearPanelDerecho());
+            this.setRight(actualizarPanelDerecho(this.zonaControl));
 
             // REGLA: Gana con 10 Puntos de Victoria
             if (puntos >= 10) {
