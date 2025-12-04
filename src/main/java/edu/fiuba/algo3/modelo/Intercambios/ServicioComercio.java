@@ -107,35 +107,7 @@ public class ServicioComercio {
         return comprable;
     }
 
-//    public Poblado venderPoblado(Jugador jugador) throws RecursosInsuficientesException {
-//        //  Definir Costo (Madera, Ladrillo, Lana, Grano)
-//        List<TipoDeRecurso> costo = List.of(
-//                new Madera(1), new Ladrillo(1), new Lana(1), new Grano(1)
-//        );
-//
-//        procesarPago(jugador, costo);
-//
-//        return new Poblado(jugador.getColor()); // Asumiendo que Jugador tiene getColor()
-//    }
 
-//    public Ciudad venderCiudad(Jugador jugador) throws RecursosInsuficientesException {
-//        List<TipoDeRecurso> costo = List.of(
-//                new Grano(2), new Mineral(3)
-//        );
-//        procesarPago(jugador, costo);
-//        return new Ciudad(jugador.getColor());
-//    }
-
-//    public Carretera venderCarretera(Jugador comprador){
-//
-//        List<TipoDeRecurso> costo = List.of(
-//                new Madera(1), new Ladrillo(1)
-//        );
-//        procesarPago(comprador, costo);
-//
-//        return new Carretera(comprador.getColor());
-//
-//    }
 
     public CartaDesarrollo venderCartaDesarrollo(Jugador comprador, int turno) {
 
@@ -152,7 +124,6 @@ public class ServicioComercio {
         //Posible violacion de Tell Dont Ask
         //Jugador tienes esto ? -> "NO/Si" -> entonces hago esto
 
-        //Ahora deberia estar resuelta en teoria
         for (TipoDeRecurso r : costo) {
             if (!jugador.suficienteCantidad(r)) {
                 throw new RecursosInsuficientesException("No tienes suficientes recursos: " + r.nombre());

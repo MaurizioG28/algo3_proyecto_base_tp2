@@ -29,8 +29,4 @@ public class Desierto extends Terreno {
 
     }
 
-//    @Override
-//    public void producirRecurso() {
-//
-//    }
 }

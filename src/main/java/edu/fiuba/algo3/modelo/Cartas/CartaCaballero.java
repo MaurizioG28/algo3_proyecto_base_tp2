@@ -17,21 +17,32 @@ public class CartaCaballero extends CartaDesarrollo {
 
     @Override
     public void ejecutarEfecto(Jugador jugadorActivo, Tablero tablero, List<Jugador> oponentes) {
-        this.usar();
+
         if (this.idDestino == null) {
             throw new IllegalStateException("Faltan opciones para jugar el Caballero.");
         }
+
         List<Color> coloresVictimas = tablero.moverLadron(jugadorActivo, this.idDestino);
-        if (this.victima != null) {
-            if (this.victima.equals(jugadorActivo)) {
-                throw new RuntimeException("No puedes robarte a ti mismo.");
-            }
 
-            if (!coloresVictimas.contains(this.victima.getColor())) {
-                throw new RuntimeException("La víctima seleccionada no tiene construcciones en el destino.");
-            }
+        Jugador victimaARobar = this.victima;
 
-            jugadorActivo.robarRecurso(this.victima);
+        // Si no se especificó víctima (viene null de la vista), elegir una al azar de los colores afectados
+        if (victimaARobar == null && !coloresVictimas.isEmpty()) {
+            Color colorVictima = coloresVictimas.get(0); // Elegimos el primer color afectado
+
+            // Buscamos qué jugador tiene ese color
+            for (Jugador op : oponentes) {
+                if (op.getColor().equals(colorVictima)) {
+                    victimaARobar = op;
+                    break;
+                }
+
+            }
+        }
+        if (victimaARobar != null) {
+            if (!victimaARobar.equals(jugadorActivo)) {
+                jugadorActivo.robarRecurso(victimaARobar);
+            }
         }
 
         jugadorActivo.sumarCaballero();

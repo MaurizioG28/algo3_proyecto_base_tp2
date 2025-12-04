@@ -11,6 +11,7 @@ import java.util.List;
 
 abstract public class CartaDesarrollo {
     private IEstadoCarta estado;
+    private int turnoDeCompra = Integer.MAX_VALUE;
     public  CartaDesarrollo() {
         this.estado = new EstadoCartaRecienComprada();
     }
@@ -21,11 +22,26 @@ abstract public class CartaDesarrollo {
         );
     }
 
+    public void marcarComoUsada() {
+        this.estado = new EstadoCartaUsada();
+    }
+
     public boolean estaDisponible() {
         return this.estado.sePuedeUsar();
     }
     protected CartaDesarrollo(IEstadoCarta estado) {
         this.estado = estado;
+    }
+    public void setTurnoDeCompra(int turno) {
+        this.turnoDeCompra = turno;
+    }
+
+    public boolean sePuedeUsar(int turnoActual) {
+        // 1. Valida estado (No usada)
+        if (!this.estado.sePuedeUsar()) return false;
+
+        // 2. Valida Cooldown (Debe ser turno siguiente)
+        return turnoActual > this.turnoDeCompra;
     }
     public void nuevoTurno() {
         this.estado = this.estado.actualizarEstado();

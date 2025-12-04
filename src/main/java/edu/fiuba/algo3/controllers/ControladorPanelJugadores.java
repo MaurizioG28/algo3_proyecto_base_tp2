@@ -40,9 +40,13 @@ public class ControladorPanelJugadores {
             vista.actualizarRutaComercial( panelLiderAntiguo,0.3);
         }
         liderCamino=lider;
-        HBox panelLider = panelesPorJugador.get(lider);
 
-        vista.actualizarRutaComercial( panelLider,1);
+        if (lider!= null) {
+            HBox panelLider = panelesPorJugador.get(lider);
+            if (panelLider != null) {
+                vista.actualizarRutaComercial(panelLider, 1.0); // Opacidad total
+            }
+        }
     }
 
     public void actualizarGranCaballeria() {
@@ -54,8 +58,12 @@ public class ControladorPanelJugadores {
             vista.actualizarGranCaballeria( panelLiderAntiguo,0.3);
         }
         liderCaballeria=lider;
-        HBox panelLider = panelesPorJugador.get(lider);
-        vista.actualizarGranCaballeria(panelLider,1);
+        if (lider != null) {
+            HBox panelLider = panelesPorJugador.get(lider);
+            if (panelLider != null) {
+                vista.actualizarGranCaballeria(panelLider, 1.0);
+            }
+        }
     }
 
 

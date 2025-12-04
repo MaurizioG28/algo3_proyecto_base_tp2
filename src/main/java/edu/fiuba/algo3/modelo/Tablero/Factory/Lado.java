@@ -32,7 +32,6 @@ public class Lado {
             }
         }
 
-        // 3. Debe haber conexión con una red propia (poblado propio o carretera adyacente del mismo color)
         if (!hayConexionCon(pieza.getColorActual())) {
             throw new ReglaConstruccionException("La carretera debe conectarse con tu red.");
         }

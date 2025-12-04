@@ -154,4 +154,8 @@ public class Catan implements PuntajeListener {
     public void siguienteTurno() {
         this.managerTurno.siguienteTurnoInicial();
     }
+
+    public void reset() {
+        instance = null;
+    }
 }

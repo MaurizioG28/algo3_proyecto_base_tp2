@@ -17,19 +17,16 @@ public class CartaMonopolio extends CartaDesarrollo {
     }
     @Override
     public void ejecutarEfecto(Jugador jugadorActivo, Tablero tablero, List<Jugador> oponentes) {
-        // 1. Validar Estado
         this.usar();
 
         if (this.recursoElegido == null) {
             throw new IllegalStateException("Debes elegir un recurso antes de jugar Monopolio");
         }
 
-        // 2. Ejecutar Lógica (Iteración sobre colección)
         for (Jugador victima : oponentes) {
             // Evitar robarse a sí mismo si la lista incluye al jugador activo
             if (!victima.equals(jugadorActivo)) {
 
-                // Tell Don't Ask: "Dame todo lo que tengas de este tipo"
                 // La víctima calcula cuánto tiene, lo borra y nos devuelve el int.
                 int cantidadRobada = victima.entregarTodo(this.recursoElegido);
 

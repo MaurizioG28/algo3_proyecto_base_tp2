@@ -22,7 +22,6 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-        // 1. Obtener qué carta seleccionó el usuario visualmente
         String nombreCarta = vista.getCartaSeleccionada();
 
         if (nombreCarta == null) {
@@ -32,12 +31,7 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
 
         try {
             Jugador jugador = Catan.getInstance().getManagerTurno().getJugadorActual();
-
-            // 2. Pedir al modelo la carta exacta (polimorfismo puro)
-            // Si la carta es "nueva" y no se puede usar, este método lanzará error o devolverá null
-            // según cómo lo definimos en el Mazo.
             CartaDesarrollo carta = jugador.buscarCartaParaJugar(nombreCarta);
-
             if (carta == null) {
                 mostrarAlerta("Error", "No puedes jugar esa carta en este turno.");
                 return;
@@ -45,8 +39,7 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
 
             boolean exito = false;
 
-            // 3. Lógica de Interfaz según el tipo concreto de carta
-            // (El modelo no sabe de JavaFX, así que el controlador debe pedir los datos)
+
 
             if (carta instanceof CartaCaballero) {
                 vista.mostrarAlerta("Caballero", "Mueve el ladrón para activar el efecto.");
@@ -78,9 +71,10 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
                 exito = true;
             }
 
-            // 4. Finalización
             if (exito) {
-                // Marca en la vista que ya se jugó una carta (bloquea las demás)
+
+                carta.marcarComoUsada();
+
                 vista.marcarCartaJugada();
                 vista.actualizarInventario();
                 vista.verificarGanador();
@@ -91,7 +85,6 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
         }
     }
 
-    // --- Métodos Auxiliares para Diálogos ---
 
     private TipoDeRecurso pedirRecurso(String mensaje) {
         List<String> opciones = List.of("Madera", "Ladrillo", "Lana", "Grano", "Mineral");
@@ -112,11 +105,11 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
 
     private TipoDeRecurso stringARecurso(String s) {
         switch (s) {
-            case "Madera": return new Madera(0);
-            case "Ladrillo": return new Ladrillo(0);
-            case "Lana": return new Lana(0);
-            case "Grano": return new Grano(0);
-            case "Mineral": return new Mineral(0);
+            case "Madera": return new Madera(1);
+            case "Ladrillo": return new Ladrillo(1);
+            case "Lana": return new Lana(1);
+            case "Grano": return new Grano(1);
+            case "Mineral": return new Mineral(1);
             default: return null;
         }
     }

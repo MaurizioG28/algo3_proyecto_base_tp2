@@ -73,7 +73,6 @@ public class TableroFactory {
 
         List<Axial> posicionesHexagonos = generarLayoutHexagonal();
 
-        // 1. Asignar hexágonos fijos a los terrenos
         for (int id = 1; id <= terrenos.size(); id++) {
             Terreno terrenoActual = terrenos.get(id - 1);
             terrenoActual.asignarHexagono(new Hexagono());
@@ -210,7 +209,7 @@ public class TableroFactory {
             Map<Coordenada, Vertice> verticesPorCoordenada,
             Map<String, Lado> ladosUnicos) {
 
-        // 1. Asignar puntas (v1, v2) a cada lado
+        //  Asignar puntas (v1, v2) a cada lado
         for (Map.Entry<Coordenada, Lado> entry : ladosPorCoordenada.entrySet()) {
             int hex = entry.getKey().numHex();
             int edge = entry.getKey().indice();
@@ -224,7 +223,7 @@ public class TableroFactory {
             lado.agregarPunta(v2);
         }
 
-        // 2. Conectar lados adyacentes
+        //Conectar lados adyacentes
         for (Lado lado : ladosUnicos.values()) {
             Vertice a = lado.getPunta(0);
             Vertice b = lado.getPunta(1);
@@ -309,17 +308,18 @@ public class TableroFactory {
     private static void asignarPuertos(Map<Coordenada, Vertice> verticesPorCoordenada,
                                       Random random) {
 
-        // 1. Copiar lista de puertos y mezclar
+        // Copiar lista de puertos y mezclar
         List<Puerto> lista = new ArrayList<>(Arrays.asList(PUERTOS));
         Collections.shuffle(lista, random);
 
-        // 2. Copiar y mezclar posiciones fijas de pares de vértices
+        //  Copiar y mezclar posiciones fijas de pares de vértices
         List<Coordenada[]> posiciones = new ArrayList<>(Arrays.asList(POSICIONES_PUERTOS));
         Collections.shuffle(posiciones, random);
 
-        // 3. Asignar cada puerto a su par de vértices
+        //  Asignar cada puerto a su par de vértices
         for (int i = 0; i < lista.size(); i++) {
             Puerto p = lista.get(i);
+
             Coordenada[] par = posiciones.get(i);
 
             Vertice v1 = verticesPorCoordenada.get(par[0]);

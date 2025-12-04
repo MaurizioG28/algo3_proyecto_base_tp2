@@ -8,7 +8,7 @@ public class EstadoCartaDisponible implements IEstadoCarta{
 
     @Override
     public IEstadoCarta actualizarEstado() {
-        return new EstadoCartaUsada();
+        return this;
     }
 
     @Override

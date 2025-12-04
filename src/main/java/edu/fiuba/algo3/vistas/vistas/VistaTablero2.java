@@ -58,6 +58,7 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     private HBox contenedorRecursos;
     private HBox contenedorCartasDesarrollo;
     private Label lblNombreJugadorActual;
+    private VBox contenedorInfoJugadores;
 
     private Group grupoConstrucciones; // Edificios reales (fijos)
     private Group grupoSugestiones;    // Puntos/Líneas grises (temporales)
@@ -211,13 +212,6 @@ private Group agregarTerrenos() {
     return root;
 }
 
-    // Método auxiliar simple para verificar el desierto
-    private boolean esDesierto(Terreno t) {
-        if (t == null) return false;
-        // Compara ignorando mayúsculas/minúsculas por seguridad
-        return t.getTipoTerreno().toString().equalsIgnoreCase("DESIERTO");
-    }
-
 
     // He unificado tus métodos createHexagon y añadido lógica de Ladrón
     private Polygon createHexagon(double x, double y, double radius, Terreno terreno) {
@@ -306,37 +300,31 @@ private Group agregarTerrenos() {
         panel.setPrefWidth(300);
         panel.setAlignment(Pos.TOP_CENTER);
 
-        List<Jugador> jugadores = Catan.getInstance().getJugadores();
-        ControladorPanelJugadores controladorPanelJugadores = new ControladorPanelJugadores(this);
-        for (Jugador j : jugadores) {
-            HBox infoJugador = agregarJugador(j);
-            HBox separador = new HBox(); separador.setPrefHeight(15);
-            controladorPanelJugadores.agregarPanelyJugador(infoJugador,j);
-            panel.getChildren().addAll(infoJugador, separador);
-        }
-        this.controladorJugadores=controladorPanelJugadores;
+        // 1. ZONA JUGADORES (Dinámica)
+        this.contenedorInfoJugadores = new VBox();
+        this.contenedorInfoJugadores.setSpacing(10); // Espacio entre fichas de jugadores
+        actualizarPanelJugadores(); // Llenar por primera vez
 
+        // 2. ESPACIADOR
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
-        panel.getChildren().add(spacer);
 
+        // 3. ZONA DADOS Y CONTROLES (Estática)
         this.contenedorDadosVisuales = new HBox(15);
         this.contenedorDadosVisuales.setAlignment(Pos.CENTER);
 
-
-
-        Dados dados = new Dados(); // O obtener de Catan.getInstance()
+        Dados dados = new Dados();
         ControladorLanzarDados controladorLanzar = new ControladorLanzarDados(dados, this);
         this.btnLanzar = new BotonLanzarDados(controladorLanzar);
 
         ControladorTerminarTurno controladorTerminarTurno = new ControladorTerminarTurno(btnLanzar, this);
         this.btnTerminar = new BotonTerminarTurno(controladorTerminarTurno);
-        btnTerminar.setDisable(true);
 
+        // Configuración inicial de botones
+        btnTerminar.setDisable(true);
         controladorLanzar.setBoton(btnLanzar);
         controladorLanzar.setBotonTerminar(btnTerminar);
         controladorTerminarTurno.setBotonTerminar(btnTerminar);
-
 
         HBox contenedorBotones = new HBox(15);
         contenedorBotones.setAlignment(Pos.CENTER);
@@ -346,9 +334,35 @@ private Group agregarTerrenos() {
         zonaControl.setAlignment(Pos.CENTER);
         zonaControl.getChildren().addAll(this.contenedorDadosVisuales, contenedorBotones);
 
-        panel.getChildren().add(zonaControl);
+        // 4. ARMAR EL PANEL FINAL
+        panel.getChildren().addAll(this.contenedorInfoJugadores, spacer, zonaControl);
+
+        // Dibujo inicial de dados
         soloDibujarDados(1, 1);
+
         return panel;
+    }
+
+    private void actualizarPanelJugadores() {
+        if (this.contenedorInfoJugadores == null) return;
+
+        this.contenedorInfoJugadores.getChildren().clear(); // Limpiamos solo la lista
+
+        List<Jugador> jugadores = Catan.getInstance().getJugadores();
+
+        // Instanciamos el controlador del panel (para los logros visuales)
+        ControladorPanelJugadores controladorPanel = new ControladorPanelJugadores(this);
+        this.controladorJugadores = controladorPanel;
+
+        for (Jugador j : jugadores) {
+            HBox infoJugador = agregarJugador(j); // Crea la ficha con puntos actualizados
+            controladorPanel.agregarPanelyJugador(infoJugador, j);
+            this.contenedorInfoJugadores.getChildren().add(infoJugador);
+        }
+
+        // Actualizamos los íconos de logros si corresponde
+        controladorPanel.actualizarGranCaballeria();
+        controladorPanel.actualizarRutaComercial();
     }
 
     private HBox agregarJugador(Jugador jugador) {
@@ -498,14 +512,11 @@ private Group agregarTerrenos() {
         this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
             this.esperandoSeleccionHexagono = true;
             mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
-            // Opcional: Cambiar cursor para feedback visual
             this.getScene().setCursor(javafx.scene.Cursor.HAND);
         });
         this.btnMoverLadron.setDisable(true);
 
-        // --- BOTON COMPRAR CARTA (IMPLEMENTADO) ---
-        // Asumiendo que ControladorComprarCarta existe y recibe (Catan, VistaTablero) o similar
-        // Si no tienes el controlador aún, usa uno genérico para probar
+        // --- BOTON COMPRAR CARTA  ---
         this.btnComprarCarta = crearBotonAccion("Comprar\nCarta D.",new ControladorComprarCarta(this));
 
         // this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", new ControladorMoverLadron()); // Opcional
@@ -549,26 +560,6 @@ private Group agregarTerrenos() {
         }
     }
 
-    private VBox crearCartaInteractiva(String nombre, Color color) {
-        VBox carta = new VBox();
-        carta.setPrefSize(60, 80);
-        carta.setStyle("-fx-background-color: " + toHex(color) + "; -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 5;");
-        carta.setAlignment(Pos.CENTER);
-
-        Label lbl = new Label(nombre.substring(0, 3)); // Solo 3 letras
-        lbl.setFont(Font.font("Arial", FontWeight.BOLD, 12));
-        carta.getChildren().add(lbl);
-
-        carta.setOnMouseClicked(e -> {
-            this.cartaSeleccionada = nombre;
-            // Limpiar selección de hermanos
-            HBox padre = (HBox) carta.getParent();
-            padre.getChildren().forEach(n -> n.setStyle(n.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;")));
-            // Seleccionar actual
-            carta.setStyle(carta.getStyle().replace("-fx-border-color: white;", "-fx-border-color: yellow;"));
-        });
-        return carta;
-    }
 
     private BotonGenericoAccionUsuario crearBotonAccion(String texto, EventHandler<ActionEvent> event) {
         BotonGenericoAccionUsuario btn = new BotonGenericoAccionUsuario (event,texto);
@@ -697,11 +688,6 @@ private Group agregarTerrenos() {
         //if(btnTerminar != null) btnTerminar.setDisable(false);
     }
 
-    public void habilitarMoverLadron(boolean habilitar) {
-        if (this.btnMoverLadron != null) {
-            this.btnMoverLadron.setDisable(!habilitar);
-        }
-    }
 
 
     // Método auxiliar para cargar imágenes de recursos y cartas
@@ -755,7 +741,7 @@ private Group agregarTerrenos() {
                     Catan.getInstance().getManagerTurno().getJugadorActual();
         } catch(Exception e) { return; }
 
-        // Actualizar Label del Nombre y Color
+
         if (this.lblNombreJugadorActual != null) {
             this.lblNombreJugadorActual.setText(jugadorActual.getNombre());
             try {
@@ -765,7 +751,9 @@ private Group agregarTerrenos() {
             }
         }
 
-        // --- A. LLENAR RECURSOS ---
+        actualizarPanelJugadores();
+
+        // ---LLENAR RECURSOS ---
         this.contenedorRecursos.getChildren().addAll(
                 crearFichaConImagen("Madera",   jugadorActual.cantidadMadera(),   "madera.jpg",   "#228B22"),
                 crearFichaConImagen("Ladrillo", jugadorActual.cantidadLadrillo(), "ladrilo.jpg", "#B22222"),
@@ -794,7 +782,7 @@ private Group agregarTerrenos() {
                 crearCartaSmart("Punto Vic.", jugadorActual.cantidadCartasPuntoVictoria(), "PV.jpg", "#FFD700", false)
         );
 
-
+        verificarGanador();
     }
 
     private VBox crearCartaSmart(String nombre, int cantidad, String img, String color, boolean habilitada) {
@@ -1436,21 +1424,13 @@ private Group agregarTerrenos() {
             int puntos = actual.totalPuntos();
 
             // Actualizamos el panel derecho para que se vea el puntaje nuevo
-            this.setRight(crearPanelDerecho());
+            actualizarPanelJugadores();
 
             // REGLA: Gana con 10 Puntos de Victoria
             if (puntos >= 10) {
-                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-                alert.setTitle("¡JUEGO TERMINADO!");
-                alert.setHeaderText("¡VICTORIA PARA " + actual.getNombre().toUpperCase() + "!");
-                alert.setContentText("Ha alcanzado " + puntos + " Puntos de Victoria.\n¡Felicitaciones!");
-
-                // Al cerrar la alerta, cerramos la aplicación o volvemos al menú
-                alert.setOnHidden(evt -> {
-                    if (this.stage != null) this.stage.close();
-                    System.exit(0);
-                });
-                alert.show();
+                // --- CORRECCIÓN: CAMBIAR A VISTA GANADOR ---
+                this.pantallaPrincipal.setCentro(new VistaGanador(stage, pantallaPrincipal, actual));
+                // -------------------------------------------
             }
         } catch (Exception e) {
             System.out.println("Error verificando ganador: " + e.getMessage());

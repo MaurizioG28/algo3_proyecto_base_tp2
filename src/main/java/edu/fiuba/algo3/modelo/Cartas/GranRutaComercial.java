@@ -17,18 +17,22 @@ public class GranRutaComercial {
         // Si no llega al mínimo, ignorar
         if (nuevaLongitud < 5) return;
 
-        // Si nadie era líder → este lo es
         if (liderActual == null) {
             asignarLider(jugador, nuevaLongitud);
             return;
         }
+        if (liderActual.equals(jugador)) {
+            // Solo actualizo el récord numérico, NO toco los puntos
+            if (nuevaLongitud > longitudMaxima) {
+                longitudMaxima = nuevaLongitud;
+            }
+            return; // Salir para no duplicar puntos ni borrarlos
+        }
 
-        // Si empata la longitud, no cambia
         if (nuevaLongitud == longitudMaxima) {
             return;
         }
 
-        // Si supera, entonces reemplaza
         if (nuevaLongitud > longitudMaxima) {
             removerBonus(liderActual);
             asignarLider(jugador, nuevaLongitud);

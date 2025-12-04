@@ -105,10 +105,7 @@ public class Tablero {
         if (vertice.tieneConstruccion() || vertice.tieneConstruccionAdyacente()) {
             throw new ReglaDistanciaException("No se puede construir tan cerca de otro poblado.");
         }
-        /*
-        construye directamente, falta implementar el chequeo de recursos del jugardor.
-        Con algo como jugador.recursosPoblado()
-        */
+
         try {
             vertice.colocar(new Poblado(jugador));
         } catch (ConstruccionExistenteException e) {

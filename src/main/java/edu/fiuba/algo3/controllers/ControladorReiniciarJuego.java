@@ -1,5 +1,6 @@
 package edu.fiuba.algo3.controllers;
 
+import edu.fiuba.algo3.modelo.Catan;
 import edu.fiuba.algo3.vistas.PantallaPrincipal;
 import edu.fiuba.algo3.vistas.vistas.VistaInicial;
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ public class ControladorReiniciarJuego implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent event) {
+        Catan.getInstance().reset();
         principal.setCentro(new VistaInicial(stage, principal));
     }
 }
