@@ -85,10 +85,16 @@ public class CartaConstruccionDeCarreterasPermiteDosConstruccionesGratuitas {
 
         CartaConstruccionCarreteras cartaCarreteras = new CartaConstruccionCarreteras(new EstadoCartaDisponible());
         jugador.agregarCarta(cartaCarreteras);
-
+        cartaCarreteras.setTurnoDeCompra(1);
         cartaCarreteras.setCoordenadas(coordCalle1, coordCalle2);
 
         // ACT
+
+        manager.siguienteTurnoInicial();
+        manager.siguienteTurnoInicial();
+        manager.siguienteTurnoInicial();
+        manager.siguienteTurnoInicial();
+        manager.siguienteTurnoInicial();
         manager.usarUnaCarta(0);
         // ASSERT
         assertTrue(tablero.tieneCarreteraEn(coordCalle1));

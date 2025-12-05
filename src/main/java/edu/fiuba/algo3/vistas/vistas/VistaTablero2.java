@@ -63,28 +63,25 @@ import javafx.scene.layout.StackPane;
 import java.util.*;
 
 public class VistaTablero2 extends BorderPane { //
-    // CAMBIO: Ahora extendemos BorderPane
     private static final double ANCHO_VENTANA = 1280;
     private static final double ALTO_VENTANA = 720;
+    private static final String IMAGEN_RUTA = "imagenes/mapafondotablero.png";
 
 
     private HBox contenedorDadosVisuales;
     private Stage stage;
     private PantallaPrincipal pantallaPrincipal;
-    private  FlowPane contenedorCartasDesarrollo;
+    private FlowPane contenedorCartasDesarrollo;
     private Label lblNombreJugadorActual;
     private VBox contenedorInfoJugadores;
 
     private Group grupoConstrucciones; // Edificios reales (fijos)
     private Group grupoSugestiones;    // Puntos/Líneas grises (temporales)
     private Group grupoPuertos;
-    // Vista Nueva
 
     // HUD superior
     private HBox contenedorRecursosSuperior;
     private HBox barraAOE;
-
-    // Inventario inferior
 
 
     // botones
@@ -117,142 +114,132 @@ public class VistaTablero2 extends BorderPane { //
 
     private ControladorPanelJugadores controladorJugadores;
 
-    // 1. Aumentamos el radio (antes 45)
     public VistaTablero2(Stage stage, PantallaPrincipal pantallaPrincipal) {
         this.setBackground(new Background(new BackgroundFill(Color.web("#233850"), null, null)));
+
+        this.setPrefSize(ANCHO_VENTANA, ALTO_VENTANA);
+        stage.setMinWidth(ANCHO_VENTANA);
+        stage.setMinHeight(ALTO_VENTANA);
+        configurarFondo();
         this.stage = stage;
         this.pantallaPrincipal = pantallaPrincipal;
 
-        // --- CENTRO: MAPA (AJUSTE "DIAGRAMA VERDE") ---
+        // --- CENTRO: MAPA ---
+        this.controladorJugadores = new ControladorPanelJugadores(this);
         StackPane contenedorMapa = new StackPane(agregarTerrenos());
 
-        // 1. Alineación Arriba-Izquierda para tener control total
         contenedorMapa.setAlignment(Pos.TOP_LEFT);
-
-        // 2. Márgenes para empujarlo a la posición exacta:
-        // (Arriba, Derecha, Abajo, Izquierda)
-        // - 100px desde arriba para dejar espacio a los banderines pero estar alto
-        // - 50px desde la izquierda para no pegar al borde
         contenedorMapa.setPadding(new Insets(0, 0, 0, 50));
 
-        // (Opcional) Si quieres subirlo AÚN MÁS cerca de los banderines, usa padding top menor (ej: 50)
         contenedorMapa.setTranslateY(-90);
         this.setCenter(contenedorMapa);
-
         // --- ARRIBA ---
         this.setTop(crearTopConBanderines());
 
         // --- INICIALIZAR BOTONES ---
         inicializarBotonesAcciones();
 
-        // --- DERECHA (NUEVO ANCHO) ---
         this.setRight(crearPanelLateralDerecho());
 
         Platform.runLater(this::actualizarInventario);
 
-        if(btnLanzar != null) btnLanzar.setDisable(true);
-        if(btnTerminar != null) btnTerminar.setDisable(true);
+        if (btnLanzar != null) btnLanzar.setDisable(true);
+        if (btnTerminar != null) btnTerminar.setDisable(true);
         deshabilitarBotonesJuegoNormal();
         gestionarFlujoFaseInicial();
     }
 
-private Group agregarTerrenos() {
-    Tablero tablero = Catan.getInstance().getTablero();
-    if(tablero == null) tablero = Catan.getInstance().crearTablero();
+    private Group agregarTerrenos() {
+        Tablero tablero = Catan.getInstance().getTablero();
+        if (tablero == null) tablero = Catan.getInstance().crearTablero();
 
-    Map<Integer, Terreno> terrenos = tablero.getTerrenos();
-    Group root = new Group();
+        Map<Integer, Terreno> terrenos = tablero.getTerrenos();
+        Group root = new Group();
 
-    // Inicializar capas
-    this.grupoPuertos = new Group();
-    this.grupoConstrucciones = new Group();
-    this.grupoSugestiones = new Group();
+        // Inicializar capas
+        this.grupoPuertos = new Group();
+        this.grupoConstrucciones = new Group();
+        this.grupoSugestiones = new Group();
 
-    double hexRadius = radioGlobal;
-    double xDesierto = 0;
-    double yDesierto = 0;
+        double hexRadius = radioGlobal;
+        double xDesierto = 0;
+        double yDesierto = 0;
 
-    for (Terreno t : terrenos.values()) {
-        Axial pos = t.getPosicion();
-        double x = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
-        double y = hexRadius * 1.5 * pos.r;
+        for (Terreno t : terrenos.values()) {
+            Axial pos = t.getPosicion();
+            double x = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
+            double y = hexRadius * 1.5 * pos.r;
 
-        // 1. DIBUJAR HEXÁGONO
-        Polygon hexagon = createHexagon(x, y, hexRadius, t);
-        root.getChildren().add(hexagon);
+            // DIBUJAR HEXÁGONO
+            Polygon hexagon = createHexagon(x, y, hexRadius, t);
+            root.getChildren().add(hexagon);
 
-        // 2. DIBUJAR FICHA DE NÚMERO (Si produce algo)
-        if (!t.esDesierto() && t.getProduccion() != null) {
+            // DIBUJAR FICHA DE NÚMERO (Si produce algo)
+            if (!t.esDesierto() && t.getProduccion() != null) {
 
-            // Círculo beige de fondo
-            Circle ficha = new Circle(x, y, 15);
-            ficha.setFill(Color.BEIGE);
-            ficha.setStroke(Color.BLACK);
-            ficha.setStrokeWidth(1);
-            ficha.setMouseTransparent(true);
+                // Círculo beige de fondo
+                Circle ficha = new Circle(x, y, 15);
+                ficha.setFill(Color.BEIGE);
+                ficha.setStroke(Color.BLACK);
+                ficha.setStrokeWidth(1);
+                ficha.setMouseTransparent(true);
 
-            // Obtener el número
-            String textoNum = "";
-            int numero = 0;
+                // Obtener el número
+                String textoNum = "";
+                int numero = 0;
 
-            try {
-                // Aquí usamos tu lógica
-                numero = t.getProduccion().valor();
-                textoNum = String.valueOf(numero); // <--- FALTABA ESTO: Convertir int a String
-            } catch (Exception e) {
-                textoNum = "?";
+                try {
+                    numero = t.getProduccion().valor();
+                    textoNum = String.valueOf(numero);
+                } catch (Exception e) {
+                    textoNum = "?";
+                }
+
+                // Crear la etiqueta
+                Label lblNum = new Label(textoNum);
+                lblNum.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
+                lblNum.setMouseTransparent(true);
+
+                double ajusteX = (numero > 9) ? 9 : 5;
+                lblNum.setTranslateX(x - ajusteX);
+                lblNum.setTranslateY(y - 9);
+
+                if (numero == 6 || numero == 8) {
+                    lblNum.setTextFill(Color.RED);
+                } else {
+                    lblNum.setTextFill(Color.BLACK);
+                }
+
+                root.getChildren().addAll(ficha, lblNum);
             }
 
-            // Crear la etiqueta
-            Label lblNum = new Label(textoNum);
-            lblNum.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-            lblNum.setMouseTransparent(true);
-
-            // Centrar el texto visualmente (ajuste fino)
-            // Si el número tiene 2 dígitos (10, 11, 12), lo movemos un poco más a la izquierda
-            double ajusteX = (numero > 9) ? 9 : 5;
-            lblNum.setTranslateX(x - ajusteX);
-            lblNum.setTranslateY(y - 9);
-
-            // Regla visual: 6 y 8 van en ROJO
-            if (numero == 6 || numero == 8) {
-                lblNum.setTextFill(Color.RED);
-            } else {
-                lblNum.setTextFill(Color.BLACK);
+            // Guardar posición del desierto para el ladrón
+            if (t.esDesierto()) {
+                xDesierto = x;
+                yDesierto = y;
             }
-
-            root.getChildren().addAll(ficha, lblNum);
         }
 
-        // Guardar posición del desierto para el ladrón
-        if (t.esDesierto()) {
-            xDesierto = x;
-            yDesierto = y;
-        }
+        dibujarPuertos(hexRadius);
+
+        root.getChildren().add(this.grupoPuertos);
+        root.getChildren().add(this.grupoConstrucciones);
+        root.getChildren().add(this.grupoSugestiones);
+
+        // Ladrón
+        ladronVisual = new Circle(15, Color.web("#333333"));
+        ladronVisual.setStroke(Color.BLACK);
+        ladronVisual.setStrokeWidth(2);
+        ladronVisual.setMouseTransparent(true);
+        ladronVisual.setTranslateX(xDesierto);
+        ladronVisual.setTranslateY(yDesierto);
+
+        root.getChildren().add(ladronVisual);
+
+        return root;
     }
 
-    // 3. Agregar resto de capas
-    dibujarPuertos(hexRadius);
 
-    root.getChildren().add(this.grupoPuertos);
-    root.getChildren().add(this.grupoConstrucciones);
-    root.getChildren().add(this.grupoSugestiones);
-
-    // 4. Ladrón
-    ladronVisual = new Circle(15, Color.web("#333333"));
-    ladronVisual.setStroke(Color.BLACK);
-    ladronVisual.setStrokeWidth(2);
-    ladronVisual.setMouseTransparent(true);
-    ladronVisual.setTranslateX(xDesierto);
-    ladronVisual.setTranslateY(yDesierto);
-
-    root.getChildren().add(ladronVisual);
-
-    return root;
-}
-
-
-    // He unificado tus métodos createHexagon y añadido lógica de Ladrón
     private Polygon createHexagon(double x, double y, double radius, Terreno terreno) {
         Polygon hexagon = new Polygon();
         double angleOffset = Math.PI / 6;
@@ -268,14 +255,12 @@ private Group agregarTerrenos() {
             String nombreImg = terreno.getTipoTerreno().toLowerCase();
 
             try {
-                // NUEVA RUTA: ahora buscamos en /imagenes/celdas/
                 java.net.URL url = getClass().getResource("/imagenes/celdas/" + nombreImg + ".png");
 
                 if (url != null) {
                     Image img = new Image(url.toExternalForm());
                     hexagon.setFill(new ImagePattern(img));
                 } else {
-                    // fallback si no existe la imagen
                     hexagon.setFill(Color.BROWN);
                 }
 
@@ -293,18 +278,14 @@ private Group agregarTerrenos() {
 
         hexagon.setOnMouseClicked(e -> {
             if (this.esperandoSeleccionHexagono) {
-                // 1. Mover visualmente
                 moverLadronVisualmente(x, y);
 
-                // 2. Lógica de Negocio
                 if (cartaCaballeroActiva != null) {
                     // --- CASO CABALLERO ---
                     CartaCaballero caballero = (CartaCaballero) cartaCaballeroActiva;
 
-                    // Configuramos la carta con el destino elegido
                     caballero.setOpciones(terreno.getId(), null); // null = víctima al azar según tu lógica
 
-                    // Ejecutamos efecto
                     caballero.ejecutarEfecto(Catan.getInstance().getManagerTurno().getJugadorActual(),
                             Catan.getInstance().getTablero(),
                             Catan.getInstance().getJugadores());
@@ -318,7 +299,6 @@ private Group agregarTerrenos() {
                     Catan.getInstance().getManagerTurno().moverLadron(terreno.getId());
                 }
 
-                // 3. Restaurar estado
                 this.esperandoSeleccionHexagono = false;
                 this.getScene().setCursor(javafx.scene.Cursor.DEFAULT);
                 setModoRobo(false);
@@ -336,16 +316,16 @@ private Group agregarTerrenos() {
         if (ladronVisual != null) {
             ladronVisual.setTranslateX(x);
             ladronVisual.setTranslateY(y);
-            ladronVisual.toFront(); // Lo traemos al frente por si acaso quedó tapado
+            ladronVisual.toFront();
         }
     }
 
 
-
-
-
-
     private void actualizarPanelJugadores() {
+        if (this.controladorJugadores != null) {
+            this.controladorJugadores.actualizarGranCaballeria();
+            this.controladorJugadores.actualizarRutaComercial();
+        }
         if (this.contenedorInfoJugadores == null) return;
 
         this.contenedorInfoJugadores.getChildren().clear();
@@ -364,6 +344,7 @@ private Group agregarTerrenos() {
         controladorPanel.actualizarGranCaballeria();
         controladorPanel.actualizarRutaComercial();
     }
+
 
     private HBox agregarJugador(Jugador jugador) {
         HBox jugadorBox = new HBox();
@@ -387,121 +368,36 @@ private Group agregarTerrenos() {
     }
 
 
+    private VBox crearPanelLogros(Color colorTexto) {
+        VBox logrosBox = new VBox(5);
+        logrosBox.setAlignment(Pos.CENTER);
 
+        java.net.URL url = getClass().getResource("/imagenes/caballero.jpg");
+        Image img = new Image(url.toExternalForm());
+        ImageView iconoCaballeria = new ImageView(img);
+        iconoCaballeria.setFitWidth(20);
+        iconoCaballeria.setFitHeight(20);
+        iconoCaballeria.setId("caballeria");
 
+        java.net.URL url1 = getClass().getResource("/imagenes/carreteras.jpg");
+        Image img1 = new Image(url1.toExternalForm());
+        ImageView iconoCamino = new ImageView(img1);
+        iconoCamino.setFitWidth(20);
+        iconoCamino.setFitHeight(20);
+        iconoCamino.setId("camino");
 
+        HBox iconosBox = new HBox(5, iconoCaballeria, iconoCamino);
+        iconosBox.setAlignment(Pos.CENTER);
+        iconoCaballeria.setOpacity(0.3);
+        iconoCamino.setOpacity(0.3);
 
-//    private HBox crearPanelInferior() {
-//
-//        HBox panel = new HBox(20);
-//        panel.setPadding(new Insets(15, 20, 15, 20));
-//        panel.setAlignment(Pos.BOTTOM_CENTER);
-//        panel.setPrefHeight(200);
-//
-//        // ─────────────────────────────────────────────
-//        // INVENTARIO (solo cartas de desarrollo)
-//        // ─────────────────────────────────────────────
-//
-//        VBox inventario = new VBox(5);
-//        inventario.setPrefWidth(600);
-//        inventario.setPadding(new Insets(10, 15, 10, 15));
-//        inventario.setAlignment(Pos.TOP_CENTER);
-//        inventario.setStyle(
-//                "-fx-background-color: #222;" +
-//                        "-fx-background-radius: 20;" +
-//                        "-fx-border-color: black;" +
-//                        "-fx-border-width: 4;" +
-//                        "-fx-border-radius: 20;"
-//        );
-//
-//        // Título pequeño, como en el diseño moderno
-//        Label lblTitulo = new Label("INVENTARIO");
-//        lblTitulo.setStyle(
-//                "-fx-text-fill: gray;" +
-//                        "-fx-font-size: 10px;" +
-//                        "-fx-font-weight: bold;" +
-//                        "-fx-letter-spacing: 2;"
-//        );
-//
-//        // Solo cartas de desarrollo → NO recursos
-//        HBox filaDeCartas = new HBox(15);
-//        filaDeCartas.setAlignment(Pos.CENTER);
-//        filaDeCartas.setPrefWidth(580);
-//
-//        this.contenedorRecursos = new HBox(10);
-//        this.contenedorRecursos.setAlignment(Pos.CENTER_LEFT);
-//        this.contenedorRecursos.setPadding(new Insets(5, 10, 5, 10));
-//
-//        inventario.getChildren().add(contenedorRecursos);
-//        this.contenedorCartasDesarrollo = new HBox(10);
-//        this.contenedorCartasDesarrollo.setAlignment(Pos.CENTER);
-//
-//
-//        filaDeCartas.getChildren().add(this.contenedorCartasDesarrollo);
-//
-//        // rellenar cartas
-//        actualizarInventario();
-//
-//        // ─────────────────────────────────────────────
-//        // ACCIONES (botones)
-//        // ─────────────────────────────────────────────
-//        GridPane acciones = new GridPane();
-//        acciones.setHgap(15);
-//        acciones.setVgap(15);
-//        acciones.setAlignment(Pos.CENTER_LEFT);
-//
-//        this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado", e -> {
-//            mostrarAlerta("Modo Construcción", "Selecciona un punto gris para construir.");
-//            mostrarLugaresPoblado();
-//        });
-//
-//        this.btnConstruirCamino = crearBotonAccion("Construir\nCamino", e -> {
-//            mostrarAlerta("Modo Construcción", "Selecciona una línea gris para el camino.");
-//            mostrarLugaresCamino();
-//        });
-//
-//        this.btnConstruirCiudad = crearBotonAccion("Construir\nCiudad", e -> {
-//            mostrarAlerta("Modo Ciudad", "Selecciona uno de tus poblados para mejorar.");
-//            mostrarLugaresCiudad();
-//        });
-//
-//        this.btnBanca =
-//                crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
-//
-//        this.btnIntercambioJugadores =
-//                crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
-//
-//        this.btnJugarCarta =
-//                crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
-//
-//        this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
-//            this.esperandoSeleccionHexagono = true;
-//            mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
-//            this.getScene().setCursor(javafx.scene.Cursor.HAND);
-//        });
-//        this.btnMoverLadron.setDisable(true);
-//
-//        this.btnComprarCarta =
-//                crearBotonAccion("Comprar\nCarta D.", new ControladorComprarCarta(this));
-//
-//        acciones.add(this.btnConstruirPoblado,      0, 0);
-//        acciones.add(this.btnConstruirCamino,       1, 0);
-//        acciones.add(this.btnConstruirCiudad,       2, 0);
-//
-//        acciones.add(this.btnBanca,                 0, 1);
-//        acciones.add(this.btnIntercambioJugadores,  1, 1);
-//        acciones.add(this.btnJugarCarta,            2, 1);
-//
-//        acciones.add(this.btnComprarCarta,          0, 2);
-//        acciones.add(this.btnMoverLadron,           2, 2);
-//
-//        panel.setSpacing(30);
-//        panel.setAlignment(Pos.BOTTOM_CENTER);
-//
-//        panel.getChildren().addAll(inventario, acciones);
-//
-//        return panel;
-//    }
+        Label labelLogros = new Label("Logros");
+        labelLogros.setFont(Font.font("Verdana", 10));
+        labelLogros.setTextFill(colorTexto);
+
+        logrosBox.getChildren().addAll(labelLogros, iconosBox);
+        return logrosBox;
+    }
 
 
     public void actualizarEstadoBotones() {
@@ -522,7 +418,6 @@ private Group agregarTerrenos() {
             this.btnComprarCarta.setDisable(!tieneRecursosCarta);
 
         } catch(Exception e) {
-            // Manejo silencioso si el juego no ha iniciado bien
         }
     }
 
@@ -541,33 +436,28 @@ private Group agregarTerrenos() {
                 0.7152 * colorFondo.getGreen() +
                 0.0722 * colorFondo.getBlue();
 
-        //  Si la luminancia es mayor a 0.5, el color es "claro" -> Texto NEGRO
-        // Si es menor o igual, el color es "oscuro" -> Texto BLANCO
-        // Usamos 0.55 punto medio
+
         return (luminancia > 0.55) ? Color.BLACK : Color.WHITE;
     }
 
     private StackPane crearDadoVisual(int valor) {
 
         StackPane dado = new StackPane();
-        dado.setPrefSize(70, 70); // un poco más grande
+        dado.setPrefSize(70, 70);
 
         Rectangle fondo = new Rectangle(70, 70);
         fondo.setArcWidth(18);
         fondo.setArcHeight(18);
 
-        // 🎨 Nuevo color moderno
-        fondo.setFill(Color.web("#4A6370")); // azul gris profesional
+        fondo.setFill(Color.web("#4A6370"));
 
         fondo.setStroke(Color.web("#FFFFFF"));
         fondo.setStrokeWidth(3);
 
-        // sombra elegante
-        fondo.setEffect(new DropShadow(10, Color.color(0,0,0,0.45)));
+        fondo.setEffect(new DropShadow(10, Color.color(0, 0, 0, 0.45)));
 
         dado.getChildren().add(fondo);
 
-        // puntos del dado
         GridPane puntosGrid = new GridPane();
         puntosGrid.setAlignment(Pos.CENTER);
         puntosGrid.setHgap(6);
@@ -594,7 +484,7 @@ private Group agregarTerrenos() {
     }
 
     private Circle crearPunto() {
-        Circle punto = new Circle(7); // un poquito más grande
+        Circle punto = new Circle(7);
         punto.setFill(Color.WHITE);
         return punto;
     }
@@ -624,11 +514,10 @@ private Group agregarTerrenos() {
     }
     public void marcarCartaJugada() {
         this.cartaDesarrolloJugadaEnTurno = true;
-        this.cartaSeleccionada = null; // Quitar selección
-        actualizarInventario(); // Esto repintará todo bloqueado
+        this.cartaSeleccionada = null;
+        actualizarInventario();
     }
 
-    // Auxiliar para no repetir código de habilitar botones
     private void habilitarBotonesJuegoNormal() {
         btnIntercambioJugadores.setDisable(false);
         btnBanca.setDisable(false);
@@ -644,16 +533,13 @@ private Group agregarTerrenos() {
         btnConstruirPoblado.setDisable(true);
         btnConstruirCiudad.setDisable(true);
         btnComprarCarta.setDisable(true);
-        //btnMoverLadron.setDisable(true);
-        //if(btnTerminar != null) btnTerminar.setDisable(false);
+
     }
 
 
 
-    // Método auxiliar para cargar imágenes de recursos y cartas
     private VBox crearFichaConImagen(String nombre, int cantidad, String nombreImagen, String colorFondoHex) {
         VBox ficha = new VBox(2);
-        // Tamaño reducido tipo Icono
         ficha.setPrefSize(85, 100);
         ficha.setAlignment(Pos.CENTER);
 
@@ -664,7 +550,6 @@ private Group agregarTerrenos() {
                 "-fx-border-radius: 8;");
 
         StackPane contenedorImagen = new StackPane();
-        // Imagen más pequeña
         contenedorImagen.setPrefSize(60, 60);
 
         try {
@@ -678,7 +563,6 @@ private Group agregarTerrenos() {
             }
         } catch (Exception e) {}
 
-        // Texto abreviado o más pequeño
         Label lblNombre = new Label(nombre.length() > 6 ? nombre.substring(0, 6) + "." : nombre);
         lblNombre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 10px;");
 
@@ -693,10 +577,8 @@ private Group agregarTerrenos() {
 
 
     public void actualizarInventario() {
-        // 1. CAMBIO IMPORTANTE: Chequeamos el contenedor de cartas, NO el de recursos viejos
         if (this.contenedorCartasDesarrollo == null || Catan.getInstance() == null) return;
 
-        // 2. Limpiamos solo el contenedor de cartas
         this.contenedorCartasDesarrollo.getChildren().clear();
 
         Jugador jugadorActual;
@@ -706,16 +588,14 @@ private Group agregarTerrenos() {
                     Catan.getInstance().getManagerTurno().getJugadorActual();
         } catch(Exception e) { return; }
 
-        // Actualizar etiquetas de nombre (igual que antes)
         if (this.lblNombreJugadorActual != null) {
             this.lblNombreJugadorActual.setText(jugadorActual.getNombre());
         }
 
-        // Actualizar recursos en la barra SUPERIOR (La única que importa ahora)
+        // Actualizar recursos en la barra
         actualizarRecursosSuperiores(jugadorActual);
         actualizarPanelJugadores();
 
-        // 3. Lógica de Cartas
         boolean turnoHabilitado = !this.cartaDesarrolloJugadaEnTurno;
 
         this.contenedorCartasDesarrollo.getChildren().addAll(
@@ -760,49 +640,6 @@ private Group agregarTerrenos() {
                 carta.setStyle(carta.getStyle().replace("-fx-border-color: white;", "-fx-border-color: yellow;"));
             }
         });
-        return carta;
-    }
-    private VBox crearCartaInteractiva(String nombre, int cantidad, String nombreImagen, String colorFondoHex, boolean turnoHabilitado) {
-
-        // Reutilizamos tu método base de crear ficha
-        VBox carta = crearFichaConImagen(nombre, cantidad, nombreImagen, colorFondoHex);
-
-        if (cantidad <= 0) {
-            carta.setDisable(true);
-            carta.setOpacity(0.4); // Se ve transparente
-            return carta;
-        }
-
-        //YA JUGUÉ CARTA ESTE TURNO (O es carta de PV)
-        if (!turnoHabilitado) {
-            carta.setDisable(true);
-            carta.setOpacity(0.7); // Un poco más oscuro para indicar bloqueo temporal
-            // Opcional: Tooltip explicando por qué
-            return carta;
-        }
-
-        //DISPONIBLE PARA SELECCIONAR
-        carta.setCursor(Cursor.HAND);
-        carta.setOnMouseClicked(e -> {
-            // Lógica de Selección Visual
-            if (this.cartaSeleccionada != null && this.cartaSeleccionada.equals(nombre)) {
-                // Deseleccionar si toco la misma
-                this.cartaSeleccionada = null;
-                carta.setStyle(carta.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"));
-            } else {
-                // Seleccionar nueva
-                this.cartaSeleccionada = nombre;
-
-                // Limpiar borde de hermanos
-                HBox padre = (HBox) carta.getParent();
-                padre.getChildren().forEach(n -> {
-                    n.setStyle(n.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"));
-                });
-                // Poner borde amarillo
-                carta.setStyle(carta.getStyle().replace("-fx-border-color: white;", "-fx-border-color: yellow;"));
-            }
-        });
-
         return carta;
     }
 
@@ -860,88 +697,6 @@ private Group agregarTerrenos() {
     }
 
 
-
-//    private void dibujarPuertos(double hexRadius) {
-//        grupoPuertos.getChildren().clear();
-//        Tablero tablero = Catan.getInstance().getTablero();
-//
-//        // Set para evitar duplicados
-//        java.util.Set<Vertice> visitados = new java.util.HashSet<>();
-//
-//        // Distancia extra desde el vértice hacia afuera
-//        double distanciaExtra = 25.0;
-//
-//        for (Map.Entry<Coordenada, Vertice> entry : tablero.getMapaVertices().entrySet()) {
-//            Vertice v = entry.getValue();
-//            Coordenada coord = entry.getKey();
-//
-//            if (v != null && v.esPuerto() && !visitados.contains(v)) {
-//                visitados.add(v);
-//
-//                Terreno t = tablero.getTerrenos().get(coord.numHex());
-//                if (t == null) continue;
-//
-//                Axial pos = t.getPosicion();
-//                double xCentro = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
-//                double yCentro = hexRadius * 1.5 * pos.r;
-//
-//                int i = coord.indice();
-//                double angle = (Math.PI / 2) + i * (Math.PI / 3) + Math.PI;
-//
-//                // Posición del Vértice (Donde iría la el poblado)
-//                double xVertice = xCentro + hexRadius * Math.cos(angle);
-//                double yVertice = yCentro + hexRadius * Math.sin(angle);
-//
-//                //Posición del Puerto (Más afuera)
-//                double radioPuerto = hexRadius + distanciaExtra;
-//                double xPuerto = xCentro + radioPuerto * Math.cos(angle);
-//                double yPuerto = yCentro + radioPuerto * Math.sin(angle);
-//
-//                // --- DIBUJAR ---
-//
-//                // A. Línea conectora (Muelle)
-//                Line lineaConectora = new Line(xVertice, yVertice, xPuerto, yPuerto);
-//                lineaConectora.setStroke(Color.SADDLEBROWN);
-//                lineaConectora.setStrokeWidth(4);
-//                lineaConectora.setMouseTransparent(true);
-//
-//                // B. Círculo del puerto (La plataforma)
-//                Circle plataforma = new Circle(xPuerto, yPuerto, 14);
-//                plataforma.setFill(Color.SADDLEBROWN);
-//                plataforma.setStroke(Color.WHITE);
-//                plataforma.setStrokeWidth(2);
-//
-//                //  Lógica de Texto y Color según Tasa
-//                String texto = "?";
-//                Color colorTexto = Color.WHITE;
-//
-//                try {
-//                    String desc = v.obtenerPoliticaDeIntercambio().toString().toLowerCase();
-//
-//                    if (v.obtenerPoliticaDeIntercambio().tasa() == 3) {
-//                        texto = "3:1";
-//                    } else {
-//                        // Es 2:1, intentamos adivinar el recurso por el string o lo ponemos genérico
-//                        if (desc.contains("madera")) { texto = "Mad"; colorTexto = Color.LIGHTGREEN; }
-//                        else if (desc.contains("ladrillo")) { texto = "Lad"; colorTexto = Color.TOMATO; }
-//                        else if (desc.contains("lana")) { texto = "Lan"; colorTexto = Color.LIGHTGREEN; }
-//                        else if (desc.contains("grano")) { texto = "Gra"; colorTexto = Color.GOLD; }
-//                        else if (desc.contains("mineral")) { texto = "Min"; colorTexto = Color.LIGHTGRAY; }
-//                        else { texto = "2:1"; }
-//                    }
-//                } catch (Exception e) { texto = "P"; }
-//
-//                Label lbl = new Label(texto);
-//                lbl.setFont(Font.font("Arial", FontWeight.BOLD, 10));
-//                lbl.setTextFill(colorTexto);
-//                lbl.setTranslateX(xPuerto - 9);
-//                lbl.setTranslateY(yPuerto - 7);
-//                lbl.setMouseTransparent(true);
-//
-//                grupoPuertos.getChildren().addAll(lineaConectora, plataforma, lbl);
-//            }
-//        }
-//    }
 
     private void dibujarPuertos(double hexRadius) {
 
@@ -1055,7 +810,7 @@ private Group agregarTerrenos() {
             lbl.setMouseTransparent(true);
             lbl.setTextAlignment(TextAlignment.CENTER);
 
-            // Ajuste a mano para centrar texto sobre el círculo
+            // Ajuste para centrar texto sobre el círculo
             lbl.setTranslateX(xPuerto - 14);
             lbl.setTranslateY(yPuerto - 10);
 
@@ -1081,7 +836,7 @@ private Group agregarTerrenos() {
 
 
                 Point2D posVisual = calcularPosicionVisual(coord, hexRadius);
-                if (posVisual == null) continue; // Si no pudimos calcular (borde raro)
+                if (posVisual == null) continue;
 
                 Circle fantasma = new Circle(posVisual.getX(), posVisual.getY(), 12);
                 fantasma.setFill(Color.rgb(128, 128, 128, 0.5)); // Gris transparente
@@ -1104,7 +859,6 @@ private Group agregarTerrenos() {
 
         Map<Coordenada, edu.fiuba.algo3.modelo.Tablero.Factory.Lado> mapaLados = tablero.getMapaLados();
 
-        // Recuperar último poblado para la fase inicial
         Coordenada ultimoPoblado = null;
         if (this.enFaseInicial && !manager.estaEsperandoPobladoInicial()) {
             try {
@@ -1326,7 +1080,7 @@ private Group agregarTerrenos() {
             double x = hexRadius * Math.sqrt(3) * (pos.q + pos.r / 2.0);
             double y = hexRadius * 1.5 * pos.r;
 
-            // --- A. DIBUJAR POBLADOS Y CIUDADES ---
+            // ---  DIBUJAR POBLADOS Y CIUDADES ---
             for (int i = 0; i < 6; i++) {
                 Coordenada coord = new Coordenada(t.getId(), i);
                 Vertice v = tablero.obtenerVertice(coord);
@@ -1363,7 +1117,7 @@ private Group agregarTerrenos() {
                 }
             }
 
-            // --- B. DIBUJAR CAMINOS ---
+            // --- DIBUJAR CAMINOS ---
             Map<Coordenada, edu.fiuba.algo3.modelo.Tablero.Factory.Lado> mapaLados = tablero.getMapaLados();
             for(int i = 0; i < 6; i++) {
                 Coordenada coordLado = new Coordenada(t.getId(), i);
@@ -1615,7 +1369,6 @@ private Group agregarTerrenos() {
         banners.setAlignment(Pos.TOP_RIGHT);
         banners.setPadding(new Insets(0, 25, 0, 0));
 
-        // EVITA QUE EL CONTENEDOR "OCUPE ALTURA"
         banners.setPickOnBounds(false);
 
         for (Jugador j : Catan.getInstance().getJugadores()) {
@@ -1641,8 +1394,6 @@ private Group agregarTerrenos() {
 
 
     private StackPane crearBannerJugador(Jugador jugador) {
-
-        // un poco más opaco: alpha 0.9
         Color colorJugador = Color.web(jugador.getColor().getColor(), 0.9);
 
         Rectangle cuerpo = new Rectangle(110, 100);
@@ -1664,12 +1415,14 @@ private Group agregarTerrenos() {
         VBox forma = new VBox(cuerpo, punta);
         forma.setAlignment(Pos.TOP_CENTER);
 
+        // Efecto de brillo para el jugador actual
         if (jugador == Catan.getInstance().getManagerTurno().getJugadorActual()) {
             DropShadow glow = new DropShadow(20, Color.GOLD);
             glow.setSpread(0.3);
             forma.setEffect(glow);
         }
 
+        //Contenido del Texto
         VBox texto = new VBox(2);
         texto.setAlignment(Pos.CENTER);
 
@@ -1681,39 +1434,13 @@ private Group agregarTerrenos() {
         pv.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 20));
         pv.setTextFill(Color.WHITE);
 
-        texto.getChildren().addAll(nombre, pv);
-        // ===== LOGROS EN BANDERÍN =====
+        VBox logros = crearPanelLogros(Color.WHITE);
 
-// Ícono Gran Caballería
-        java.net.URL urlCab = getClass().getResource("/imagenes/caballero.jpg");
-        Image imgCab = new Image(urlCab.toExternalForm());
-        ImageView iconoCaballeria = new ImageView(imgCab);
-        iconoCaballeria.setFitWidth(18);
-        iconoCaballeria.setFitHeight(18);
-        iconoCaballeria.setOpacity(0.3); // apagado por default
-        iconoCaballeria.setId("caballeria_banner_" + jugador.getNombre());
+        logros.setId("panel_logros_" + jugador.getNombre());
 
-// Ícono Gran Ruta Comercial
-        java.net.URL urlCam = getClass().getResource("/imagenes/carreteras.jpg");
-        Image imgCam = new Image(urlCam.toExternalForm());
-        ImageView iconoCamino = new ImageView(imgCam);
-        iconoCamino.setFitWidth(18);
-        iconoCamino.setFitHeight(18);
-        iconoCamino.setOpacity(0.3); // apagado por default
-        iconoCamino.setId("camino_banner_" + jugador.getNombre());
+        texto.getChildren().addAll(nombre, pv, logros);
 
-// Contenedor horizontal de ambos iconos
-        HBox logrosBanner = new HBox(5, iconoCaballeria, iconoCamino);
-        logrosBanner.setAlignment(Pos.CENTER);
-
-// Lo agregamos al VBox de texto del banner
-        texto.getChildren().add(logrosBanner);
-
-
-        StackPane banner = new StackPane(forma, texto);
-        banner.setPrefSize(110, 100);
-
-        return banner;
+        return new StackPane(forma, texto);
     }
     private void cargarRecursosSuperioresIniciales() {
         try {
@@ -1723,7 +1450,6 @@ private Group agregarTerrenos() {
 
             actualizarRecursosSuperiores(jugadorActual);
         } catch (Exception e) {
-            // puede que aún no exista manager, lo ignoramos
         }
     }
 
@@ -1749,7 +1475,6 @@ private Group agregarTerrenos() {
     }
     private void estilizarBotonesAccion() {
 
-        // 🎯 BOTÓN PRINCIPAL: LANZAR
         btnLanzar.setStyle(
                 "-fx-background-color: #4A6370;" +      // primario
                         "-fx-background-radius: 14;" +
@@ -1813,13 +1538,11 @@ private Group agregarTerrenos() {
         VBox panel = new VBox(10);
         panel.setPadding(new Insets(15));
 
-        // --- CAMBIO CLAVE: ANCHO AUMENTADO (460px) ---
-        // Esto asegura que el recuadro verde ocupe el espacio deseado
         panel.setPrefWidth(550);
 
         panel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3); -fx-border-color: rgba(255, 255, 255, 0.1); -fx-border-width: 0 0 0 1;");
 
-        // --- ZONA 1: DADOS ---
+        // ---  DADOS ---
         Label lblTurno = new Label("CONTROL DE TURNO");
         lblTurno.setTextFill(Color.LIGHTGRAY);
         lblTurno.setFont(Font.font("Arial", FontWeight.BOLD, 10));
@@ -1835,38 +1558,33 @@ private Group agregarTerrenos() {
         HBox boxTurno = new HBox(15, btnLanzar, btnTerminar);
         boxTurno.setAlignment(Pos.CENTER);
 
-        // --- ZONA 2: ACCIONES ---
+        // ---  ACCIONES ---
         Label lblAcciones = new Label("ACCIONES");
         lblAcciones.setTextFill(Color.LIGHTGRAY);
         lblAcciones.setFont(Font.font("Arial", FontWeight.BOLD, 10));
 
-        // Aumentamos el espacio horizontal entre botones (Hgap) para aprovechar el ancho nuevo
         GridPane grid = new GridPane();
         grid.setHgap(15); grid.setVgap(8);
         grid.setAlignment(Pos.CENTER);
 
-        // Aseguramos que los botones ocupen el ancho disponible
         btnConstruirPoblado.setMaxWidth(Double.MAX_VALUE);
         btnConstruirCiudad.setMaxWidth(Double.MAX_VALUE);
-        // (Aplica esto al resto de botones si deseas que se estiren)
 
         grid.add(btnConstruirPoblado, 0, 0); grid.add(btnConstruirCiudad, 1, 0);
         grid.add(btnConstruirCamino, 0, 1);  grid.add(btnComprarCarta, 1, 1);
         grid.add(btnIntercambioJugadores, 0, 2); grid.add(btnBanca, 1, 2);
         grid.add(btnMoverLadron, 0, 3);      grid.add(btnJugarCarta, 1, 3);
 
-        // --- ZONA 3: CARTAS (CORRECCIÓN DE ERROR) ---
+        // --- CARTAS ---
         Label lblCartas = new Label("MIS CARTAS");
         lblCartas.setTextFill(Color.LIGHTGRAY);
         lblCartas.setFont(Font.font("Arial", FontWeight.BOLD, 10));
 
-        // CORRECCIÓN: Inicializar como FlowPane explícitamente
         this.contenedorCartasDesarrollo = new FlowPane();
         this.contenedorCartasDesarrollo.setHgap(10);
         this.contenedorCartasDesarrollo.setVgap(10);
-        this.contenedorCartasDesarrollo.setAlignment(Pos.TOP_CENTER); // Centrado
+        this.contenedorCartasDesarrollo.setAlignment(Pos.TOP_CENTER);
 
-        // Forzamos el wrap length al ancho del panel menos padding para aprovechar todo el espacio
         this.contenedorCartasDesarrollo.setPrefWrapLength(430);
 
         ScrollPane scrollCartas = new ScrollPane(contenedorCartasDesarrollo);
@@ -1909,5 +1627,16 @@ private Group agregarTerrenos() {
         this.btnMoverLadron.setDisable(true);
 
         this.btnComprarCarta = crearBotonAccion("Comprar Carta", new ControladorComprarCarta(this));
+    }
+
+    private void configurarFondo() {
+        Image imagen = new Image(IMAGEN_RUTA);
+        BackgroundImage fondoImagen = new BackgroundImage(imagen,
+                BackgroundRepeat.ROUND,
+                BackgroundRepeat.SPACE,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(100, 100, true, true, true, false));
+        Background fondo = new Background(fondoImagen);
+        super.setBackground(fondo);
     }
 }

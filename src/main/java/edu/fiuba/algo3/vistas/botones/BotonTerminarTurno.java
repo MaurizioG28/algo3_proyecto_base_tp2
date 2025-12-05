@@ -41,6 +41,9 @@ public class BotonTerminarTurno extends Button {
         super.setOnAction(e -> {
             if (!this.isDisabled()) {
                 System.out.println("Fin de turno");
+                System.out.println("puntaje jugador actual"+Catan.getInstance().getManagerTurno().getJugadorActual().totalPuntos());
+                if(Catan.getInstance().getManagerTurno().getGranRutaComercial().getLider()!=null)
+                    System.out.println("lider camino "+Catan.getInstance().getManagerTurno().getGranRutaComercial().getLider().getNombre()+" "+Catan.getInstance().getManagerTurno().getGranRutaComercial().getLider().totalPuntos());
                 sfx.reproducirClick();
                 controlador.handle(e);
 

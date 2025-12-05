@@ -69,9 +69,9 @@ public class ManagerTurno {
         CartaDesarrollo cartaComprada = servicioComercio.venderCartaDesarrollo(jugador, numeroTurnoActual);
         cartaComprada.setTurnoDeCompra(this.numeroTurnoActual);
         jugador.agregarCarta(cartaComprada);
-        if(cartaComprada instanceof PuntoDeVictoria){
-            jugador.sumarPuntoDeVictoriaOculto();
-        }
+//        if(cartaComprada instanceof PuntoDeVictoria){
+//            jugador.sumarPuntoDeVictoriaOculto();
+//        }
     }
 
     public void construirCarretera(Coordenada coordenada) throws ConstruccionExistenteException, ReglaConstruccionException {
@@ -100,7 +100,7 @@ public class ManagerTurno {
         Jugador jugadorActual = getJugadorActual();
         CartaDesarrollo cartaSeleccionada = jugadorActual.agarrarCarta(indice);
         if (!cartaSeleccionada.sePuedeUsar(this.numeroTurnoActual)) {
-            throw new RuntimeException("No puedes usar una carta el mismo turno que la compraste.");
+            throw new ReglaDeCompraYUsoException("No puedes usar una carta el mismo turno que la compraste.");
         }
         try {
             cartaSeleccionada.ejecutarEfecto(jugadorActual, this.tablero, this.jugadores);
@@ -165,7 +165,7 @@ public class ManagerTurno {
 //        jugador.actualizarPuntosDeVictoria(pv);
         Jugador jugadorAPuntuar = ordenInicial.haTerminado() ? getJugadorActual() : getJugadorActualInicial();
 
-        PuntajeDeVictoria pv = tablero.calcularPuntosDeVictoriaPorConstruccion(jugadorAPuntuar.getColor());
+         PuntajeDeVictoria pv= tablero.calcularPuntosDeVictoriaPorConstruccion(jugadorAPuntuar.getColor());
         jugadorAPuntuar.actualizarPuntosDeVictoria(pv);
     }
 
@@ -380,5 +380,13 @@ public class ManagerTurno {
 
     public Jugador getGranCaballeriaLider() {
         return granCaballeria.getLider();
+    }
+
+    public GranRutaComercial getGranRutaComercial() {
+        return granRutaComercial;
+    }
+
+    public void notificarGranCaballeria() {
+        this.granCaballeria.registrarCaballeroJugado(this.getJugadorActual());
     }
 }

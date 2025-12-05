@@ -32,7 +32,6 @@ public class ControladorPanelJugadores {
     public void actualizarRutaComercial() {
         Jugador lider = juego.getManagerTurno().getRutaComercialLider();
 
-        // 1) LIMPIAR LÍDER ANTERIOR (panel + banner)
         if (liderCamino != null && !liderCamino.equals(lider)) {
             HBox panelLiderAntiguo = panelesPorJugador.get(liderCamino);
             if (panelLiderAntiguo != null) {
@@ -41,7 +40,7 @@ public class ControladorPanelJugadores {
             }
         }
 
-        // 2) ACTUALIZAR NUEVO LÍDER
+        //ACTUALIZAR NUEVO LÍDER
         liderCamino = lider;
 
         if (lider != null) {
@@ -58,10 +57,8 @@ public class ControladorPanelJugadores {
 
         Jugador lider = juego.getManagerTurno().getGranCaballeriaLider();
 
-        // 1) LIMPIAR LÍDER ANTERIOR -> panel + banner
         if (liderCaballeria != null && !liderCaballeria.equals(lider)) {
 
-            // PANEL LATERAL
             HBox panelLiderAntiguo = panelesPorJugador.get(liderCaballeria);
             if (panelLiderAntiguo != null) {
                 vista.actualizarGranCaballeria(panelLiderAntiguo, 0.3);
@@ -71,7 +68,7 @@ public class ControladorPanelJugadores {
             vista.actualizarLogroCaminoEnBanner(liderCaballeria, 0.3);
         }
 
-        // 2) ACTUALIZAR NUEVO LÍDER
+        //ACTUALIZAR NUEVO LÍDER
         liderCaballeria = lider;
 
         if (lider != null) {
@@ -86,6 +83,7 @@ public class ControladorPanelJugadores {
             vista.actualizarLogroCaminoEnBanner(lider, 1.0);
         }
     }
+
 
 
 }

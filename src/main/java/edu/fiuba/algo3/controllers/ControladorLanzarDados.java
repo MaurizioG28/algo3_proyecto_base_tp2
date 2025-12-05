@@ -60,11 +60,11 @@ public void handle(ActionEvent actionEvent) {
             }
         }
         // comentar estas lineas, son para testear
-        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Madera(20));
-        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Ladrillo(20));
-        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Grano(20));
-        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Lana(20));
-        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Mineral(20));
+//        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Madera(20));
+//        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Ladrillo(20));
+//        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Grano(20));
+//        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Lana(20));
+//        Catan.getInstance().getManagerTurno().getJugadorActual().agregarRecurso(new Mineral(20));
         vista.actualizarInventario();
     }
 }

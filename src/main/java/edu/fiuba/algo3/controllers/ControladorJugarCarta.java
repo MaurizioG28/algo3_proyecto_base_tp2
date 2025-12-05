@@ -45,6 +45,7 @@ public class ControladorJugarCarta implements EventHandler<ActionEvent> {
                 vista.mostrarAlerta("Caballero", "Mueve el ladrón para activar el efecto.");
                 vista.setModoCaballero(carta);
                 vista.setModoRobo(true);
+                Catan.getInstance().getManagerTurno().notificarGranCaballeria();
                 exito = true;
 
             } else if (carta instanceof CartaMonopolio) {

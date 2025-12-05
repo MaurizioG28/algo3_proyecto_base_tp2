@@ -48,7 +48,7 @@ public class VistaGanador extends StackPane {
         // Detalles
         Label lblPuntos = new Label("Total Puntos de Victoria: " + ganador.totalPuntos());
         lblPuntos.setFont(Font.font("Verdana", 20));
-        lblPuntos.setTextFill(Color.LIGHTGRAY);
+        lblPuntos.setTextFill(Color.RED);
 
         // Botones
         ControladorReiniciarJuego reiniciar = new ControladorReiniciarJuego(stage, pantallaPrincipal);

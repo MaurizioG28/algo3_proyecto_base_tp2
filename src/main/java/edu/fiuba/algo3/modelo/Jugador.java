@@ -197,6 +197,9 @@ public class Jugador {
 
 
     public void actualizarPuntosDeVictoria(PuntajeDeVictoria pv) {
+        if(pv.getPuntosPublicos()< this.puntos.getPuntosPublicos()){
+            return;
+        }
         this.puntos.setPuntosPublicos(pv.getPuntosPublicos());
 
     }

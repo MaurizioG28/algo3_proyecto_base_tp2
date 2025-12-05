@@ -29,6 +29,7 @@ public class PuntajeDeVictoria {
     }
 
     public int obtenerPuntos() {
+
         return this.puntosPublicos + this.puntosOcultos;
     };
     public void agregarPuntosOcultos(int puntos) {
