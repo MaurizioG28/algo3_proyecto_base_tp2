@@ -30,37 +30,60 @@ public class ControladorPanelJugadores {
     }
 
     public void actualizarRutaComercial() {
-        Jugador lider= juego.getManagerTurno().getRutaComercialLider();
+        Jugador lider = juego.getManagerTurno().getRutaComercialLider();
+
+        // 1) LIMPIAR LÍDER ANTERIOR (panel + banner)
         if (liderCamino != null && !liderCamino.equals(lider)) {
             HBox panelLiderAntiguo = panelesPorJugador.get(liderCamino);
             if (panelLiderAntiguo != null) {
-                vista.actualizarRutaComercial(panelLiderAntiguo, 0.3); // Opacidad baja
+                vista.actualizarRutaComercial(panelLiderAntiguo, 0.3); // panel
+                vista.actualizarLogroCaballeriaEnBanner(liderCamino, 0.3); // banner
             }
         }
-        liderCamino=lider;
 
-        if (lider!= null) {
+        // 2) ACTUALIZAR NUEVO LÍDER
+        liderCamino = lider;
+
+        if (lider != null) {
             HBox panelLider = panelesPorJugador.get(lider);
             if (panelLider != null) {
-                vista.actualizarRutaComercial(panelLider, 1.0); // Opacidad total
+                vista.actualizarRutaComercial(panelLider, 1.0);     // panel
+                vista.actualizarLogroCaballeriaEnBanner(lider, 1.0);  // banner
             }
         }
     }
 
+
     public void actualizarGranCaballeria() {
-        Jugador lider= juego.getManagerTurno().getGranCaballeriaLider();
+
+        Jugador lider = juego.getManagerTurno().getGranCaballeriaLider();
+
+        // 1) LIMPIAR LÍDER ANTERIOR -> panel + banner
         if (liderCaballeria != null && !liderCaballeria.equals(lider)) {
+
+            // PANEL LATERAL
             HBox panelLiderAntiguo = panelesPorJugador.get(liderCaballeria);
             if (panelLiderAntiguo != null) {
                 vista.actualizarGranCaballeria(panelLiderAntiguo, 0.3);
             }
+
+            // BANNER SUPERIOR
+            vista.actualizarLogroCaminoEnBanner(liderCaballeria, 0.3);
         }
-        liderCaballeria=lider;
+
+        // 2) ACTUALIZAR NUEVO LÍDER
+        liderCaballeria = lider;
+
         if (lider != null) {
+
+            // PANEL LATERAL
             HBox panelLider = panelesPorJugador.get(lider);
             if (panelLider != null) {
                 vista.actualizarGranCaballeria(panelLider, 1.0);
             }
+
+            // BANNER SUPERIOR
+            vista.actualizarLogroCaminoEnBanner(lider, 1.0);
         }
     }
 

@@ -31,6 +31,7 @@ import edu.fiuba.algo3.vistas.PantallaPrincipal;
 import edu.fiuba.algo3.vistas.botones.BotonGenericoAccionUsuario;
 import edu.fiuba.algo3.vistas.botones.BotonLanzarDados;
 import edu.fiuba.algo3.vistas.botones.BotonTerminarTurno;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -38,6 +39,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -52,10 +55,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.StackPane;
+
 
 import java.util.*;
 
-public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos BorderPane
+public class VistaTablero2 extends BorderPane { //
+    // CAMBIO: Ahora extendemos BorderPane
     private static final double ANCHO_VENTANA = 1280;
     private static final double ALTO_VENTANA = 720;
 
@@ -63,14 +71,20 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     private HBox contenedorDadosVisuales;
     private Stage stage;
     private PantallaPrincipal pantallaPrincipal;
-    private HBox contenedorRecursos;
-    private HBox contenedorCartasDesarrollo;
+    private  FlowPane contenedorCartasDesarrollo;
     private Label lblNombreJugadorActual;
     private VBox contenedorInfoJugadores;
 
     private Group grupoConstrucciones; // Edificios reales (fijos)
     private Group grupoSugestiones;    // Puntos/Líneas grises (temporales)
     private Group grupoPuertos;
+    // Vista Nueva
+
+    // HUD superior
+    private HBox contenedorRecursosSuperior;
+    private HBox barraAOE;
+
+    // Inventario inferior
 
 
     // botones
@@ -98,29 +112,46 @@ public class VistaTablero2 extends BorderPane { // CAMBIO: Ahora extendemos Bord
     // Estado para "Caballero" (Saber si el robo viene de una carta o de los dados)
     private CartaDesarrollo cartaCaballeroActiva = null;
 
+    //RadioGloblal
+    private double radioGlobal = 70;
+
     private ControladorPanelJugadores controladorJugadores;
 
+    // 1. Aumentamos el radio (antes 45)
     public VistaTablero2(Stage stage, PantallaPrincipal pantallaPrincipal) {
-
         this.setBackground(new Background(new BackgroundFill(Color.web("#233850"), null, null)));
         this.stage = stage;
         this.pantallaPrincipal = pantallaPrincipal;
+
+        // --- CENTRO: MAPA (AJUSTE "DIAGRAMA VERDE") ---
         StackPane contenedorMapa = new StackPane(agregarTerrenos());
-        contenedorMapa.setAlignment(Pos.CENTER);
+
+        // 1. Alineación Arriba-Izquierda para tener control total
+        contenedorMapa.setAlignment(Pos.TOP_LEFT);
+
+        // 2. Márgenes para empujarlo a la posición exacta:
+        // (Arriba, Derecha, Abajo, Izquierda)
+        // - 100px desde arriba para dejar espacio a los banderines pero estar alto
+        // - 50px desde la izquierda para no pegar al borde
+        contenedorMapa.setPadding(new Insets(0, 0, 0, 50));
+
+        // (Opcional) Si quieres subirlo AÚN MÁS cerca de los banderines, usa padding top menor (ej: 50)
+        contenedorMapa.setTranslateY(-90);
         this.setCenter(contenedorMapa);
 
-        // ABAJO: Inventario + Acciones
-        this.setBottom(crearPanelInferior());
+        // --- ARRIBA ---
+        this.setTop(crearTopConBanderines());
 
-        // DERECHA: Jugadores + Dados + Fin Turno
-        this.setRight(crearPanelDerecho());
+        // --- INICIALIZAR BOTONES ---
+        inicializarBotonesAcciones();
 
+        // --- DERECHA (NUEVO ANCHO) ---
+        this.setRight(crearPanelLateralDerecho());
 
-        // 5. Initial Inventory Load
-        actualizarInventario();
+        Platform.runLater(this::actualizarInventario);
 
-        btnLanzar.setDisable(true);
-        btnTerminar.setDisable(true);
+        if(btnLanzar != null) btnLanzar.setDisable(true);
+        if(btnTerminar != null) btnTerminar.setDisable(true);
         deshabilitarBotonesJuegoNormal();
         gestionarFlujoFaseInicial();
     }
@@ -137,7 +168,7 @@ private Group agregarTerrenos() {
     this.grupoConstrucciones = new Group();
     this.grupoSugestiones = new Group();
 
-    double hexRadius = 50;
+    double hexRadius = radioGlobal;
     double xDesierto = 0;
     double yDesierto = 0;
 
@@ -235,18 +266,27 @@ private Group agregarTerrenos() {
 
         if (terreno != null) {
             String nombreImg = terreno.getTipoTerreno().toLowerCase();
+
             try {
-                // Intento de carga seguro
-                java.net.URL url = getClass().getResource("/imagenes/" + nombreImg + ".jpg");
+                // NUEVA RUTA: ahora buscamos en /imagenes/celdas/
+                java.net.URL url = getClass().getResource("/imagenes/celdas/" + nombreImg + ".png");
+
                 if (url != null) {
-                    hexagon.setFill(new ImagePattern(new Image(url.toExternalForm())));
+                    Image img = new Image(url.toExternalForm());
+                    hexagon.setFill(new ImagePattern(img));
                 } else {
+                    // fallback si no existe la imagen
                     hexagon.setFill(Color.BROWN);
                 }
-            } catch (Exception e) { hexagon.setFill(Color.BROWN); }
+
+            } catch (Exception e) {
+                hexagon.setFill(Color.BROWN);
+            }
+
         } else {
             hexagon.setFill(Color.LIGHTGRAY);
         }
+
 
         hexagon.setStroke(Color.BLACK);
         hexagon.setStrokeWidth(2);
@@ -302,73 +342,25 @@ private Group agregarTerrenos() {
 
 
 
-    private VBox crearPanelDerecho() {
-        VBox panel = new VBox();
-        panel.setPadding(new Insets(20));
-        panel.setPrefWidth(300);
-        panel.setAlignment(Pos.TOP_CENTER);
 
-        // 1. ZONA JUGADORES (Dinámica)
-        this.contenedorInfoJugadores = new VBox();
-        this.contenedorInfoJugadores.setSpacing(10); // Espacio entre fichas de jugadores
-        actualizarPanelJugadores(); // Llenar por primera vez
 
-        // 2. ESPACIADOR
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-
-        // 3. ZONA DADOS Y CONTROLES (Estática)
-        this.contenedorDadosVisuales = new HBox(15);
-        this.contenedorDadosVisuales.setAlignment(Pos.CENTER);
-
-        Dados dados = new Dados();
-        ControladorLanzarDados controladorLanzar = new ControladorLanzarDados(dados, this);
-        this.btnLanzar = new BotonLanzarDados(controladorLanzar);
-
-        ControladorTerminarTurno controladorTerminarTurno = new ControladorTerminarTurno(btnLanzar, this);
-        this.btnTerminar = new BotonTerminarTurno(controladorTerminarTurno);
-
-        // Configuración inicial de botones
-        btnTerminar.setDisable(true);
-        controladorLanzar.setBoton(btnLanzar);
-        controladorLanzar.setBotonTerminar(btnTerminar);
-        controladorTerminarTurno.setBotonTerminar(btnTerminar);
-
-        HBox contenedorBotones = new HBox(15);
-        contenedorBotones.setAlignment(Pos.CENTER);
-        contenedorBotones.getChildren().addAll(btnLanzar, btnTerminar);
-
-        VBox zonaControl = new VBox(20);
-        zonaControl.setAlignment(Pos.CENTER);
-        zonaControl.getChildren().addAll(this.contenedorDadosVisuales, contenedorBotones);
-
-        // 4. ARMAR EL PANEL FINAL
-        panel.getChildren().addAll(this.contenedorInfoJugadores, spacer, zonaControl);
-
-        // Dibujo inicial de dados
-        soloDibujarDados(1, 1);
-
-        return panel;
-    }
 
     private void actualizarPanelJugadores() {
         if (this.contenedorInfoJugadores == null) return;
 
-        this.contenedorInfoJugadores.getChildren().clear(); // Limpiamos solo la lista
+        this.contenedorInfoJugadores.getChildren().clear();
 
         List<Jugador> jugadores = Catan.getInstance().getJugadores();
 
-        // Instanciamos el controlador del panel (para los logros visuales)
         ControladorPanelJugadores controladorPanel = new ControladorPanelJugadores(this);
         this.controladorJugadores = controladorPanel;
 
         for (Jugador j : jugadores) {
-            HBox infoJugador = agregarJugador(j); // Crea la ficha con puntos actualizados
+            HBox infoJugador = agregarJugador(j);
             controladorPanel.agregarPanelyJugador(infoJugador, j);
             this.contenedorInfoJugadores.getChildren().add(infoJugador);
         }
 
-        // Actualizamos los íconos de logros si corresponde
         controladorPanel.actualizarGranCaballeria();
         controladorPanel.actualizarRutaComercial();
     }
@@ -376,175 +368,141 @@ private Group agregarTerrenos() {
     private HBox agregarJugador(Jugador jugador) {
         HBox jugadorBox = new HBox();
         jugadorBox.setPadding(new Insets(10));
+        jugadorBox.setAlignment(Pos.CENTER_LEFT);
+
+        jugadorBox.setMinHeight(35);
+        jugadorBox.setPrefHeight(35);
+        jugadorBox.setMaxHeight(35);
+
         Color colorFondoJavaFX = Color.web(jugador.getColor().getColor());
         jugadorBox.setBackground(new Background(new BackgroundFill(colorFondoJavaFX, new CornerRadii(8), null)));
         jugadorBox.setStyle("-fx-border-color: rgba(255,255,255,0.3); -fx-border-radius: 8; -fx-border-width: 1;");
-        Color colorTexto = obtenerColorTextoContraste(colorFondoJavaFX);
 
         Label nombreJugador = new Label(jugador.getNombre());
-        nombreJugador.setPrefWidth(110);
-        nombreJugador.setWrapText(true);
         nombreJugador.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-        nombreJugador.setTextFill(colorTexto);
+        nombreJugador.setTextFill(obtenerColorTextoContraste(colorFondoJavaFX));
 
-        VBox puntosVictoria = new VBox(2);
-        puntosVictoria.setAlignment(Pos.CENTER);
-
-        Label pvLabel = new Label("Puntos de\nVictoria");
-        pvLabel.setFont(Font.font("Verdana", FontWeight.NORMAL, 10));
-        pvLabel.setTextAlignment(TextAlignment.CENTER);
-        pvLabel.setTextFill(colorTexto);
-
-        String puntosReales = String.valueOf(jugador.totalPuntos());
-        Label pvValue = new Label(puntosReales);
-        pvValue.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        pvValue.setAlignment(Pos.CENTER);
-        pvValue.setTextFill(colorTexto);
-
-        VBox logros = crearPanelLogros();
-
-
-        puntosVictoria.getChildren().addAll(pvLabel, pvValue);
-        jugadorBox.getChildren().addAll(nombreJugador, puntosVictoria,logros);
-
+        jugadorBox.getChildren().add(nombreJugador);
         return jugadorBox;
     }
 
-    private VBox crearPanelLogros() {
-        VBox logrosBox = new VBox(5);
-        logrosBox.setAlignment(Pos.CENTER);
-
-        java.net.URL url = getClass().getResource("/imagenes/caballero.jpg" );
-
-        Image img = new Image(url.toExternalForm());
-        // Gran Caballería
-        ImageView iconoCaballeria = new ImageView(
-                img
-        );
-        iconoCaballeria.setFitWidth(20);
-        iconoCaballeria.setFitHeight(20);
-        iconoCaballeria.setId("caballeria");
-
-        java.net.URL url1 = getClass().getResource("/imagenes/carreteras.jpg" );
-
-        Image img1 = new Image(url1.toExternalForm());
-
-        // Gran Camino
-        ImageView iconoCamino = new ImageView(
-                img1
-        );
-        iconoCamino.setFitWidth(20);
-        iconoCamino.setFitHeight(20);
-        iconoCamino.setId("camino");
-
-        // Contenedor para iconos
-        HBox iconosBox = new HBox(5, iconoCaballeria, iconoCamino);
-        iconosBox.setAlignment(Pos.CENTER);
-        iconoCaballeria.setOpacity(0.3);
-        iconoCamino.setOpacity( 0.3);
-        // Label
-        Label labelLogros = new Label("Logros");
-        labelLogros.setFont(Font.font("Verdana", 10));
-        labelLogros.setTextFill(Color.WHITE);
-
-        logrosBox.getChildren().addAll(labelLogros, iconosBox);
 
 
 
-        return logrosBox;
-    }
 
 
-    private HBox crearPanelInferior() {
-        HBox panel = new HBox(20);
-        panel.setPadding(new Insets(15, 20, 15, 20));
-        panel.setAlignment(Pos.BOTTOM_CENTER);
-        panel.setPrefHeight(200);
+//    private HBox crearPanelInferior() {
+//
+//        HBox panel = new HBox(20);
+//        panel.setPadding(new Insets(15, 20, 15, 20));
+//        panel.setAlignment(Pos.BOTTOM_CENTER);
+//        panel.setPrefHeight(200);
+//
+//        // ─────────────────────────────────────────────
+//        // INVENTARIO (solo cartas de desarrollo)
+//        // ─────────────────────────────────────────────
+//
+//        VBox inventario = new VBox(5);
+//        inventario.setPrefWidth(600);
+//        inventario.setPadding(new Insets(10, 15, 10, 15));
+//        inventario.setAlignment(Pos.TOP_CENTER);
+//        inventario.setStyle(
+//                "-fx-background-color: #222;" +
+//                        "-fx-background-radius: 20;" +
+//                        "-fx-border-color: black;" +
+//                        "-fx-border-width: 4;" +
+//                        "-fx-border-radius: 20;"
+//        );
+//
+//        // Título pequeño, como en el diseño moderno
+//        Label lblTitulo = new Label("INVENTARIO");
+//        lblTitulo.setStyle(
+//                "-fx-text-fill: gray;" +
+//                        "-fx-font-size: 10px;" +
+//                        "-fx-font-weight: bold;" +
+//                        "-fx-letter-spacing: 2;"
+//        );
+//
+//        // Solo cartas de desarrollo → NO recursos
+//        HBox filaDeCartas = new HBox(15);
+//        filaDeCartas.setAlignment(Pos.CENTER);
+//        filaDeCartas.setPrefWidth(580);
+//
+//        this.contenedorRecursos = new HBox(10);
+//        this.contenedorRecursos.setAlignment(Pos.CENTER_LEFT);
+//        this.contenedorRecursos.setPadding(new Insets(5, 10, 5, 10));
+//
+//        inventario.getChildren().add(contenedorRecursos);
+//        this.contenedorCartasDesarrollo = new HBox(10);
+//        this.contenedorCartasDesarrollo.setAlignment(Pos.CENTER);
+//
+//
+//        filaDeCartas.getChildren().add(this.contenedorCartasDesarrollo);
+//
+//        // rellenar cartas
+//        actualizarInventario();
+//
+//        // ─────────────────────────────────────────────
+//        // ACCIONES (botones)
+//        // ─────────────────────────────────────────────
+//        GridPane acciones = new GridPane();
+//        acciones.setHgap(15);
+//        acciones.setVgap(15);
+//        acciones.setAlignment(Pos.CENTER_LEFT);
+//
+//        this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado", e -> {
+//            mostrarAlerta("Modo Construcción", "Selecciona un punto gris para construir.");
+//            mostrarLugaresPoblado();
+//        });
+//
+//        this.btnConstruirCamino = crearBotonAccion("Construir\nCamino", e -> {
+//            mostrarAlerta("Modo Construcción", "Selecciona una línea gris para el camino.");
+//            mostrarLugaresCamino();
+//        });
+//
+//        this.btnConstruirCiudad = crearBotonAccion("Construir\nCiudad", e -> {
+//            mostrarAlerta("Modo Ciudad", "Selecciona uno de tus poblados para mejorar.");
+//            mostrarLugaresCiudad();
+//        });
+//
+//        this.btnBanca =
+//                crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
+//
+//        this.btnIntercambioJugadores =
+//                crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
+//
+//        this.btnJugarCarta =
+//                crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
+//
+//        this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
+//            this.esperandoSeleccionHexagono = true;
+//            mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
+//            this.getScene().setCursor(javafx.scene.Cursor.HAND);
+//        });
+//        this.btnMoverLadron.setDisable(true);
+//
+//        this.btnComprarCarta =
+//                crearBotonAccion("Comprar\nCarta D.", new ControladorComprarCarta(this));
+//
+//        acciones.add(this.btnConstruirPoblado,      0, 0);
+//        acciones.add(this.btnConstruirCamino,       1, 0);
+//        acciones.add(this.btnConstruirCiudad,       2, 0);
+//
+//        acciones.add(this.btnBanca,                 0, 1);
+//        acciones.add(this.btnIntercambioJugadores,  1, 1);
+//        acciones.add(this.btnJugarCarta,            2, 1);
+//
+//        acciones.add(this.btnComprarCarta,          0, 2);
+//        acciones.add(this.btnMoverLadron,           2, 2);
+//
+//        panel.setSpacing(30);
+//        panel.setAlignment(Pos.BOTTOM_CENTER);
+//
+//        panel.getChildren().addAll(inventario, acciones);
+//
+//        return panel;
+//    }
 
-        // INVENTARIO
-        VBox inventario = new VBox(5);
-        inventario.setPrefWidth(600);
-        inventario.setPadding(new Insets(10, 15, 10, 15));
-        inventario.setAlignment(Pos.TOP_CENTER);
-        inventario.setStyle("-fx-background-color: #222; -fx-background-radius: 20; -fx-border-color: black; -fx-border-width: 4; -fx-border-radius: 20;");
-
-        this.lblNombreJugadorActual = new Label("Cargando...");
-        this.lblNombreJugadorActual.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-
-        Label lblTitulo = new Label("INVENTARIO");
-        lblTitulo.setStyle("-fx-text-fill: gray; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 2;");
-
-        HBox filaDeCartas = new HBox(15);
-        filaDeCartas.setAlignment(Pos.CENTER);
-        filaDeCartas.setPrefWidth(580);
-
-        this.contenedorRecursos = new HBox(10);
-        this.contenedorRecursos.setAlignment(Pos.CENTER);
-
-        this.contenedorCartasDesarrollo = new HBox(10);
-        this.contenedorCartasDesarrollo.setAlignment(Pos.CENTER);
-        this.contenedorCartasDesarrollo.setStyle("-fx-padding: 0 0 0 10; -fx-border-color: gray; -fx-border-width: 0 0 0 2;");
-
-        filaDeCartas.getChildren().addAll(this.contenedorRecursos, this.contenedorCartasDesarrollo);
-        inventario.getChildren().addAll(this.lblNombreJugadorActual, lblTitulo, filaDeCartas);
-
-        actualizarInventario();
-
-        // GRID DE ACCIONES
-        GridPane acciones = new GridPane();
-        acciones.setHgap(15);
-        acciones.setVgap(15);
-        acciones.setAlignment(Pos.CENTER_LEFT);
-
-        //this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado", new ControladorConstruirPoblado(Catan.getInstance()));
-        //this.btnConstruirCamino = crearBotonAccion("Construir\nCamino", new ControladorConstruirCamino(Catan.getInstance()));
-
-        this.btnConstruirPoblado = crearBotonAccion("Construir\nPoblado", e -> {
-            mostrarAlerta("Modo Construcción", "Selecciona un punto gris para construir.");
-            mostrarLugaresPoblado(); // <--- Llama a la visualización
-        });
-
-        this.btnConstruirCamino = crearBotonAccion("Construir\nCamino", e -> {
-            mostrarAlerta("Modo Construcción", "Selecciona una línea gris para el camino.");
-            mostrarLugaresCamino(); // <--- Llama a la visualización
-        });
-
-        this.btnConstruirCiudad = crearBotonAccion("Construir\nCiudad", e -> {
-            mostrarAlerta("Modo Ciudad", "Selecciona uno de tus poblados para mejorar.");
-            mostrarLugaresCiudad(); // <--- Llama a la visualización
-        });
-
-        this.btnBanca = crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
-        this.btnIntercambioJugadores = crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
-        this.btnJugarCarta = crearBotonAccion("JUGAR\nCARTA", new ControladorJugarCarta(Catan.getInstance(), this));
-        this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", e -> {
-            this.esperandoSeleccionHexagono = true;
-            mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono para colocar al ladrón.");
-            this.getScene().setCursor(javafx.scene.Cursor.HAND);
-        });
-        this.btnMoverLadron.setDisable(true);
-
-        // --- BOTON COMPRAR CARTA  ---
-        this.btnComprarCarta = crearBotonAccion("Comprar\nCarta D.",new ControladorComprarCarta(this));
-
-        // this.btnMoverLadron = crearBotonAccion("MOVER\nLADRÓN", new ControladorMoverLadron()); // Opcional
-
-        acciones.add(this.btnConstruirPoblado, 0, 0);
-        acciones.add(this.btnConstruirCamino, 1, 0);
-        acciones.add(this.btnConstruirCiudad, 2, 0);
-        acciones.add(this.btnBanca, 0, 1);
-        acciones.add(this.btnIntercambioJugadores, 1, 1);
-        acciones.add(this.btnJugarCarta, 2, 1);
-
-        acciones.add(this.btnComprarCarta, 0, 2);
-        acciones.add(this.btnMoverLadron, 2, 2);
-
-        panel.setSpacing(30);
-        panel.setAlignment(Pos.BOTTOM_CENTER);
-        panel.getChildren().addAll(inventario, acciones);
-
-        return panel;
-    }
 
     public void actualizarEstadoBotones() {
         try {
@@ -590,49 +548,42 @@ private Group agregarTerrenos() {
     }
 
     private StackPane crearDadoVisual(int valor) {
-        //EL FONDO DEL DADO
-        StackPane dado = new StackPane();
-        dado.setPrefSize(60, 60); // Tamaño del dado
 
-        javafx.scene.shape.Rectangle fondo = new javafx.scene.shape.Rectangle(60, 60);
-        fondo.setArcWidth(15); // Redondez de esquinas
-        fondo.setArcHeight(15);
-        fondo.setFill(Color.web("#d9534f")); // Color ROJO (Igual a tus botones)
-        fondo.setStroke(Color.WHITE); // Borde blanco
-        fondo.setStrokeWidth(2);
+        StackPane dado = new StackPane();
+        dado.setPrefSize(70, 70); // un poco más grande
+
+        Rectangle fondo = new Rectangle(70, 70);
+        fondo.setArcWidth(18);
+        fondo.setArcHeight(18);
+
+        // 🎨 Nuevo color moderno
+        fondo.setFill(Color.web("#4A6370")); // azul gris profesional
+
+        fondo.setStroke(Color.web("#FFFFFF"));
+        fondo.setStrokeWidth(3);
+
+        // sombra elegante
+        fondo.setEffect(new DropShadow(10, Color.color(0,0,0,0.45)));
 
         dado.getChildren().add(fondo);
 
+        // puntos del dado
         GridPane puntosGrid = new GridPane();
         puntosGrid.setAlignment(Pos.CENTER);
-        puntosGrid.setHgap(5); // Espacio horizontal entre puntos
-        puntosGrid.setVgap(5); // Espacio vertical entre puntos
+        puntosGrid.setHgap(6);
+        puntosGrid.setVgap(6);
 
-        //posiciones lógicas de los puntos en una matriz 3x3
-        // (columna, fila)
-        // 0,0  1,0  2,0
-        // 0,1  1,1  2,1
-        // 0,2  1,2  2,2
-
-        // PUNTOS SEGÚN EL NÚMERO
-        // Centro (para 1, 3, 5)
         if (valor % 2 != 0) {
             puntosGrid.add(crearPunto(), 1, 1);
         }
-
-        // Esquinas Superior-Izquierda e Inferior-Derecha (para 2, 3, 4, 5, 6)
         if (valor > 1) {
             puntosGrid.add(crearPunto(), 0, 0);
             puntosGrid.add(crearPunto(), 2, 2);
         }
-
-        // Esquinas Superior-Derecha e Inferior-Izquierda (para 4, 5, 6)
         if (valor > 3) {
             puntosGrid.add(crearPunto(), 2, 0);
             puntosGrid.add(crearPunto(), 0, 2);
         }
-
-        // Medio-Izquierda y Medio-Derecha (solo para 6)
         if (valor == 6) {
             puntosGrid.add(crearPunto(), 0, 1);
             puntosGrid.add(crearPunto(), 2, 1);
@@ -642,11 +593,12 @@ private Group agregarTerrenos() {
         return dado;
     }
 
-    private javafx.scene.shape.Circle crearPunto() {
-        javafx.scene.shape.Circle punto = new javafx.scene.shape.Circle(5); // Radio 5
+    private Circle crearPunto() {
+        Circle punto = new Circle(7); // un poquito más grande
         punto.setFill(Color.WHITE);
         return punto;
     }
+
 
     public void actualizarDadosVisuales(int valor1, int valor2) {
 
@@ -700,46 +652,51 @@ private Group agregarTerrenos() {
 
     // Método auxiliar para cargar imágenes de recursos y cartas
     private VBox crearFichaConImagen(String nombre, int cantidad, String nombreImagen, String colorFondoHex) {
-        VBox ficha = new VBox(5);
-        ficha.setPrefSize(80, 110);
+        VBox ficha = new VBox(2);
+        // Tamaño reducido tipo Icono
+        ficha.setPrefSize(85, 100);
         ficha.setAlignment(Pos.CENTER);
-        ficha.setStyle("-fx-background-color: " + colorFondoHex + "; -fx-background-radius: 10; -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 0);");
+
+        ficha.setStyle("-fx-background-color: " + colorFondoHex + ";" +
+                "-fx-background-radius: 8;" +
+                "-fx-border-color: white;" +
+                "-fx-border-width: 2;" +
+                "-fx-border-radius: 8;");
 
         StackPane contenedorImagen = new StackPane();
+        // Imagen más pequeña
         contenedorImagen.setPrefSize(60, 60);
 
         try {
-            java.net.URL url = getClass().getResource("/imagenes/" + nombreImagen);
+            java.net.URL url = getClass().getResource("/imagenes/cartas/" + nombreImagen);
             if (url != null) {
-                Image img = new Image(url.toExternalForm());
-                javafx.scene.image.ImageView imgView = new javafx.scene.image.ImageView(img);
-                imgView.setFitWidth(50);
-                imgView.setFitHeight(50);
+                ImageView imgView = new ImageView(new Image(url.toExternalForm()));
+                imgView.setFitWidth(55);
+                imgView.setFitHeight(55);
                 imgView.setPreserveRatio(true);
                 contenedorImagen.getChildren().add(imgView);
-            } else {
-                Label lblNoImg = new Label(nombre.substring(0,1));
-                lblNoImg.setTextFill(Color.WHITE);
-                contenedorImagen.getChildren().add(lblNoImg);
             }
-        } catch (Exception e) { }
+        } catch (Exception e) {}
 
-        Label lblNombre = new Label(nombre);
+        // Texto abreviado o más pequeño
+        Label lblNombre = new Label(nombre.length() > 6 ? nombre.substring(0, 6) + "." : nombre);
         lblNombre.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 10px;");
-        lblNombre.setEffect(new DropShadow(2, Color.BLACK));
 
-        Label lblCantidad = new Label(String.valueOf(cantidad));
-        lblCantidad.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;");
-        lblCantidad.setEffect(new DropShadow(2, Color.BLACK));
+        Label lblCantidad = new Label("x" + cantidad);
+        lblCantidad.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
 
         ficha.getChildren().addAll(contenedorImagen, lblNombre, lblCantidad);
         return ficha;
     }
 
-    public void actualizarInventario() {
-        if (this.contenedorRecursos == null || Catan.getInstance() == null) return;
 
-        this.contenedorRecursos.getChildren().clear();
+
+
+    public void actualizarInventario() {
+        // 1. CAMBIO IMPORTANTE: Chequeamos el contenedor de cartas, NO el de recursos viejos
+        if (this.contenedorCartasDesarrollo == null || Catan.getInstance() == null) return;
+
+        // 2. Limpiamos solo el contenedor de cartas
         this.contenedorCartasDesarrollo.getChildren().clear();
 
         Jugador jugadorActual;
@@ -749,86 +706,60 @@ private Group agregarTerrenos() {
                     Catan.getInstance().getManagerTurno().getJugadorActual();
         } catch(Exception e) { return; }
 
-
+        // Actualizar etiquetas de nombre (igual que antes)
         if (this.lblNombreJugadorActual != null) {
             this.lblNombreJugadorActual.setText(jugadorActual.getNombre());
-            try {
-                this.lblNombreJugadorActual.setTextFill(Color.web(jugadorActual.getColor().getColor()));
-            } catch(Exception e) {
-                this.lblNombreJugadorActual.setTextFill(Color.WHITE);
-            }
         }
 
+        // Actualizar recursos en la barra SUPERIOR (La única que importa ahora)
+        actualizarRecursosSuperiores(jugadorActual);
         actualizarPanelJugadores();
 
-        // ---LLENAR RECURSOS ---
-        this.contenedorRecursos.getChildren().addAll(
-                crearFichaConImagen("Madera",   jugadorActual.cantidadMadera(),   "madera.jpg",   "#228B22"),
-                crearFichaConImagen("Ladrillo", jugadorActual.cantidadLadrillo(), "ladrilo.jpg", "#B22222"),
-                crearFichaConImagen("Lana",     jugadorActual.cantidadLana(),     "lana.jpg",     "#7CB342"),
-                crearFichaConImagen("Grano",    jugadorActual.cantidadGrano(),    "grano.jpg",    "#FFD700"),
-                crearFichaConImagen("Mineral",   jugadorActual.cantidadMineral(),  "piedra.jpg",   "#708090")
-        );
-
-
+        // 3. Lógica de Cartas
         boolean turnoHabilitado = !this.cartaDesarrolloJugadaEnTurno;
 
         this.contenedorCartasDesarrollo.getChildren().addAll(
-                crearCartaSmart("Caballero", jugadorActual.cantidadCartasCaballero(), "caballero.jpg", "#A9A9A9",
+                crearCartaSmart("Caballero", jugadorActual.cantidadCartasCaballero(), "caballero.png", "#A9A9A9",
                         turnoHabilitado && jugadorActual.tieneCartaHabilitada("Caballero")),
 
-                crearCartaSmart("Monopolio", jugadorActual.cantidadCartasMonopolio(), "monopolio.jpg", "#90EE90",
+                crearCartaSmart("Monopolio", jugadorActual.cantidadCartasMonopolio(), "monopolio.png", "#90EE90",
                         turnoHabilitado && jugadorActual.tieneCartaHabilitada("Monopolio")),
 
-                crearCartaSmart("Descubrimiento", jugadorActual.cantidadCartasDescubrimiento(), "descubrimiento.jpg", "#FFD700",
+                crearCartaSmart("Descubrimiento", jugadorActual.cantidadCartasDescubrimiento(), "descubrimiento.png", "#FFD700",
                         turnoHabilitado && jugadorActual.tieneCartaHabilitada("Descubrimiento")),
 
-                crearCartaSmart("Carreteras", jugadorActual.cantidadCartasCarreteras(), "carreteras.jpg", "#FFD700",
+                crearCartaSmart("Carreteras", jugadorActual.cantidadCartasCarreteras(), "carreteras.png", "#FFD700",
                         turnoHabilitado && jugadorActual.tieneCartaHabilitada("Carreteras")),
 
-                // Puntos de Victoria son pasivos, nunca se habilitan para click
-                crearCartaSmart("Punto Vic.", jugadorActual.cantidadCartasPuntoVictoria(), "PV.jpg", "#FFD700", false)
+                crearCartaSmart("Punto Vic.", jugadorActual.cantidadCartasPuntoVictoria(), "PV.png", "#FFD700", false)
         );
 
         verificarGanador();
     }
 
     private VBox crearCartaSmart(String nombre, int cantidad, String img, String color, boolean habilitada) {
-        VBox carta = crearFichaConImagen(nombre, cantidad, img, color); // Tu método base
+        VBox carta = crearFichaConImagen(nombre, cantidad, img, color);
 
-        // CASO 1: NO TIENE LA CARTA
-        if (cantidad <= 0) {
+        if (cantidad <= 0 || !habilitada) {
             carta.setDisable(true);
-            carta.setOpacity(0.3); // Muy transparente
+            carta.setOpacity(cantidad <= 0 ? 0.3 : 0.6);
             return carta;
         }
 
-        // CASO 2: TIENE PERO NO PUEDE USAR (Nueva o ya jugó otra)
-        if (!habilitada) {
-            carta.setDisable(true); // No clickable
-            carta.setOpacity(0.6); // Semi-transparente
-            carta.setStyle(carta.getStyle() + "-fx-border-color: gray;"); // Borde gris
-            return carta;
-        }
-
-        // CASO 3: DISPONIBLE
         carta.setCursor(Cursor.HAND);
         carta.setOnMouseClicked(e -> {
-            // Lógica de Selección (Borde Amarillo)
             if (nombre.equals(this.cartaSeleccionada)) {
-                this.cartaSeleccionada = null; // Deseleccionar
+                this.cartaSeleccionada = null;
                 carta.setStyle(carta.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"));
             } else {
                 this.cartaSeleccionada = nombre;
-                // Limpiar hermanos
-                ((javafx.scene.layout.HBox) carta.getParent()).getChildren().forEach(n ->
-                        n.setStyle(n.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"))
-                );
-                // Marcar esta
+
+                for (javafx.scene.Node n : contenedorCartasDesarrollo.getChildren()) {
+                    n.setStyle(n.getStyle().replace("-fx-border-color: yellow;", "-fx-border-color: white;"));
+                }
                 carta.setStyle(carta.getStyle().replace("-fx-border-color: white;", "-fx-border-color: yellow;"));
             }
         });
-
         return carta;
     }
     private VBox crearCartaInteractiva(String nombre, int cantidad, String nombreImagen, String colorFondoHex, boolean turnoHabilitado) {
@@ -1137,7 +1068,7 @@ private Group agregarTerrenos() {
     private void mostrarLugaresPoblado() {
         grupoSugestiones.getChildren().clear();
         Tablero tablero = Catan.getInstance().getTablero();
-        double hexRadius = 50;
+        double hexRadius = radioGlobal;
 
         Map<Coordenada, Vertice> mapaVertices = tablero.getMapaVertices();
 
@@ -1169,7 +1100,7 @@ private Group agregarTerrenos() {
         grupoSugestiones.getChildren().clear();
         Tablero tablero = Catan.getInstance().getTablero();
         ManagerTurno manager = Catan.getInstance().getManagerTurno();
-        double hexRadius = 50;
+        double hexRadius = radioGlobal;
 
         Map<Coordenada, edu.fiuba.algo3.modelo.Tablero.Factory.Lado> mapaLados = tablero.getMapaLados();
 
@@ -1254,7 +1185,7 @@ private Group agregarTerrenos() {
 
                 if (esMio) {
                     // Usamos la calculadora centralizada para saber dónde dibujar
-                    Point2D posVisual = calcularPosicionVisual(coord, 50); // 50 es tu hexRadius
+                    Point2D posVisual = calcularPosicionVisual(coord, radioGlobal); // radioGlobal es tu hexRadius
                     if (posVisual == null) continue;
 
                     Circle fantasma = new Circle(posVisual.getX(), posVisual.getY(), 20); // Más grande
@@ -1384,7 +1315,7 @@ private Group agregarTerrenos() {
         this.grupoConstrucciones.getChildren().clear();
 
         Tablero tablero = Catan.getInstance().getTablero();
-        double hexRadius = 50;
+        double hexRadius = radioGlobal;
 
         // Sets para evitar dibujar el mismo vértice/lado múltiples veces
         java.util.Set<Vertice> verticesVisitados = new java.util.HashSet<>();
@@ -1574,6 +1505,7 @@ private Group agregarTerrenos() {
         if(iconoCamino != null){
             iconoCamino.setOpacity(opacidad);
         }
+
     }
 
     public void actualizarGranCaballeria(HBox panelLider,double opacidad) {
@@ -1581,5 +1513,401 @@ private Group agregarTerrenos() {
         if(iconoCaballero != null){
             iconoCaballero.setOpacity(opacidad);
         }
+
+    }
+
+    //Banderines
+    private HBox crearRecursoHUD(String nombreImagen, int cantidad) {
+        HBox box = new HBox(6);
+        box.setAlignment(Pos.CENTER_LEFT);
+
+        String estilo = "-fx-background-color: rgba(0,0,0,0.40);"
+                + "-fx-background-radius: 10;"
+                + "-fx-border-radius: 10;"
+                + "-fx-border-color: rgba(255,255,255,0.25);"
+                + "-fx-border-width: 1;"
+                + "-fx-padding: 6 10 6 10;";
+
+        box.setStyle(estilo);
+
+        ImageView icono;
+        try {
+            icono = new ImageView(new Image(
+                    getClass().getResource("/imagenes/barraRecursos/" + nombreImagen).toExternalForm()
+            ));
+        } catch (Exception e) {
+            icono = new ImageView();
+        }
+
+        icono.setFitWidth(28);
+        icono.setFitHeight(28);
+        icono.setPreserveRatio(true);
+
+        Label lblCantidad = new Label(String.valueOf(cantidad));
+        lblCantidad.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
+        lblCantidad.setTextFill(Color.WHITE);
+        lblCantidad.setEffect(new DropShadow(2, Color.BLACK));
+
+        Tooltip.install(box, new Tooltip(nombreImagen.replace(".png", "").toUpperCase()));
+
+        box.getChildren().addAll(icono, lblCantidad);
+        return box;
+    }
+
+    private HBox crearBarraAOE() {
+        HBox barra = new HBox(20);
+        barra.setPadding(new Insets(5, 15, 5, 15));
+        barra.setAlignment(Pos.CENTER_LEFT);
+
+        barra.setStyle(
+                "-fx-background-color: rgba(0,0,0,0.35);" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-border-radius: 12;" +
+                        "-fx-border-color: rgba(255,255,255,0.25);" +
+                        "-fx-border-width: 1;"
+        );
+
+        barra.getChildren().add(crearRecursoHUD("madera.png", 0));
+        barra.getChildren().add(crearRecursoHUD("ladrillo.png", 0));
+        barra.getChildren().add(crearRecursoHUD("lana.png", 0));
+        barra.getChildren().add(crearRecursoHUD("grano.png", 0));
+        barra.getChildren().add(crearRecursoHUD("mineral.png", 0));
+
+        return barra;
+    }
+
+    private HBox crearBarraSuperior() {
+        HBox barra = new HBox(20);
+        barra.setPadding(new Insets(4, 15, 4, 15));
+        barra.setMinHeight(50);
+        barra.setPrefHeight(50);
+        barra.setMaxHeight(50);
+        barra.setAlignment(Pos.CENTER_LEFT);
+        barra.setStyle("-fx-background-color: rgba(0,0,0,0.25);");
+
+        this.lblNombreJugadorActual = new Label("Jugador 1");
+        this.lblNombreJugadorActual.setStyle(
+                "-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;"
+        );
+
+        this.contenedorRecursosSuperior = new HBox(15);
+        this.contenedorRecursosSuperior.setAlignment(Pos.CENTER_LEFT);
+
+        cargarRecursosSuperioresIniciales();
+
+        barra.getChildren().addAll(
+                lblNombreJugadorActual,
+                contenedorRecursosSuperior
+        );
+
+        return barra;
+    }
+    private StackPane crearTopConBanderines() {
+
+        // --- BARRA SUPERIOR ---
+        HBox barra = crearBarraSuperior();
+        barra.setMinHeight(45);
+        barra.setPrefHeight(45);
+        barra.setMaxHeight(45);
+
+        // --- CONTENEDOR SUPERFICIAL PARA BANDERINES ---
+        HBox banners = new HBox(18);
+        banners.setAlignment(Pos.TOP_RIGHT);
+        banners.setPadding(new Insets(0, 25, 0, 0));
+
+        // EVITA QUE EL CONTENEDOR "OCUPE ALTURA"
+        banners.setPickOnBounds(false);
+
+        for (Jugador j : Catan.getInstance().getJugadores()) {
+
+            StackPane banner = crearBannerJugador(j);
+
+
+            banner.setTranslateY(-5);
+
+            banners.getChildren().add(banner);
+        }
+
+        // --- SUPERPOSICIÓN ---
+        StackPane stack = new StackPane();
+        StackPane.setAlignment(barra, Pos.TOP_LEFT);
+        StackPane.setAlignment(banners, Pos.TOP_RIGHT);
+
+        stack.getChildren().addAll(barra, banners);
+
+        return stack;
+    }
+
+
+
+    private StackPane crearBannerJugador(Jugador jugador) {
+
+        // un poco más opaco: alpha 0.9
+        Color colorJugador = Color.web(jugador.getColor().getColor(), 0.9);
+
+        Rectangle cuerpo = new Rectangle(110, 100);
+        cuerpo.setArcWidth(8);
+        cuerpo.setArcHeight(8);
+        cuerpo.setFill(colorJugador);
+        cuerpo.setStroke(Color.BLACK);
+        cuerpo.setStrokeWidth(2);
+
+        Polygon punta = new Polygon(
+                0.0, 0.0,
+                110.0, 0.0,
+                55.0, 35.0
+        );
+        punta.setFill(colorJugador);
+        punta.setStroke(Color.BLACK);
+        punta.setStrokeWidth(2);
+
+        VBox forma = new VBox(cuerpo, punta);
+        forma.setAlignment(Pos.TOP_CENTER);
+
+        if (jugador == Catan.getInstance().getManagerTurno().getJugadorActual()) {
+            DropShadow glow = new DropShadow(20, Color.GOLD);
+            glow.setSpread(0.3);
+            forma.setEffect(glow);
+        }
+
+        VBox texto = new VBox(2);
+        texto.setAlignment(Pos.CENTER);
+
+        Label nombre = new Label(jugador.getNombre());
+        nombre.setFont(Font.font("Verdana", FontWeight.BOLD, 12));
+        nombre.setTextFill(Color.WHITE);
+
+        Label pv = new Label(String.valueOf(jugador.totalPuntos()));
+        pv.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 20));
+        pv.setTextFill(Color.WHITE);
+
+        texto.getChildren().addAll(nombre, pv);
+        // ===== LOGROS EN BANDERÍN =====
+
+// Ícono Gran Caballería
+        java.net.URL urlCab = getClass().getResource("/imagenes/caballero.jpg");
+        Image imgCab = new Image(urlCab.toExternalForm());
+        ImageView iconoCaballeria = new ImageView(imgCab);
+        iconoCaballeria.setFitWidth(18);
+        iconoCaballeria.setFitHeight(18);
+        iconoCaballeria.setOpacity(0.3); // apagado por default
+        iconoCaballeria.setId("caballeria_banner_" + jugador.getNombre());
+
+// Ícono Gran Ruta Comercial
+        java.net.URL urlCam = getClass().getResource("/imagenes/carreteras.jpg");
+        Image imgCam = new Image(urlCam.toExternalForm());
+        ImageView iconoCamino = new ImageView(imgCam);
+        iconoCamino.setFitWidth(18);
+        iconoCamino.setFitHeight(18);
+        iconoCamino.setOpacity(0.3); // apagado por default
+        iconoCamino.setId("camino_banner_" + jugador.getNombre());
+
+// Contenedor horizontal de ambos iconos
+        HBox logrosBanner = new HBox(5, iconoCaballeria, iconoCamino);
+        logrosBanner.setAlignment(Pos.CENTER);
+
+// Lo agregamos al VBox de texto del banner
+        texto.getChildren().add(logrosBanner);
+
+
+        StackPane banner = new StackPane(forma, texto);
+        banner.setPrefSize(110, 100);
+
+        return banner;
+    }
+    private void cargarRecursosSuperioresIniciales() {
+        try {
+            Jugador jugadorActual = Catan.getInstance()
+                    .getManagerTurno()
+                    .getJugadorActualInicial();
+
+            actualizarRecursosSuperiores(jugadorActual);
+        } catch (Exception e) {
+            // puede que aún no exista manager, lo ignoramos
+        }
+    }
+
+    private void actualizarRecursosSuperiores(Jugador jugadorActual) {
+        if (contenedorRecursosSuperior == null || jugadorActual == null) return;
+
+        contenedorRecursosSuperior.getChildren().setAll(
+                crearRecursoHUD("madera.png", jugadorActual.cantidadMadera()),
+                crearRecursoHUD("ladrillo.png", jugadorActual.cantidadLadrillo()),
+                crearRecursoHUD("lana.png", jugadorActual.cantidadLana()),
+                crearRecursoHUD("grano.png", jugadorActual.cantidadGrano()),
+                crearRecursoHUD("mineral.png", jugadorActual.cantidadMineral())
+        );
+    }
+    public void actualizarLogroCaballeriaEnBanner(Jugador jugador, double opacidad) {
+        ImageView icono = (ImageView) this.lookup("#caballeria_banner_" + jugador.getNombre());
+        if (icono != null) icono.setOpacity(opacidad);
+    }
+
+    public void actualizarLogroCaminoEnBanner(Jugador jugador, double opacidad) {
+        ImageView icono = (ImageView) this.lookup("#camino_banner_" + jugador.getNombre());
+        if (icono != null) icono.setOpacity(opacidad);
+    }
+    private void estilizarBotonesAccion() {
+
+        // 🎯 BOTÓN PRINCIPAL: LANZAR
+        btnLanzar.setStyle(
+                "-fx-background-color: #4A6370;" +      // primario
+                        "-fx-background-radius: 14;" +
+                        "-fx-padding: 10 25;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 16;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-border-color: white;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-border-radius: 14;"
+        );
+
+        btnLanzar.setOnMouseEntered(e ->
+                btnLanzar.setStyle(
+                        "-fx-background-color: #5B7482;" +
+                                "-fx-background-radius: 14;" +
+                                "-fx-padding: 10 25;" +
+                                "-fx-text-fill: white;" +
+                                "-fx-font-size: 16;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-border-color: white;" +
+                                "-fx-border-width: 2;" +
+                                "-fx-border-radius: 14;"
+                )
+        );
+        btnLanzar.setOnMouseExited(e -> estilizarBotonesAccion());
+
+
+        // 🎨 BOTÓN SECUNDARIO: TERMINAR
+        btnTerminar.setStyle(
+                "-fx-background-color: #3B4E59;" +      // secundario
+                        "-fx-background-radius: 14;" +
+                        "-fx-padding: 10 25;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-size: 16;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-border-color: #A0B0BB;" +           // borde más suave
+                        "-fx-border-width: 2;" +
+                        "-fx-border-radius: 14;"
+        );
+
+        btnTerminar.setOnMouseEntered(e ->
+                btnTerminar.setStyle(
+                        "-fx-background-color: #4A6370;" + // hover igual al primario
+                                "-fx-background-radius: 14;" +
+                                "-fx-padding: 10 25;" +
+                                "-fx-text-fill: white;" +
+                                "-fx-font-size: 16;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-border-color: white;" +
+                                "-fx-border-width: 2;" +
+                                "-fx-border-radius: 14;"
+                )
+        );
+        btnTerminar.setOnMouseExited(e -> estilizarBotonesAccion());
+    }
+
+
+
+    private javafx.scene.Node crearPanelLateralDerecho() {
+        VBox panel = new VBox(10);
+        panel.setPadding(new Insets(15));
+
+        // --- CAMBIO CLAVE: ANCHO AUMENTADO (460px) ---
+        // Esto asegura que el recuadro verde ocupe el espacio deseado
+        panel.setPrefWidth(550);
+
+        panel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.3); -fx-border-color: rgba(255, 255, 255, 0.1); -fx-border-width: 0 0 0 1;");
+
+        // --- ZONA 1: DADOS ---
+        Label lblTurno = new Label("CONTROL DE TURNO");
+        lblTurno.setTextFill(Color.LIGHTGRAY);
+        lblTurno.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+
+        this.contenedorDadosVisuales = new HBox(15);
+        this.contenedorDadosVisuales.setAlignment(Pos.CENTER);
+        soloDibujarDados(1, 1);
+
+        if (this.btnLanzar == null) this.btnLanzar = new BotonLanzarDados(new ControladorLanzarDados(new Dados(), this));
+        if (this.btnTerminar == null) this.btnTerminar = new BotonTerminarTurno(new ControladorTerminarTurno(btnLanzar, this));
+        estilizarBotonesAccion();
+
+        HBox boxTurno = new HBox(15, btnLanzar, btnTerminar);
+        boxTurno.setAlignment(Pos.CENTER);
+
+        // --- ZONA 2: ACCIONES ---
+        Label lblAcciones = new Label("ACCIONES");
+        lblAcciones.setTextFill(Color.LIGHTGRAY);
+        lblAcciones.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+
+        // Aumentamos el espacio horizontal entre botones (Hgap) para aprovechar el ancho nuevo
+        GridPane grid = new GridPane();
+        grid.setHgap(15); grid.setVgap(8);
+        grid.setAlignment(Pos.CENTER);
+
+        // Aseguramos que los botones ocupen el ancho disponible
+        btnConstruirPoblado.setMaxWidth(Double.MAX_VALUE);
+        btnConstruirCiudad.setMaxWidth(Double.MAX_VALUE);
+        // (Aplica esto al resto de botones si deseas que se estiren)
+
+        grid.add(btnConstruirPoblado, 0, 0); grid.add(btnConstruirCiudad, 1, 0);
+        grid.add(btnConstruirCamino, 0, 1);  grid.add(btnComprarCarta, 1, 1);
+        grid.add(btnIntercambioJugadores, 0, 2); grid.add(btnBanca, 1, 2);
+        grid.add(btnMoverLadron, 0, 3);      grid.add(btnJugarCarta, 1, 3);
+
+        // --- ZONA 3: CARTAS (CORRECCIÓN DE ERROR) ---
+        Label lblCartas = new Label("MIS CARTAS");
+        lblCartas.setTextFill(Color.LIGHTGRAY);
+        lblCartas.setFont(Font.font("Arial", FontWeight.BOLD, 10));
+
+        // CORRECCIÓN: Inicializar como FlowPane explícitamente
+        this.contenedorCartasDesarrollo = new FlowPane();
+        this.contenedorCartasDesarrollo.setHgap(10);
+        this.contenedorCartasDesarrollo.setVgap(10);
+        this.contenedorCartasDesarrollo.setAlignment(Pos.TOP_CENTER); // Centrado
+
+        // Forzamos el wrap length al ancho del panel menos padding para aprovechar todo el espacio
+        this.contenedorCartasDesarrollo.setPrefWrapLength(430);
+
+        ScrollPane scrollCartas = new ScrollPane(contenedorCartasDesarrollo);
+        scrollCartas.setFitToWidth(true);
+        scrollCartas.setStyle("-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0;");
+        VBox.setVgrow(scrollCartas, Priority.ALWAYS);
+
+        panel.getChildren().addAll(
+                lblTurno, contenedorDadosVisuales, boxTurno, new Separator(),
+                lblAcciones, grid, new Separator(),
+                lblCartas, scrollCartas
+        );
+
+        return panel;
+    }
+
+    private void inicializarBotonesAcciones() {
+        this.btnConstruirPoblado = crearBotonAccion("Poblado", e -> {
+            mostrarAlerta("Modo Construcción", "Selecciona un punto gris.");
+            mostrarLugaresPoblado();
+        });
+        this.btnConstruirCamino = crearBotonAccion("Camino", e -> {
+            mostrarAlerta("Modo Construcción", "Selecciona una línea gris.");
+            mostrarLugaresCamino();
+        });
+        this.btnConstruirCiudad = crearBotonAccion("Ciudad", e -> {
+            mostrarAlerta("Modo Ciudad", "Mejora un poblado existente.");
+            mostrarLugaresCiudad();
+        });
+
+        this.btnBanca = crearBotonAccion("Banca", new ControladorBanca(Catan.getInstance(), this));
+        this.btnIntercambioJugadores = crearBotonAccion("Intercambio", new ControladorIntercambioEntreJugadores(Catan.getInstance(), this));
+        this.btnJugarCarta = crearBotonAccion("Jugar Carta", new ControladorJugarCarta(Catan.getInstance(), this));
+
+        this.btnMoverLadron = crearBotonAccion("Mover Ladrón", e -> {
+            this.esperandoSeleccionHexagono = true;
+            mostrarAlerta("Mover Ladrón", "Haz clic en un hexágono.");
+            this.getScene().setCursor(javafx.scene.Cursor.HAND);
+        });
+        this.btnMoverLadron.setDisable(true);
+
+        this.btnComprarCarta = crearBotonAccion("Comprar Carta", new ControladorComprarCarta(this));
     }
 }
